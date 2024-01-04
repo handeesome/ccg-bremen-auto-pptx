@@ -108,7 +108,8 @@ def generate_pptx(templatePath, config):
 
     # 圣餐礼
     shengcanSong = config['shengcan']
-    partSixteen(prs, shengcanSong)
+    if shengcanSong != 'None':
+        partSixteen(prs, shengcanSong)
 
     # 三一颂
     partSeventeen(prs)
