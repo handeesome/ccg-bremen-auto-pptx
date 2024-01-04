@@ -92,28 +92,45 @@ def _versePage(prs, choice):
 
 
 def _lyricsPage(prs):
+    # 2023年 奉献回应诗
+    # audioPath = 'docs/把最好的献给你.mp3'
+    # song = '把最好的献给你'
+    # lyrics = textwrap.dedent("""
+    # [Page 1]
+    # 主耶稣我爱你
+    # 把你话语藏心底
+    # 主耶稣我爱你
+    # 把最好的献给你
+
+    # [Page 2]
+    # 用我口 传扬你
+    # 用我手 服事你
+    # 献我心 敬拜你
+    # 献我身 荣耀你
+
+    # [Page 3]
+    # 主耶稣我爱你
+    # 把你话语藏心底
+    # 主耶稣我爱你
+    # 把最好的献给你
+    # """)
+
+    #2024 奉献回应诗
     audioPath = 'docs/把最好的献给你.mp3'
-    song = '把最好的献给你'
     lyrics = textwrap.dedent("""
     [Page 1]
-    主耶稣我爱你
-    把你话语藏心底
-    主耶稣我爱你
-    把最好的献给你
-
+    主啊  我今完全献上
+    一切所有归于祢
+    一生行事尽依靠祢
+    日日与祢不分离
+                             
     [Page 2]
-    用我口 传扬你
-    用我手 服事你
-    献我心 敬拜你
-    献我身 荣耀你
-
-    [Page 3]
-    主耶稣我爱你
-    把你话语藏心底
-    主耶稣我爱你
-    把最好的献给你
+    一切全献上
+    一切全献上
+    我将所有全归耶稣
+    一切全献上
     """)
-    song = '奉献回应诗：' + song
+    song = '奉献回应诗：'
     lyricsPages(prs, song, lyrics, audioPath, titleFontSize=36)
 
     song = '奉献回应礼'

@@ -12,7 +12,7 @@ def student():
 def result():
     if request.method == 'POST':
       data_from_js = request.json  # Assuming the data is sent as JSON
-      print(data_from_js)
+      # print(data_from_js)
       generate_pptx('docs/template.pptx', config=data_from_js)
 
       return jsonify({'message': 'Data received successfully'})
