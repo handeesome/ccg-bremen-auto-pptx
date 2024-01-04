@@ -85,7 +85,7 @@ def generate_pptx(templatePath, config):
             counter +=1
         else:
             break
-    partTwelve(prs, items, isBirthday=config['birthday']=='有', birthdayList=config['birthdayList'])
+    partTwelve(prs, items, isBirthday=config['birthday']=='true', birthdayList=config['birthdayList'])
 
     # 每月金句
     jinjuLines = config['meiyuejinjuLines']

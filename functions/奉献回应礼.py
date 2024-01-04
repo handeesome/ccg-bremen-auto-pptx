@@ -23,6 +23,10 @@ def _cellText(table, row, col, text, fontSize, fontName='Calibri', isBold=False)
 
 def _bankPage(prs):
     slide = newSlide(prs, '奉献回应礼')
+    txBox = addTextBox(slide, 1.09, 3.94, 20.24, 15.11)
+    p = txBox.text_frame.paragraphs[0]
+    p.text = '教会奉献账号：'
+    setFont(p, 34)
 
     # first table
     table = slide.shapes.add_table(
@@ -126,6 +130,15 @@ def _lyricsPage(prs):
                              
     [Page 2]
     一切全献上
+    一切全献上
+    我将所有全归耶稣
+    一切全献上
+    X2
+                             
+    [Page 3]
+    一切全献上
+    一切全献上
+    我将所有全归耶稣
     一切全献上
     我将所有全归耶稣
     一切全献上
