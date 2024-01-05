@@ -185,8 +185,6 @@ def divide_verse_evenly(verse):
         if verse[i] in delimiters:
             right_delimiter = i
             break
-    print(left_delimiter)
-    print(right_delimiter)
     if left_delimiter is not None and right_delimiter is not None:
         if abs(middle-left_delimiter) <= abs(right_delimiter-middle):
             delimiter_index = left_delimiter
