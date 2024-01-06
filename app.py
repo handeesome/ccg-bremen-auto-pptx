@@ -1,11 +1,12 @@
 from flask import Flask, render_template, request, jsonify
-from generate_pptx import generate_pptx
-from flask_cors import CORS
-app = Flask(__name__)
-CORS(app)
+from functions.generate_pptx import generate_pptx
+import webview
+from pptx import Presentation
+app = Flask(__name__, static_folder='./static', template_folder='./templates')
+window = webview.create_window('app', app)
 
 @app.route('/')
-def student():
+def home():
    return render_template('index.html')
 
 @app.route('/result',methods = ['POST'])
@@ -17,6 +18,5 @@ def result():
 
       return jsonify({'message': 'Data received successfully'})
 
-    
 if __name__ == '__main__':
-   app.run(debug = True)
+   webview.start()
