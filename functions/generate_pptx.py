@@ -146,4 +146,5 @@ def generate_pptx(templatePath, config):
 
     fileName = config['date1'] + '.pptx'
     prs.save(fileName)
+    print(fileName + "生成成功，请在app文件夹中查看")
 
