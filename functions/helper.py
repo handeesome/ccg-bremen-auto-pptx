@@ -4,6 +4,7 @@ from pptx.util import Cm, Pt
 from pptx.enum.text import MSO_ANCHOR
 from pptx.enum.text import PP_ALIGN
 import re
+import os
 
 
 def addTextBox(slide, left, top, width, height):

@@ -23,9 +23,9 @@ from functions.阿们颂 import partNineteen
 from functions.默祷 import partTwenty
 from functions.祷告会 import partTwentyOne
 
+
 def generate_pptx(templatePath, config):
     prs = Presentation(templatePath)
-
     # 今日事奉名单
     slide = prs.slides[0]
     证道 = config['zhengdao1'] + ' ' + config['suffixZhengdao1']
