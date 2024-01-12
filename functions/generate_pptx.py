@@ -1,3 +1,4 @@
+import os
 from pptx import Presentation
 from pptx.enum.text import PP_ALIGN
 from pptx.enum.text import MSO_ANCHOR
@@ -24,7 +25,7 @@ from functions.默祷 import partTwenty
 from functions.祷告会 import partTwentyOne
 
 
-def generate_pptx(templatePath, config):
+def generate_pptx(templatePath, destination, config):
     prs = Presentation(templatePath)
     # 今日事奉名单
     slide = prs.slides[0]
@@ -144,6 +145,7 @@ def generate_pptx(templatePath, config):
             break
     partTwentyOne(prs, prayerWorld, prayerChurch)
 
+    os.chdir(destination)
     fileName = config['date1'] + '.pptx'
     prs.save(fileName)
     print(fileName + "生成成功，请在app文件夹中查看")

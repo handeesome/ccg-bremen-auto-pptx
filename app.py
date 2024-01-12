@@ -6,9 +6,12 @@ import os
 import sys
 def get_executable_dir():
     if getattr(sys, 'frozen', False):
-        return os.path.dirname(sys.executable)
+        # Get the path to the templates folder in the temporary extraction directory
+        working_folder = os.path.join(sys._MEIPASS)
     else:
-        return os.path.dirname(os.path.abspath(__file__))
+        # Use a relative path if running in a regular Python environment
+        working_folder = os.path.join(os.getcwd())
+    return working_folder
 
  
 app = Flask(__name__, static_folder='./static', template_folder='./templates')
@@ -23,8 +26,10 @@ def result():
     if request.method == 'POST':
       data_from_js = request.json  # Assuming the data is sent as JSON
       # print(data_from_js)
-      templatepath = os.path.join(get_executable_dir(),'docs','template.pptx')
-      generate_pptx(templatepath, config=data_from_js)
+    #   dirpath = get_executable_dir()
+    #   templatepath = os.path.join(get_executable_dir(),'docs','template.pptx')
+      destination = os.path.dirname(os.path.abspath(sys.executable))
+      generate_pptx('docs/template.pptx', destination, config=data_from_js)
 
       return jsonify({'message': 'Data received successfully'})
 
