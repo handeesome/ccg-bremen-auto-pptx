@@ -26,8 +26,6 @@ def result():
     if request.method == 'POST':
       data_from_js = request.json  # Assuming the data is sent as JSON
       # print(data_from_js)
-    #   dirpath = get_executable_dir()
-    #   templatepath = os.path.join(get_executable_dir(),'docs','template.pptx')
       destination = os.path.dirname(os.path.abspath(sys.executable))
       generate_pptx('docs/template.pptx', destination, config=data_from_js)
 
