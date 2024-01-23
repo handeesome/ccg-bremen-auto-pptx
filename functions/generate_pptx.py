@@ -148,5 +148,5 @@ def generate_pptx(templatePath, destination, config):
     os.chdir(destination)
     fileName = config['date1'] + '.pptx'
     prs.save(fileName)
-    print(fileName + "生成成功，请在app文件夹中查看")
+    print(fileName + "生成成功，请在" + destination + "中查看")
 

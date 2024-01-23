@@ -17,6 +17,9 @@ def get_executable_dir():
 app = Flask(__name__, static_folder='./static', template_folder='./templates')
 window = webview.create_window('app', app)
 
+# Store the current working directory in the app's context
+app.config['CWD'] = os.getcwd()
+
 @app.route('/')
 def home():
    return render_template('index.html')
@@ -24,12 +27,12 @@ def home():
 @app.route('/result',methods = ['POST'])
 def result():
     if request.method == 'POST':
-      data_from_js = request.json  # Assuming the data is sent as JSON
-      # print(data_from_js)
-      destination = os.getcwd()
-      generate_pptx('docs/template.pptx', destination, config=data_from_js)
+        data_from_js = request.json  # Assuming the data is sent as JSON
+        # print(data_from_js)
+        destination = app.config['CWD']
+        generate_pptx('docs/template.pptx', destination, config=data_from_js)
 
-      return jsonify({'message': 'Data received successfully'})
+        return jsonify({'message': 'Data received successfully'})
 
 if __name__ == '__main__':
    dirPath = get_executable_dir()
