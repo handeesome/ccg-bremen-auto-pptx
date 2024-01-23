@@ -8,7 +8,7 @@ from .helper import *
 
 def partTwentyOne(prs, prayersWorld, prayersChurch):
     slide = newSlide(prs, '')
-    slide.shapes.add_picture('docs/祷告会.jpg', 0, 0)
+    slide.shapes.add_picture('docs/祷告会.jpg', 0, 0, Cm(25.4), Cm(19.05))
     txBox = addTextBox(slide, 7.23, 4.55, 10.95, 3.08)
     p = txBox.text_frame.paragraphs[0]
     p.text = '祷告会'

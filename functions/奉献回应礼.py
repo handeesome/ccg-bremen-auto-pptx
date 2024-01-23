@@ -135,7 +135,7 @@ def _lyricsPage(prs):
     我将所有全归耶稣
     一切全献上
     """)
-    song = '奉献回应诗：'
+    song = '奉献回应诗：一切全献上'
     lyricsPages(prs, song, lyrics, audioPath, titleFontSize=36)
 
     song = '奉献回应礼'

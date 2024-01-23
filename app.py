@@ -26,7 +26,7 @@ def result():
     if request.method == 'POST':
       data_from_js = request.json  # Assuming the data is sent as JSON
       # print(data_from_js)
-      destination = os.path.dirname(os.path.abspath(sys.executable))
+      destination = os.getcwd()
       generate_pptx('docs/template.pptx', destination, config=data_from_js)
 
       return jsonify({'message': 'Data received successfully'})
