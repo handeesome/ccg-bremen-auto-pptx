@@ -3,18 +3,17 @@
 """
 
 
-def partOne(slide, r1, r2, r3, r4, r5, r6):
+def partOne(slide, r1, r2, r3, r4, r5):
     """
     parameters:
     r1: 证道
     r2: 司会
     r3: PPT
-    r4: 场务
-    r5: 接待
-    r6: 儿童主日学
+    r4: 接待
+    r5: 儿童主日学
     """
     shape = slide.shapes[1]
-    table_values = [r1, r2, r3, r4, r5, r6]
+    table_values = [r1, r2, r3, r4, r5]
     rows = shape.table.rows
 
     for i in range(6):

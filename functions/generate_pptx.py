@@ -32,10 +32,9 @@ def generate_pptx(templatePath, destination, config):
     证道 = config['zhengdao1'] + ' ' + config['suffixZhengdao1']
     司会 = config['sihui1'] + ' ' + config['suffixSihui1']
     PPT = config['ppt1'] + ' ' + config['suffixPpt1']
-    场务 = config['changwu1'] + ' ' + config['suffixChangwu1']
     接待 = config['jiedai1'] + ' ' + config['suffixJiedai1']
     儿童主日学 = config['ertongxue1'] + ' ' + config['suffixErtongxue1']
-    partOne(slide, 证道, 司会, PPT, 场务, 接待, 儿童主日学)
+    partOne(slide, 证道, 司会, PPT, 接待, 儿童主日学)
 
     # 日期
     slide = prs.slides[1]

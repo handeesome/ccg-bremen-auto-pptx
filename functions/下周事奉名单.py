@@ -6,7 +6,7 @@ from .helper import *
 """
 
 
-def partFourteen(prs, r1, r2, r3, r4, r5, r6, r7, r8, r9):
+def partFourteen(prs, r1, r2, r3, r4, r5, r6, r7, r8):
     """
         r1: 日期
         r2: 主题
@@ -14,9 +14,8 @@ def partFourteen(prs, r1, r2, r3, r4, r5, r6, r7, r8, r9):
         r4: 经文
         r5: 司会
         r6: PPT
-        r7: 场务
-        r8: 接待
-        r9: 儿童主日学
+        r7: 接待
+        r8: 儿童主日学
     """
     slide = newSlide(prs, '下周事奉名单')
     table = slide.shapes.add_table(
@@ -30,11 +29,10 @@ def partFourteen(prs, r1, r2, r3, r4, r5, r6, r7, r8, r9):
     _cellText(table, 3, 0, '经文', 20)
     _cellText(table, 4, 0, '司会', 20)
     _cellText(table, 5, 0, 'PPT', 20)
-    _cellText(table, 6, 0, '场务', 20)
-    _cellText(table, 7, 0, '接待', 20)
-    _cellText(table, 8, 0, '儿童主日学', 20)
+    _cellText(table, 6, 0, '接待', 20)
+    _cellText(table, 7, 0, '儿童主日学', 20)
 
-    table_values = [r2, r3, r4, r5, r6, r7, r8, r9]
+    table_values = [r2, r3, r4, r5, r6, r7, r8]
     for i in range(8):
         _cellText(table, i+1, 1, table_values[i], 20)
     _cellText(table, 0, 1, r1, 20, isBold=True)
