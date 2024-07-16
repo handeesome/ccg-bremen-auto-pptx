@@ -44,7 +44,7 @@ def generate_pptx(templatePath, destination, config):
     year = date[0]
     month = date[1]
     day = date[2]
-    partTwo(slide, year, month, day, communion=False)
+    partTwo(slide, year, month, day, communion=config['shengcan']!="None")
 
     # 主在圣殿中
     partThree(prs)
