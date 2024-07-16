@@ -5,7 +5,7 @@ from .helper import *
 """
 
 
-def partSix(prs, verseLines):
+def partSeven(prs, verseLines):
     firstSlide = newSlide(prs, '启应经文')
     chunks = parseVerses(verseLines, isQiYing=True)
     fullNames = '\n'.join([chunk[0] for chunk in chunks])

@@ -1,284 +1,285 @@
 <!DOCTYPE html>
 <html lang="en">
-<script src="../static/dropdown.js"></script>
-<script src="../static/changeMonthly.js"></script>
+  <script src="../static/dropdown.js"></script>
+  <script src="../static/changeMonthly.js"></script>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Generate PPTX</title>
-</head>
-<body>
-
-    <h1 style="text-align:center">不来梅教会自动生成周日PPTX</h1>
+  </head>
+  <body>
+    <h1 style="text-align: center">不来梅教会自动生成周日PPTX</h1>
     <form id="pptxForm">
-        <!-- 第一部分 -->
-        <h2>本周事奉名单</h2>
-        <label for="zhengdao1">证道:</label>
-        <input type="text" id="zhengdao1" name="zhengdao1" required>
-        <select id="suffixZhengdao1" name="suffixZhengdao1"></select>
-        <script>generateSuffixDropdown("suffixZhengdao1", true);</script><br>
+      <!-- 第一部分 -->
+      <h2>本周事奉名单</h2>
+      <label for="zhengdao1">证道:</label>
+      <input type="text" id="zhengdao1" name="zhengdao1" required />
+      <select id="suffixZhengdao1" name="suffixZhengdao1"></select>
+      <script>
+        generateSuffixDropdown("suffixZhengdao1", true);
+      </script>
+      <br />
 
-        <label for="sihui1">司会:</label>
-        <input type="text" id="sihui1" name="sihui1" required>
-        <select id="suffixSihui1" name="suffixSihui1"></select>
-        <script>generateSuffixDropdown("suffixSihui1");</script><br>
+      <label for="sihui1">司会:</label>
+      <input type="text" id="sihui1" name="sihui1" required />
+      <select id="suffixSihui1" name="suffixSihui1"></select>
+      <script>
+        generateSuffixDropdown("suffixSihui1");
+      </script>
+      <br />
 
-        <label for="ppt1">PPT:</label>
-        <input type="text" id="ppt1" name="ppt1" required>
-        <select id="suffixPpt1" name="suffixPpt1"></select>
-        <script>generateSuffixDropdown("suffixPpt1");</script><br>
+      <label for="ppt1">PPT:</label>
+      <input type="text" id="ppt1" name="ppt1" required />
+      <select id="suffixPpt1" name="suffixPpt1"></select>
+      <script>
+        generateSuffixDropdown("suffixPpt1");
+      </script>
+      <br />
 
-        <label for="changwu1">场务:</label>
-        <input type="text" id="changwu1" name="changwu1" required>
-        <select id="suffixChangwu1" name="suffixChangwu1"></select>
-        <script>generateSuffixDropdown("suffixChangwu1");</script><br>
+      <label for="jiedai1">接待:</label>
+      <input type="text" id="jiedai1" name="jiedai1" required />
+      <select id="suffixJiedai1" name="suffixJiedai1"></select>
+      <script>
+        generateSuffixDropdown("suffixJiedai1");
+      </script>
+      <br />
 
-        <label for="jiedai1">接待:</label>
-        <input type="text" id="jiedai1" name="jiedai1" required>
-        <select id="suffixJiedai1" name="suffixJiedai1"></select>
-        <script>generateSuffixDropdown("suffixJiedai1");</script><br>
+      <label for="ertongxue1">儿童主日学:</label>
+      <input type="text" id="ertongxue1" name="ertongxue1" required />
+      <select id="suffixErtongxue1" name="suffixErtongxue1"></select>
+      <script>
+        generateSuffixDropdown("suffixErtongxue1");
+      </script>
+      <br />
 
-        <label for="ertongxue1">儿童主日学:</label>
-        <input type="text" id="ertongxue1" name="ertongxue1" required>
-        <select id="suffixErtongxue1" name="suffixErtongxue1"></select>
-        <script>generateSuffixDropdown("suffixErtongxue1");</script><br>
+      <label for="date1">日期:</label>
+      <input type="date" id="date1" name="date1" required /><br />
 
-        <label for="date1">日期:</label>
-        <input type="date" id="date1" name="date1" required><br>
+      <!-- 第二部分 -->
+      <h2>经文自动生成</h2>
+      <label>
+        经文可以是全称也可以是缩写，例如：创世记1:1-2, 创1:1-2,
+        创1:1-2;创3:4-5。
+        <br />多处经文需要用逗号或者分号隔开，同一本书也需要写上书名。
+        <br />创1:1-2,10-12 -> 意思是创世记1章1到2节，10章到12章全部。
+        <br />创1:2,创1:10-12 -> 才是创世记1章1到2节，10到12节。 </label
+      ><br />
+      <label for="xuanzhao">宣召:</label>
+      <input type="text" id="xuanzhao" name="xuanzhao" required />
+      <script type="module">
+        import { findBibleText } from "../static/findBibleText.js";
+        var resultXuanzhao = "";
+        document.getElementById("xuanzhao").addEventListener("input", () => {
+          const text = event.target.value;
+          resultXuanzhao = findBibleText(text);
+        });
+      </script>
 
-        <!-- 第二部分 -->
-        <h2>经文自动生成</h2>
-        <label> 经文可以是全称也可以是缩写，例如：创世记1:1-2, 创1:1-2, 创1:1-2;创3:4-5。
-            <br>多处经文需要用逗号或者分号隔开，同一本书也需要写上书名。
-            <br>创1:1-2,10-12 -> 意思是创世记1章1到2节，10章到12章全部。
-            <br>创1:2,创1:10-12 -> 才是创世记1章1到2节，10到12节。
-        </label><br>
-        <label for="xuanzhao">宣召:</label>
-        <input type="text" id="xuanzhao" name="xuanzhao" required>
-        <script type="module">
-            import {findBibleText} from "../static/findBibleText.js";
-            var resultXuanzhao = ''
-            document.getElementById('xuanzhao').addEventListener('input', ()=>{
-                const text = event.target.value;
-                resultXuanzhao = findBibleText(text);
-            });
-        </script>
+      <label for="qiyingjingwen">启应经文:</label>
+      <input type="text" id="qiyingjingwen" name="qiyingjingwen" required />
+      <script type="module">
+        import { findBibleText } from "../static/findBibleText.js";
+        var resultQiying = "";
+        document
+          .getElementById("qiyingjingwen")
+          .addEventListener("input", () => {
+            const text = event.target.value;
+            resultQiying = findBibleText(text);
+          });
+      </script>
 
-        <label for="qiyingjingwen">启应经文:</label>
-        <input type="text" id="qiyingjingwen" name="qiyingjingwen" required>
-        <script type="module">
-            import {findBibleText} from "../static/findBibleText.js";
-            var resultQiying = ''
-            document.getElementById('qiyingjingwen').addEventListener('input', ()=>{
-                const text = event.target.value;
-                resultQiying = findBibleText(text);
-            });
-        </script>
+      <label for="dujing">读经:</label>
+      <input type="text" id="dujing" name="dujing" required /><br />
+      <script type="module">
+        import { findBibleText } from "../static/findBibleText.js";
+        var resultDujing = "";
+        document.getElementById("dujing").addEventListener("input", () => {
+          const text = event.target.value;
+          resultDujing = findBibleText(text);
+        });
+      </script>
 
-        <label for="dujing">读经:</label>
-        <input type="text" id="dujing" name="dujing" required><br>
-        <script type="module">
-            import {findBibleText} from "../static/findBibleText.js";
-            var resultDujing = ''
-            document.getElementById('dujing').addEventListener('input', ()=>{
-                const text = event.target.value;
-                resultDujing = findBibleText(text);
-            });
-        </script>
+      <label for="songOne">第一首诗歌:</label>
+      <input type="text" id="songOne" name="songOne" required /><br />
+      <label for="songTwo">第二首诗歌:</label>
+      <input type="text" id="songTwo" name="songTwo" required /><br />
+      <label for="songThree">第三首诗歌:</label>
+      <input type="text" id="songThree" name="songThree" required /><br />
+      <label for="songHuiying">回应诗歌:</label>
+      <input type="text" id="songHuiying" name="songHuiying" required /><br />
 
-        <label for="jiangdaotimu">讲道题目:</label>
-        <input type="text" id="jiangdaotimu" name="jiangdaotimu" required><br>
+      <label for="jiangdaotimu">讲道题目:</label>
+      <input type="text" id="jiangdaotimu" name="jiangdaotimu" required /><br />
 
-        <label> 林后 9:6-7 “少种的少收，多种的多收”，这话是真的。各人要随本心所酌定的，不要作难，不要勉强，因为捐得乐意的人是神所喜爱的。”</label><br>
-        <label> 罗12:1 “所以，弟兄们，我以神的慈悲劝你们，将身体献上，当作活祭，是圣洁的，是神所喜悦的；你们如此事奉乃是理所当然的。”</label><br>
-        <label for="fengxianjingwen">奉献回应礼经文</label>
-        <select id="fengxianjingwen" name="fengxianjingwen"></select>
+      <label>
+        林后 9:6-7
+        “少种的少收，多种的多收”，这话是真的。各人要随本心所酌定的，不要作难，不要勉强，因为捐得乐意的人是神所喜爱的。”</label
+      ><br />
+      <label>
+        罗12:1
+        “所以，弟兄们，我以神的慈悲劝你们，将身体献上，当作活祭，是圣洁的，是神所喜悦的；你们如此事奉乃是理所当然的。”</label
+      ><br />
+      <label for="fengxianjingwen">奉献回应礼经文</label>
+      <select id="fengxianjingwen" name="fengxianjingwen"></select>
+      <script>
+        dropdown = document.getElementById("fengxianjingwen");
+        populateDropdown(dropdown, ["林后 9:6-7", "罗12:1"]);
+      </script>
+      <br />
+
+      <h2>诗歌敬拜暂时没有办法自动生成</h2>
+
+      <label for="birthdayDropdown">生日:</label>
+      <select id="birthdayDropdown" name="birthday" onchange="toggleInputBox()">
+        <option value="false">非第一周</option>
+        <option value="true">第一周</option>
+      </select>
+
+      <div id="inputBoxContainer" style="display: none">
+        <label for="birthdayList">本月寿星:</label>
+        <input
+          type="text"
+          id="birthdayList"
+          name="birthdayList"
+          style="width: 400px" />
+        <label id="dynamicBirthday"></label>
         <script>
-            dropdown = document.getElementById("fengxianjingwen");
-            populateDropdown(dropdown, ["林后 9:6-7", "罗12:1"]);
-        </script><br>
-
-        <h2>诗歌敬拜暂时没有办法自动生成</h2>       
-        
-        <h2>活动报告</h2>
-        <p id="dynamicHuodongbaogao"></p>
-        <script>
-            document.getElementById("dynamicHuodongbaogao").innerHTML = dynamicDate + dynamicHuodongbaogao;
+          document.getElementById("dynamicBirthday").innerHTML =
+            dynamicDate + dynamicBirthday;
         </script>
-        <div>
-            <label for="huodongbaogao1">活动报告 1:</label>
-            <textarea id="huodongbaogao1" name="huodongbaogao1" rows="4" cols="50" maxlength="255"></textarea>
-          </div>
-        
-          <div id="huodongbaogaoTextBoxes"></div>
-        
-          <button type="button" onclick="addhuodongbaogao()">增加活动报告</button><br>
+      </div>
+      <br />
 
-          <script>
-            let textBoxCounter1 = 1;
-            function addhuodongbaogao(){
-                var container = document.getElementById('huodongbaogaoTextBoxes');
-                textBoxCounter1 = addTextBox(container, textBoxCounter1, "活动报告", "huodongbaogao");
-            }
-          </script>
+      <script>
+        function toggleInputBox() {
+          var dropdown = document.getElementById("birthdayDropdown");
+          var inputBoxContainer = document.getElementById("inputBoxContainer");
+          inputBoxContainer.style.display =
+            dropdown.value === "true" ? "block" : "none";
+        }
+      </script>
 
-        <label for="birthdayDropdown">生日:</label>
-        <select id="birthdayDropdown" name="birthday" onchange="toggleInputBox()">
-            <option value="false">非第一周</option>
-            <option value="true">第一周</option>
-        </select>
+      <label>每月金句:</label>
+      <input type="text" id="meiyuejinju" name="meiyuejinju" required />
+      <label id="dynamicJinju"></label><br />
+      <script>
+        document.getElementById("dynamicJinju").innerHTML =
+          dynamicDate + dynamicJinju;
+      </script>
+      <script type="module">
+        import { findBibleText } from "../static/findBibleText.js";
+        var resultMeiyue = "";
+        document.getElementById("meiyuejinju").addEventListener("input", () => {
+          const text = event.target.value;
+          resultMeiyue = findBibleText(text);
+        });
+      </script>
 
-        <div id="inputBoxContainer" style="display: none;">
-            <label for="birthdayList">本月寿星:</label>
-            <input type="text" id="birthdayList" name="birthdayList" style="width: 400px">
-            <label id="dynamicBirthday"></label>
-            <script>
-                document.getElementById("dynamicBirthday").innerHTML = dynamicDate + dynamicBirthday;
-            </script>
-        </div>
+      <label>圣餐礼诗歌：</label>
+      <select id="shengcan" name="shengcan">
+        <option value="None">非第一周</option>
+        <option value="宝架清影">宝架清影</option>
+        <option value="靠近十架">靠近十架</option>
+      </select>
+      <h2>下周事奉名单:</h2>
+      <label for="date2">日期:</label>
+      <input type="date" id="date2" name="date2" required /><br />
 
-        <script>
-            function toggleInputBox() {
-                var dropdown = document.getElementById("birthdayDropdown");
-                var inputBoxContainer = document.getElementById("inputBoxContainer");
-                inputBoxContainer.style.display = (dropdown.value === "true") ? "block" : "none";
-            }
-        </script>
-        
-        <label>每月金句:</label>
-        <input type="text" id="meiyuejinju" name="meiyuejinju" required>
-        <label id="dynamicJinju"></label><br>
-        <script>
-            document.getElementById("dynamicJinju").innerHTML = dynamicDate + dynamicJinju;
-        </script>
-        <script type="module">
-            import {findBibleText} from "../static/findBibleText.js";
-            var resultMeiyue = ''
-            document.getElementById('meiyuejinju').addEventListener('input', ()=>{
-                const text = event.target.value;
-                resultMeiyue = findBibleText(text);
-            });
-        </script>
+      <label for="zhuti">主题:</label>
+      <input type="text" id="zhuti" name="zhuti" required /><br />
 
-        <label>圣餐礼诗歌：</label>
-        <select id="shengcan" name="shengcan">
-            <option value="None">非第一周</option>
-            <option value="宝架清影">宝架清影</option>
-            <option value="靠近十架">靠近十架</option>
-        </select>
-        <h2>下周事奉名单:</h2>
-        <label for="date2">日期:</label>
-        <input type="date" id="date2" name="date2" required><br>
+      <label for="zhengdao2">证道:</label>
+      <input type="text" id="zhengdao2" name="zhengdao2" required />
+      <select id="suffixZhengdao2" name="suffixZhengdao2"></select>
+      <script>
+        generateSuffixDropdown("suffixZhengdao2", true);
+      </script>
+      <br />
 
-        <label for="zhuti">主题:</label>
-        <input type="text" id="zhuti" name="zhuti" required><br>
+      <label for="jingwen">经文:</label>
+      <input type="text" id="jingwen" name="jingwen" required /><br />
 
-        <label for="zhengdao2">证道:</label>
-        <input type="text" id="zhengdao2" name="zhengdao2" required>
-        <select id="suffixZhengdao2" name="suffixZhengdao2"></select>
-        <script>generateSuffixDropdown("suffixZhengdao2", true);</script><br>
+      <label for="sihui2">司会:</label>
+      <input type="text" id="sihui2" name="sihui2" required />
+      <select id="suffixSihui2" name="suffixSihui2"></select>
+      <script>
+        generateSuffixDropdown("suffixSihui2");
+      </script>
+      <br />
 
-        <label for="jingwen">经文:</label>
-        <input type="text" id="jingwen" name="jingwen" required><br>
+      <label for="ppt2">PPT:</label>
+      <input type="text" id="ppt2" name="ppt2" required />
+      <select id="suffixPpt2" name="suffixPpt2"></select>
+      <script>
+        generateSuffixDropdown("suffixPpt2");
+      </script>
+      <br />
 
-        <label for="sihui2">司会:</label>
-        <input type="text" id="sihui2" name="sihui2" required>
-        <select id="suffixSihui2" name="suffixSihui2"></select>
-        <script>generateSuffixDropdown("suffixSihui2");</script><br>
+      <label for="jiedai2">接待:</label>
+      <input type="text" id="jiedai2" name="jiedai2" required />
+      <select id="suffixJiedai2" name="suffixJiedai2"></select>
+      <script>
+        generateSuffixDropdown("suffixJiedai2");
+      </script>
+      <br />
 
-        <label for="ppt2">PPT:</label>
-        <input type="text" id="ppt2" name="ppt2" required>
-        <select id="suffixPpt2" name="suffixPpt2"></select>
-        <script>generateSuffixDropdown("suffixPpt2");</script><br>
+      <label for="ertongxue2">儿童主日学:</label>
+      <input type="text" id="ertongxue2" name="ertongxue2" required />
+      <select id="suffixErtongxue2" name="suffixErtongxue2"></select>
+      <script>
+        generateSuffixDropdown("suffixErtongxue2");
+      </script>
+      <br />
 
-        <label for="changwu2">场务:</label>
-        <input type="text" id="changwu2" name="changwu2" required>
-        <select id="suffixChangwu2" name="suffixChangwu2"></select>
-        <script>generateSuffixDropdown("suffixChangwu2");</script><br>
-
-        <label for="jiedai2">接待:</label>
-        <input type="text" id="jiedai2" name="jiedai2" required>
-        <select id="suffixJiedai2" name="suffixJiedai2"></select>
-        <script>generateSuffixDropdown("suffixJiedai2");</script><br>
-
-        <label for="ertongxue2">儿童主日学:</label>
-        <input type="text" id="ertongxue2" name="ertongxue2" required>
-        <select id="suffixErtongxue2" name="suffixErtongxue2"></select>
-        <script>generateSuffixDropdown("suffixErtongxue2");</script><br>
-
-        <h2>祷告会</h2>
-        <p id="dynamicDaogao"></p>
-        <script>
-            document.getElementById("dynamicDaogao").innerHTML = dynamicDate + dynamicDaogao;
-        </script>
-        <div>
-            <label for="daogaoshijie1">世界及社会 1:</label>
-            <textarea id="daogaoshijie1" name="daogaoshijie1" rows="4" cols="50" maxlength="255"></textarea>
-        </div>
-        
-        <div id="daogaoshijieTextBoxes"></div>
-        
-        <button type="button" onclick="adddaogaoshijie()">增加祷告</button>
-        <div>
-        <label for="daogaojiaohui1">教会及个人 1:</label>
-        <textarea id="daogaojiaohui1" name="daogaojiaohui1" rows="4" cols="50" maxlength="255"></textarea>
-        </div>
-    
-        <div id="daogaojiaohuiTextBoxes"></div>
-    
-        <button type="button" onclick="adddaogaojiaohui()">增加祷告</button><br>
-          <script>
-            let textBoxCounter2 = 1;
-            let textBoxCounter3 = 1;
-            function adddaogaoshijie(){
-                var container = document.getElementById('daogaoshijieTextBoxes');
-                textBoxCounter2 = addTextBox(container, textBoxCounter2, "世界及社会", "daogaoshijie");
-            }
-            function adddaogaojiaohui(){
-                var container = document.getElementById('daogaojiaohuiTextBoxes');
-                textBoxCounter3 = addTextBox(container, textBoxCounter3, "教会及个人", "daogaojiaohui");
-            }
-          </script>
-        </div>
-        <h2>请注意，新生成的pptx中的音频需要手动设置为跨页播放。</h2>
-        <button type="button" id="button">生成PPTX</button>
+      <h2>请注意，新生成的pptx中的音频需要手动设置为跨页播放。</h2>
+      <button type="button" id="button">生成PPTX</button>
     </form>
     <script type="module">
-        import {findBibleText} from "../static/findBibleText.js";
-        document.getElementById('button').addEventListener('click', sendData);
-        console.log(findBibleText('约翰福音14:1-3'));
-        function sendData(){
-            var formData = new FormData(document.getElementById('pptxForm'));
-            var formDataObject = {};
-            formData.forEach(function (value, key) {
-                formDataObject[key] = value;
-            });
-            var xuanzhaoLines = findBibleText(document.getElementById('xuanzhao').value);
-            var qiyingLines = findBibleText(document.getElementById('qiyingjingwen').value);
-            var dujingLines = findBibleText(document.getElementById('dujing').value);
-            var meiyuejinjuLines = findBibleText(document.getElementById('meiyuejinju').value);
-            formDataObject['xuanzhaoLines'] = xuanzhaoLines;
-            formDataObject['qiyingLines'] = qiyingLines;
-            formDataObject['dujingLines'] = dujingLines;
-            formDataObject['meiyuejinjuLines'] = meiyuejinjuLines;
-            fetch('result', {
-                method: 'POST',
-                headers: {
-                'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formDataObject),
-            })
-            .then(response => response.json())
-            .then(data => console.log(data))
-            .catch(error => console.error('Error:', error));
-        }
+      import { findBibleText } from "../static/findBibleText.js";
+      document.getElementById("button").addEventListener("click", sendData);
+      function sendData() {
+        var formData = new FormData(document.getElementById("pptxForm"));
+        var formDataObject = {};
+        formData.forEach(function (value, key) {
+          formDataObject[key] = value;
+        });
+        var xuanzhaoLines = findBibleText(
+          document.getElementById("xuanzhao").value
+        );
+        var qiyingLines = findBibleText(
+          document.getElementById("qiyingjingwen").value
+        );
+        var dujingLines = findBibleText(
+          document.getElementById("dujing").value
+        );
+        var meiyuejinjuLines = findBibleText(
+          document.getElementById("meiyuejinju").value
+        );
+        formDataObject["xuanzhaoLines"] = xuanzhaoLines;
+        formDataObject["qiyingLines"] = qiyingLines;
+        formDataObject["dujingLines"] = dujingLines;
+        formDataObject["meiyuejinjuLines"] = meiyuejinjuLines;
+        formDataObject["huodongbaogao"] = dynamicHuodongbaogao;
+        formDataObject["daogaoshijie"] = dynamicDaogaoShijie;
+        formDataObject["daogaojiaohui"] = dynamicDaogaoJiaohui;
+        fetch("result", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formDataObject),
+        })
+          .then((response) => response.json())
+          .then((data) => console.log(data))
+          .catch((error) => console.error("Error:", error));
+      }
     </script>
     <script>
-        // Enable text selection and copying
-        document.body.style.userSelect = 'text';
-        document.body.style.webkitUserSelect = 'text';
-        document.body.style.MozUserSelect = 'text';
+      // Enable text selection and copying
+      document.body.style.userSelect = "text";
+      document.body.style.webkitUserSelect = "text";
+      document.body.style.MozUserSelect = "text";
     </script>
-</body>
+  </body>
 </html>

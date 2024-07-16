@@ -19,7 +19,7 @@ def partFourteen(prs, r1, r2, r3, r4, r5, r6, r7, r8):
     """
     slide = newSlide(prs, '下周事奉名单')
     table = slide.shapes.add_table(
-        9, 2, Cm(4.81), Cm(4.73), Cm(15.77), Cm(12.81)).table
+        8, 2, Cm(4.81), Cm(4.73), Cm(15.77), Cm(12.81)).table
     table.columns[0].width = 1571911
     table.columns[1].width = 4106218
 
@@ -33,7 +33,7 @@ def partFourteen(prs, r1, r2, r3, r4, r5, r6, r7, r8):
     _cellText(table, 7, 0, '儿童主日学', 20)
 
     table_values = [r2, r3, r4, r5, r6, r7, r8]
-    for i in range(8):
+    for i in range(7):
         _cellText(table, i+1, 1, table_values[i], 20)
     _cellText(table, 0, 1, r1, 20, isBold=True)
     return slide

@@ -16,7 +16,7 @@ def partOne(slide, r1, r2, r3, r4, r5):
     table_values = [r1, r2, r3, r4, r5]
     rows = shape.table.rows
 
-    for i in range(6):
+    for i in range(5):
         cell = rows[i+1].cells[1]
         new_text = table_values[i]
         cell.text_frame.paragraphs[0].runs[0].text = new_text

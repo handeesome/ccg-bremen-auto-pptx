@@ -8,10 +8,12 @@ from functions.今日事奉名单 import partOne
 from functions.日期 import partTwo
 from functions.主在圣殿中 import partThree
 from functions.宣召 import partFour
-from functions.启应经文 import partSix
-from functions.主祷文 import partSeven
+from functions.敬拜赞美 import partFive
+from functions.启应经文 import partSeven
+from functions.主祷文 import partSix
 from functions.读经 import partEight
 from functions.讲道 import partNine
+from functions.回应诗歌 import partTen
 from functions.奉献回应礼 import partEleven
 from functions.活动报告 import partTwelve
 from functions.每月金句 import partThirteen
@@ -51,14 +53,23 @@ def generate_pptx(templatePath, destination, config):
     xuanzhaoLines = config['xuanzhaoLines']
     partFour(prs, xuanzhaoLines)
 
-    # 敬拜赞美 TODO
+    # 敬拜赞美 
+    songOne = config['songOne']
+    songTwo = config['songTwo']
+    songThree = config['songThree']
+    partFive(prs, songOne, songTwo, songThree)
+
+    # 为儿童祷告
+    slide = newSlide(prs, '')
+    slide.shapes.add_picture('docs/为儿童祷告.jpg', 0, 0, Cm(25.4), Cm(19.05))
+    # 主祷文
+    partSix(prs)
 
     # 启应经文
     qiyingLines = config['qiyingLines']
-    partSix(prs, qiyingLines)
+    partSeven(prs, qiyingLines)
 
     # 主祷文
-    partSeven(prs)
 
     # 读经 
     dujingLines = config['dujingLines']
@@ -69,23 +80,19 @@ def generate_pptx(templatePath, destination, config):
     经文 = config['dujing']
     partNine(prs, title, 证道, 经文)
 
-    # 回应诗歌 TODO
+    # 回应诗歌 
+    songHuiying = config['songHuiying']
+    partTen(prs, songHuiying)
 
     # 奉献回应礼
     fengxianjingwen = config['fengxianjingwen']
     partEleven(prs, fengxianjingwen)
 
     # 活动报告
-    counter = 1
-    items = []
-    while(True):
-        key = 'huodongbaogao'+str(counter)
-        if key in config:
-            items.append(config['huodongbaogao'+str(counter)])
-            counter +=1
-        else:
-            break
-    partTwelve(prs, items, isBirthday=config['birthday']=='true', birthdayList=config['birthdayList'])
+    pattern = r'\d+\.\s'
+    reports = re.split(pattern, config['huodongbaogao'])
+    reports = [item.strip() for item in reports if item.strip()]
+    partTwelve(prs, reports, isBirthday=config['birthday']=='true', birthdayList=config['birthdayList'])
 
     # 每月金句
     jinjuLines = config['meiyuejinjuLines']
@@ -98,10 +105,9 @@ def generate_pptx(templatePath, destination, config):
     经文 = config['jingwen']
     司会 = config['sihui2'] + config['suffixSihui2']
     PPT = config['ppt2'] + config['suffixPpt2']
-    场务 = config['changwu2'] + config['suffixChangwu2']
     接待 = config['jiedai2'] + config['suffixJiedai2']
     儿童主日学 = config['ertongxue2'] + config['suffixErtongxue2']
-    partFourteen(prs, 日期, 主题, 证道, 经文, 司会, PPT, 场务, 接待, 儿童主日学)
+    partFourteen(prs, 日期, 主题, 证道, 经文, 司会, PPT, 接待, 儿童主日学)
 
     # 欢迎新朋友
     partFifteen(prs)
@@ -124,24 +130,11 @@ def generate_pptx(templatePath, destination, config):
     partTwenty(prs)
 
     # 祷告会
-    counter = 1
-    prayerWorld = []
-    while(True):
-        key = 'daogaoshijie'+str(counter)
-        if key in config:
-            prayerWorld.append(config['daogaoshijie'+str(counter)])
-            counter +=1
-        else:
-            break
-    counter = 1
-    prayerChurch = []
-    while(True):
-        key = 'daogaojiaohui'+str(counter)
-        if key in config:
-            prayerChurch.append(config['daogaojiaohui'+str(counter)])
-            counter +=1
-        else:
-            break
+    pattern = r'\d+\.\s'
+    prayerWorld = re.split(pattern, config['daogaoshijie'])
+    prayerWorld = [item.strip() for item in prayerWorld if item.strip()]
+    prayerChurch = re.split(pattern, config['daogaojiaohui'])
+    prayerChurch = [item.strip() for item in prayerChurch if item.strip()]
     partTwentyOne(prs, prayerWorld, prayerChurch)
 
     os.chdir(destination)
