@@ -74,7 +74,6 @@ def generate_pptx(templatePath, destination, config):
     # 读经 
     dujingLines = config['dujingLines']
     partEight(prs, dujingLines)
-
     # 讲道
     title = config['jiangdaotimu']
     经文 = config['dujing']

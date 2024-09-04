@@ -3,9 +3,9 @@
 
 a = Analysis(
     ['app.py'],
-    pathex=['./'],
+    pathex=[],
     binaries=[],
-    datas=[('static', 'static'), ('templates', 'templates'), ('functions', 'functions')],
+    datas=[],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
