@@ -23,10 +23,16 @@ def _cellText(table, row, col, text, fontSize, fontName='Calibri', isBold=False)
 
 def _bankPage(prs):
     slide = newSlide(prs, '奉献回应礼')
-    txBox = addTextBox(slide, 1.09, 3.94, 20.24, 15.11)
+    txBox = addTextBox(slide, 1.09, 3.94, 22.91, 15.11)
     p = txBox.text_frame.paragraphs[0]
     p.text = '教会奉献账号：'
     setFont(p, 34)
+    p = txBox.text_frame.add_paragraph()
+    p.text = '\n\n\n\n'
+    p = txBox.text_frame.add_paragraph()
+    p.text = '如果奉献给神学教育基金，请备注“10”'
+    setFont(p, 34)
+
 
     # first table
     table = slide.shapes.add_table(
@@ -91,7 +97,7 @@ def _versePage(prs, choice):
     setFont(p, 34)
     p = txBox.text_frame.add_paragraph()
     p.text = choice
-    setFont(p, 34)
+    setFont(p, 23)
     p.alignment = PP_ALIGN.RIGHT
 
 
