@@ -170,7 +170,7 @@ def divide_verse_evenly(verse):
     Returns:
         list: A list of two chunks after division.
     """
-    delimiters = ['，', '。', '：', '；', '？', '！']
+    delimiters = ['，', '。', '：', '；', '?', '！', '、']
     chunks = []
     middle = len(verse) // 2
     left_delimiter = None
@@ -295,7 +295,7 @@ def itemsPagesHasSpace(prs, title, items, charPerLine, fontSize=36, isNumber=Fal
                 if int(number)>9:
                     newLine = '\n   '
                 text_part = match.group(2)
-                delimiters = ['，', '。', '：', '；', '？']
+                delimiters = ['，', '。', '：', '；', '?', '、', '！']
                 substrings = []
                 i = 0
                 while i < len(text_part):

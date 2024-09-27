@@ -39,7 +39,7 @@ def partSeven(prs, verseLines):
             p.space_before = Pt(10)
 
 def newLines(text):
-    delimiters = ['，', '。', '：', '；', '？']
+    delimiters = ['，', '。', '：', '；', '?', '、', '！']
     substrings = []
     i = 0
     while i < len(text):

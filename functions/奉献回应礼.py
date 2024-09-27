@@ -97,7 +97,7 @@ def _versePage(prs, choice):
     setFont(p, 34)
     p = txBox.text_frame.add_paragraph()
     p.text = choice
-    setFont(p, 23)
+    setFont(p, 34)
     p.alignment = PP_ALIGN.RIGHT
 
 
