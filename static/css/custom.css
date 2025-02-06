@@ -1,0 +1,29 @@
+/* Input fields */
+.form-input {
+  width: 7rem !important;
+}
+
+/* Suffix dropdowns */
+.form-select-suffix {
+  width: 6rem !important;
+}
+.label-container {
+  min-width: 4rem;
+  text-align: right;
+}
+
+.form-section {
+  margin-bottom: 2rem;
+  padding: 1rem;
+  border: 1px solid #dee2e6;
+  border-radius: 0.25rem;
+}
+.required::after {
+  content: "*";
+  color: red;
+  margin-left: 3px;
+}
+h2 {
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+}
