@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
-  <script src="../static/dropdown.js"></script>
+<html lang="zh">
   <script src="../static/changeMonthly.js"></script>
 
   <head>
@@ -42,9 +41,6 @@
                     class="form-select form-select-suffix"
                     id="suffixZhengdao1"
                     name="suffixZhengdao1"></select>
-                  <script>
-                    generateSuffixDropdown("suffixZhengdao1", true);
-                  </script>
                 </div>
               </div>
             </div>
@@ -66,9 +62,6 @@
                     class="form-select form-select-suffix"
                     id="suffixSihui1"
                     name="suffixSihui1"></select>
-                  <script>
-                    generateSuffixDropdown("suffixSihui1");
-                  </script>
                 </div>
               </div>
             </div>
@@ -90,9 +83,6 @@
                     class="form-select form-select-suffix"
                     id="suffixPpt1"
                     name="suffixPpt1"></select>
-                  <script>
-                    generateSuffixDropdown("suffixPpt1");
-                  </script>
                 </div>
               </div>
             </div>
@@ -114,9 +104,6 @@
                     class="form-select form-select-suffix"
                     id="suffixJiedai1"
                     name="suffixJiedai1"></select>
-                  <script>
-                    generateSuffixDropdown("suffixJiedai1");
-                  </script>
                 </div>
               </div>
             </div>
@@ -138,16 +125,13 @@
                     class="form-select form-select-suffix"
                     id="suffixErtongxue1"
                     name="suffixErtongxue1"></select>
-                  <script>
-                    generateSuffixDropdown("suffixErtongxue1");
-                  </script>
                 </div>
               </div>
             </div>
 
             <!-- 日期 -->
             <div class="row align-items-center mb-3">
-              <div class="col-auto">
+              <div class="col-auto label-container">
                 <label class="form-label">日期:</label>
               </div>
               <div class="col-3">
@@ -157,21 +141,39 @@
           </div>
 
           <!-- 第二部分 -->
-          <h2>经文自动生成</h2>
-          <label>
-            经文可以是全称也可以是缩写，例如：创世记1:1-2, 创1:1-2,
-            创1:1-2;创3:4-5。
-            <br />多处经文需要用逗号或者分号隔开，同一本书也需要写上书名。
-            <br />创1:1-2,10-12 -> 意思是创世记1章1到2节，10章到12章全部。
-            <br />创1:2,创1:10-12 -> 才是创世记1章1到2节，10到12节。 </label
-          ><br />
-          <label for="xuanzhao">宣召:</label>
-          <input type="text" id="xuanzhao" name="xuanzhao" required />
+          <h3>经文自动生成</h3>
+          <div class="row align-items-center mb-3">
+            <div class="col-auto">
+              <label for="xuanZhao">宣召:</label>
+              <input type="text" id="xuanZhao" name="xuanZhao" />
+            </div>
+            <div class="col-4">
+              <div class="d-flex gap-2">
+                <select
+                  class="form-select"
+                  id="xuanZhaoDropdownBook"
+                  name="xuanZhaoDropdownBook">
+                </select>
+                <select
+                  class="form-select"
+                  id="xuanZhaoDropdownChap"
+                  name="xuanZhaoDropdownChap"
+                  style="display: none"
+                  onchange=""></select>
+                <select
+                  class="form-select"
+                  name="xuanZhaoDropdownVerseFrom"
+                  id="xuanZhaoDropdownVerseFrom"
+                  style="display: none">
+                </select>
+              </div>
+            </div>
+          </div>
           <script type="module">
             import { findBibleText } from "../static/findBibleText.js";
             var resultXuanzhao = "";
             document
-              .getElementById("xuanzhao")
+              .getElementById("xuanZhao")
               .addEventListener("input", () => {
                 const text = event.target.value;
                 resultXuanzhao = findBibleText(text);
@@ -233,11 +235,11 @@
             “所以，弟兄们，我以神的慈悲劝你们，将身体献上，当作活祭，是圣洁的，是神所喜悦的；你们如此事奉乃是理所当然的。”</label
           ><br />
           <label for="fengxianjingwen">奉献回应礼经文</label>
-          <select id="fengxianjingwen" name="fengxianjingwen"></select>
-          <script>
-            dropdown = document.getElementById("fengxianjingwen");
-            populateDropdown(dropdown, ["林后 9:6-7", "罗12:1"]);
-          </script>
+          <select id="fengxianjingwen" name="fengxianjingwen">
+            <option value="0">林后 9:6-7</option>
+            <option value="1">罗12:1</option>
+          </select>
+
           <br />
 
           <label for="birthdayDropdown">生日:</label>
@@ -257,10 +259,6 @@
               name="birthdayList"
               style="width: 400px" />
             <label id="dynamicBirthday"></label>
-            <script>
-              document.getElementById("dynamicBirthday").innerHTML =
-                dynamicDate + dynamicBirthday;
-            </script>
           </div>
           <br />
 
@@ -309,9 +307,7 @@
           <label for="zhengdao2">证道:</label>
           <input type="text" id="zhengdao2" name="zhengdao2" required />
           <select id="suffixZhengdao2" name="suffixZhengdao2"></select>
-          <script>
-            generateSuffixDropdown("suffixZhengdao2", true);
-          </script>
+
           <br />
 
           <label for="jingwen">经文:</label>
@@ -320,33 +316,25 @@
           <label for="sihui2">司会:</label>
           <input type="text" id="sihui2" name="sihui2" required />
           <select id="suffixSihui2" name="suffixSihui2"></select>
-          <script>
-            generateSuffixDropdown("suffixSihui2");
-          </script>
+
           <br />
 
           <label for="ppt2">PPT:</label>
           <input type="text" id="ppt2" name="ppt2" required />
           <select id="suffixPpt2" name="suffixPpt2"></select>
-          <script>
-            generateSuffixDropdown("suffixPpt2");
-          </script>
+
           <br />
 
           <label for="jiedai2">接待:</label>
           <input type="text" id="jiedai2" name="jiedai2" required />
           <select id="suffixJiedai2" name="suffixJiedai2"></select>
-          <script>
-            generateSuffixDropdown("suffixJiedai2");
-          </script>
+
           <br />
 
           <label for="ertongxue2">儿童主日学:</label>
           <input type="text" id="ertongxue2" name="ertongxue2" required />
           <select id="suffixErtongxue2" name="suffixErtongxue2"></select>
-          <script>
-            generateSuffixDropdown("suffixErtongxue2");
-          </script>
+
           <br />
 
           <h2>请注意，新生成的pptx中的音频需要手动设置为跨页播放。</h2>
@@ -354,6 +342,8 @@
         </form>
       </div>
     </div>
+
+    <script type="module" src="../static/scripts.js"></script>
 
     <script type="module">
       import { findBibleText } from "../static/findBibleText.js";
@@ -365,7 +355,7 @@
           formDataObject[key] = value;
         });
         var xuanzhaoLines = findBibleText(
-          document.getElementById("xuanzhao").value
+          document.getElementById("xuanZhao").value
         );
         var qiyingLines = findBibleText(
           document.getElementById("qiyingjingwen").value

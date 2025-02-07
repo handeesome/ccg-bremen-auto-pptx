@@ -1,25 +1,38 @@
-import pythoncom
-import win32com.client
+import json
 
-# Initialize PowerPoint application
-pythoncom.CoInitialize()
-ppt_app = win32com.client.Dispatch("PowerPoint.Application")
-ppt_app.Visible = 1
+def extract_verses(file_path):
+    verse_dict = {}  # Dictionary with integer keys
+    book_index = 0  # Track the book index
+    book_map = {}  # To map book names to their assigned index
+    current_book = None
 
-# Open the presentation
-ppt_path = r"C:\\Users\ducenhan\Desktop\\auto-pptx\\ccg-bremen-auto-pptx\\2024-10-06.pptx"
-presentation = ppt_app.Presentations.Open(ppt_path)
+    with open(file_path, 'r', encoding='utf-8') as file:
+        next(file)  # Skip header
 
-# Define the output PDF path
-# pdf_path = r"C:\\Users\ducenhan\Desktop\\auto-pptx\\ccg-bremen-auto-pptx\\2024-10-06.pdf"
+        for line in file:
+            parts = line.strip().split("\t")  # Split by tab
+            if len(parts) == 2:
+                book_verse, verse_number = parts
+                book_name = " ".join(book_verse.split()[:-1])  # Extract book name
 
-# Save the presentation as PDF
-# presentation.SaveAs(pdf_path, 32)  # 32 is the constant for saving as PDF
-# presentation.Presentations.Add()
-# Close the presentation
-# presentation.Close()
+                if book_name not in book_map:
+                    book_map[book_name] = book_index  # Assign index to book name
+                    verse_dict[book_index] = []  # Initialize list
+                    book_index += 1
 
-# Quit PowerPoint application
-# ppt_app.Quit()
+                try:
+                    verse_dict[book_map[book_name]].append(int(verse_number))
+                except ValueError:
+                    print(f"Skipping invalid line: {line.strip()}")  # Debugging
 
-print("Presentation converted to PDF successfully.")
+    return verse_dict  # Return dictionary with integer keys
+
+# Save data to JSON file
+file_path = "bible_verses.txt"
+verse_data = extract_verses(file_path)
+
+json_path = "bible_verses.json"
+with open(json_path, "w", encoding="utf-8") as json_file:
+    json.dump(verse_data, json_file, ensure_ascii=False, indent=4)
+
+print(f"Data saved to {json_path}")
