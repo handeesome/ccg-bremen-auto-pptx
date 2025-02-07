@@ -35,21 +35,56 @@ document.addEventListener("DOMContentLoaded", () => {
     generateBibleDropdown(dropdownBook);
 
     let bookIndex;
-    dropdownBook.addEventListener("change", function () {
-      updateChapterDropdown(
+    let originalOptions;
+    let dropdownVerseTo = document.getElementById("xuanZhaoDropdownVerseTo");
+
+    dropdownBook.addEventListener("change", async function () {
+      await updateChapterDropdown(
         this,
         "xuanZhaoDropdownChap",
-        "xuanZhaoDropdownVerseFrom"
+        "xuanZhaoDropdownVerseFrom",
+        "xuanZhaoDropdownVerseTo"
       );
+
       bookIndex = this.selectedIndex - 1;
+      originalOptions = Array.from(dropdownVerseTo.options).map((option) =>
+        option.cloneNode(true)
+      );
     });
+
     let dropdownChap = document.getElementById("xuanZhaoDropdownChap");
+    let dropdownVerseFrom = document.getElementById(
+      "xuanZhaoDropdownVerseFrom"
+    );
     if (dropdownChap) {
-      dropdownChap.addEventListener("change", function () {
-        let verseDropdownFrom = document.getElementById(
-          "xuanZhaoDropdownVerseFrom"
+      dropdownChap.addEventListener("change", async function () {
+        await updateVerseDropdown(
+          bookIndex,
+          this.selectedIndex,
+          dropdownVerseFrom,
+          dropdownVerseTo
         );
-        updateVerseDropdown(bookIndex, this.selectedIndex, verseDropdownFrom);
+
+        originalOptions = Array.from(dropdownVerseTo.options).map((option) =>
+          option.cloneNode(true)
+        );
+      });
+    }
+
+    if (dropdownVerseFrom) {
+      dropdownVerseFrom.addEventListener("change", function () {
+        dropdownVerseTo.innerHTML = "";
+        originalOptions.forEach((option) =>
+          dropdownVerseTo.appendChild(option.cloneNode(true))
+        );
+
+        for (
+          let i = 0;
+          i < this.selectedIndex && this.options.length > 0;
+          i++
+        ) {
+          dropdownVerseTo.remove(0);
+        }
       });
     }
   }

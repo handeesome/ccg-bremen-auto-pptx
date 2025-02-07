@@ -45,11 +45,13 @@ export function generateBibleDropdown(dropdown) {
 export async function updateChapterDropdown(
   bibleDropdown,
   chapterDropdownId,
-  verseDropdownId
+  dropdownVerseFromId,
+  dropdownVerseToId
 ) {
   const bibleBookIndex = bibleDropdown.selectedIndex - 1;
   const chapterDropdown = document.getElementById(chapterDropdownId);
-  const verseDropdown = document.getElementById(verseDropdownId);
+  const dropdownVerseFrom = document.getElementById(dropdownVerseFromId);
+  const dropdownVerseTo = document.getElementById(dropdownVerseToId);
   chapterDropdown.innerHTML = "";
 
   const inputChapter = generateChapterOptions(bibleBookIndex);
@@ -57,18 +59,23 @@ export async function updateChapterDropdown(
   chapterDropdown.style.display = "inline-block";
 
   const inputVerse = await generateVerseOptions(bibleBookIndex, 0);
-  populateDropdown(verseDropdown, inputVerse);
-  verseDropdown.style.display = "inline-block";
+  populateDropdown(dropdownVerseFrom, inputVerse);
+  dropdownVerseFrom.style.display = "inline-block";
+  populateDropdown(dropdownVerseTo, inputVerse);
+  dropdownVerseTo.style.display = "inline-block";
 }
 
-export function updateVerseDropdown(
+export async function updateVerseDropdown(
   bookIndex,
   chapterIndex,
-  verseDropdownFrom
+  verseDropdownFrom,
+  verseDropdownTo
 ) {
-  generateVerseOptions(bookIndex, chapterIndex);
+  const options = await generateVerseOptions(bookIndex, chapterIndex);
+
   verseDropdownFrom.innerHTML = "";
   populateDropdown(verseDropdownFrom, options);
+  populateDropdown(verseDropdownTo, options);
 }
 
 async function generateVerseOptions(bookIndex, chapterIndex) {
@@ -79,7 +86,6 @@ async function generateVerseOptions(bookIndex, chapterIndex) {
     let options = chinese_numbers
       .slice(0, verseNumber)
       .map((num) => `第${num}节`);
-
     return options;
   } catch (error) {
     console.error("Error loading JSON:", error);
