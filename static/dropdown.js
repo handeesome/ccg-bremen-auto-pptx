@@ -38,29 +38,26 @@ export function generateSuffixDropdown(dropdownId, ifPreacher = false) {
   const dropdown = document.getElementById(dropdownId);
   populateDropdown(dropdown, suffixes);
 }
-export function generateBibleDropdown(dropdown) {
+export function generateBookDropdown(dropdown) {
   populateDropdown(dropdown, [...oldTestament, ...newTestament]);
 }
 
 export async function updateChapterDropdown(
   bibleDropdown,
-  chapterDropdownId,
-  dropdownVerseFromId,
-  dropdownVerseToId,
-  textBetweenId
+  chapterDropdown,
+  dropdownVerseFrom,
+  dropdownVerseTo,
+  textBetween
 ) {
   const bibleBookIndex = bibleDropdown.selectedIndex - 1;
-  const chapterDropdown = document.getElementById(chapterDropdownId);
-  const dropdownVerseFrom = document.getElementById(dropdownVerseFromId);
-  const dropdownVerseTo = document.getElementById(dropdownVerseToId);
-  const textBetween = document.getElementById(textBetweenId);
+  const bibleBookName = bibleDropdown[bibleBookIndex + 1].textContent;
   chapterDropdown.innerHTML = "";
 
   const inputChapter = generateChapterOptions(bibleBookIndex);
   populateDropdown(chapterDropdown, inputChapter);
   chapterDropdown.style.display = "inline-block";
 
-  const inputVerse = await generateVerseOptions(bibleBookIndex, 0);
+  const inputVerse = await generateVerseOptions(bibleBookName, 0);
   populateDropdown(dropdownVerseFrom, inputVerse);
   dropdownVerseFrom.style.display = "inline-block";
   populateDropdown(dropdownVerseTo, inputVerse);
@@ -69,23 +66,23 @@ export async function updateChapterDropdown(
 }
 
 export async function updateVerseDropdown(
-  bookIndex,
+  bookName,
   chapterIndex,
   verseDropdownFrom,
   verseDropdownTo
 ) {
-  const options = await generateVerseOptions(bookIndex, chapterIndex);
+  const options = await generateVerseOptions(bookName, chapterIndex);
 
   verseDropdownFrom.innerHTML = "";
   populateDropdown(verseDropdownFrom, options);
   populateDropdown(verseDropdownTo, options);
 }
 
-async function generateVerseOptions(bookIndex, chapterIndex) {
+async function generateVerseOptions(bookName, chapterIndex) {
   try {
-    let response = await fetch("../static/data/bible_verses.json");
+    let response = await fetch("../static/data/bibleVerses.json");
     let data = await response.json();
-    let verseNumber = data[bookIndex][chapterIndex];
+    let verseNumber = data[bookName][chapterIndex];
     let options = chinese_numbers
       .slice(0, verseNumber)
       .map((num) => `第${num}节`);
@@ -142,4 +139,81 @@ export function updateVerseData(key, value, xuanZhaoTextBox) {
 
 function formatVerseData(verseData) {
   return `${verseData.book} ${verseData.chapter}:${verseData.verseFrom}-${verseData.verseTo}`;
+}
+
+export function generateBibleDropdowns(
+  dropdownBook,
+  dropdownChap,
+  dropdownVerseFrom,
+  dropdownVerseTo,
+  textBetween,
+  xuanZhaoTextBox
+) {
+  if (dropdownBook) {
+    generateBookDropdown(dropdownBook);
+    let placeholder = document.createElement("option");
+    placeholder.text = "请选择一卷书";
+    placeholder.value = "";
+    placeholder.disabled = true;
+    placeholder.selected = true;
+
+    // Insert the placeholder at the beginning
+    dropdownBook.insertBefore(placeholder, dropdownBook.firstChild);
+
+    let originalOptions;
+    dropdownBook.addEventListener("change", async function () {
+      await updateChapterDropdown(
+        this,
+        dropdownChap,
+        dropdownVerseFrom,
+        dropdownVerseTo,
+        textBetween
+      );
+      originalOptions = Array.from(dropdownVerseTo.options).map((option) =>
+        option.cloneNode(true)
+      );
+      let bookName = this.options[this.selectedIndex].text;
+      updateVerseData("book", bookName, xuanZhaoTextBox);
+    });
+
+    if (dropdownChap) {
+      dropdownChap.addEventListener("change", async function () {
+        await updateVerseDropdown(
+          verseData["book"],
+          this.selectedIndex,
+          dropdownVerseFrom,
+          dropdownVerseTo
+        );
+
+        originalOptions = Array.from(dropdownVerseTo.options).map((option) =>
+          option.cloneNode(true)
+        );
+        updateVerseData("chapter", this.value, xuanZhaoTextBox);
+      });
+    }
+
+    if (dropdownVerseFrom) {
+      dropdownVerseFrom.addEventListener("change", function () {
+        dropdownVerseTo.innerHTML = "";
+        originalOptions.forEach((option) =>
+          dropdownVerseTo.appendChild(option.cloneNode(true))
+        );
+
+        for (
+          let i = 0;
+          i < this.selectedIndex && this.options.length > 0;
+          i++
+        ) {
+          dropdownVerseTo.remove(0);
+        }
+        updateVerseData("verseFrom", this.value, xuanZhaoTextBox);
+      });
+    }
+
+    if (dropdownVerseTo) {
+      dropdownVerseTo.addEventListener("change", function () {
+        updateVerseData("verseTo", this.value, xuanZhaoTextBox);
+      });
+    }
+  }
 }
