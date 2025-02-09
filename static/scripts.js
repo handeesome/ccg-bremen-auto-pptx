@@ -26,13 +26,15 @@ document.addEventListener("DOMContentLoaded", () => {
   // Retrieve Bible verses
   let dropdownBook = document.getElementById("xuanZhaoDropdownBook");
   if (dropdownBook) {
-    dropdownBook.innerHTML = `
-            <option value="" disabled selected
-                    >请选择一卷书
-                  </option>
-                  
-        `;
     generateBibleDropdown(dropdownBook);
+    let placeholder = document.createElement("option");
+    placeholder.text = "请选择一卷书";
+    placeholder.value = "";
+    placeholder.disabled = true;
+    placeholder.selected = true;
+
+    // Insert the placeholder at the beginning
+    dropdownBook.insertBefore(placeholder, dropdownBook.firstChild);
 
     let bookIndex;
     let originalOptions;
@@ -43,7 +45,8 @@ document.addEventListener("DOMContentLoaded", () => {
         this,
         "xuanZhaoDropdownChap",
         "xuanZhaoDropdownVerseFrom",
-        "xuanZhaoDropdownVerseTo"
+        "xuanZhaoDropdownVerseTo",
+        "textBetween"
       );
 
       bookIndex = this.selectedIndex - 1;

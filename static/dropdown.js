@@ -46,12 +46,14 @@ export async function updateChapterDropdown(
   bibleDropdown,
   chapterDropdownId,
   dropdownVerseFromId,
-  dropdownVerseToId
+  dropdownVerseToId,
+  textBetweenId
 ) {
   const bibleBookIndex = bibleDropdown.selectedIndex - 1;
   const chapterDropdown = document.getElementById(chapterDropdownId);
   const dropdownVerseFrom = document.getElementById(dropdownVerseFromId);
   const dropdownVerseTo = document.getElementById(dropdownVerseToId);
+  const textBetween = document.getElementById(textBetweenId);
   chapterDropdown.innerHTML = "";
 
   const inputChapter = generateChapterOptions(bibleBookIndex);
@@ -63,6 +65,7 @@ export async function updateChapterDropdown(
   dropdownVerseFrom.style.display = "inline-block";
   populateDropdown(dropdownVerseTo, inputVerse);
   dropdownVerseTo.style.display = "inline-block";
+  textBetween.style.display = "inline-block";
 }
 
 export async function updateVerseDropdown(
@@ -109,6 +112,7 @@ function generateChapterOptions(bookIndex) {
 }
 
 export function populateDropdown(dropdown, options) {
+  dropdown.innerHTML = "";
   options.forEach((option) => {
     const optionElement = document.createElement("option");
     optionElement.value = option.toLowerCase();

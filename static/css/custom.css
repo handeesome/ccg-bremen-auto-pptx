@@ -28,12 +28,6 @@ h2 {
   margin-bottom: 1rem;
 }
 
-.dropdown-container {
-  display: flex; /* Uses Flexbox for alignment */
-  gap: 10px; /* Adds space between dropdowns */
-}
-
-select {
-  padding: 5px;
-  font-size: 16px;
+.form-select {
+  width: auto !important;
 }
