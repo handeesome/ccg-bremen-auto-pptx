@@ -113,10 +113,33 @@ function generateChapterOptions(bookIndex) {
 
 export function populateDropdown(dropdown, options) {
   dropdown.innerHTML = "";
-  options.forEach((option) => {
+  options.forEach((option, index) => {
     const optionElement = document.createElement("option");
-    optionElement.value = option.toLowerCase();
+    optionElement.value = index + 1;
     optionElement.textContent = option;
     dropdown.appendChild(optionElement);
   });
+}
+
+let verseData = JSON.parse(localStorage.getItem("verseData")) || {
+  book: "none",
+  chapter: "1",
+  verseFrom: "1",
+  verseTo: "1",
+};
+export function updateVerseData(key, value, xuanZhaoTextBox) {
+  if (key === "book") {
+    Object.assign(verseData, { chapter: "1", verseFrom: "1", verseTo: "1" });
+  } else if (key === "chapter") {
+    Object.assign(verseData, { verseFrom: "1", verseTo: "1" });
+  } else if (key === "verseFrom") {
+    verseData.verseTo = value;
+  }
+  verseData[key] = value;
+  localStorage.setItem("verseData", JSON.stringify(verseData)); // Save to localStorage
+  xuanZhaoTextBox.textContent = formatVerseData(verseData);
+}
+
+function formatVerseData(verseData) {
+  return `${verseData.book} ${verseData.chapter}:${verseData.verseFrom}-${verseData.verseTo}`;
 }

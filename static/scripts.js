@@ -1,10 +1,13 @@
+import { chapterNumbers } from "./data/bibleData.js";
 import {
   generateSuffixDropdown,
   generateBibleDropdown,
   updateChapterDropdown,
   updateVerseDropdown,
+  updateVerseData,
 } from "./dropdown.js";
 
+const xuanZhaoTextBox = document.getElementById("xuanZhaoTextBox");
 document.addEventListener("DOMContentLoaded", () => {
   // Populate dropdowns for form-section
   const dropdownIds = [
@@ -53,6 +56,8 @@ document.addEventListener("DOMContentLoaded", () => {
       originalOptions = Array.from(dropdownVerseTo.options).map((option) =>
         option.cloneNode(true)
       );
+      let bookName = this.options[this.selectedIndex].text;
+      updateVerseData("book", bookName, xuanZhaoTextBox);
     });
 
     let dropdownChap = document.getElementById("xuanZhaoDropdownChap");
@@ -71,6 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
         originalOptions = Array.from(dropdownVerseTo.options).map((option) =>
           option.cloneNode(true)
         );
+        updateVerseData("chapter", this.value, xuanZhaoTextBox);
       });
     }
 
@@ -88,6 +94,13 @@ document.addEventListener("DOMContentLoaded", () => {
         ) {
           dropdownVerseTo.remove(0);
         }
+        updateVerseData("verseFrom", this.value, xuanZhaoTextBox);
+      });
+    }
+
+    if (dropdownVerseTo) {
+      dropdownVerseTo.addEventListener("change", function () {
+        updateVerseData("verseTo", this.value, xuanZhaoTextBox);
       });
     }
   }
