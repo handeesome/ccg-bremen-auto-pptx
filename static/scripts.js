@@ -1,13 +1,9 @@
 import {
   generateSuffixDropdown,
-  generateBookDropdown,
-  updateChapterDropdown,
-  updateVerseDropdown,
-  updateVerseData,
-  generateBibleDropdowns,
+  updateBibleDropdowns,
+  createBibleDropdownSet,
 } from "./dropdown.js";
 
-const xuanZhaoTextBox = document.getElementById("xuanZhaoTextBox");
 document.addEventListener("DOMContentLoaded", () => {
   // Populate dropdowns for form-section
   const dropdownIds = [
@@ -26,21 +22,9 @@ document.addEventListener("DOMContentLoaded", () => {
     generateSuffixDropdown(id, id.includes("Zhengdao"))
   );
 
-  // Retrieve Bible verses
-  let dropdownBook = document.getElementById("xuanZhaoDropdownBook");
-  let dropdownChap = document.getElementById("xuanZhaoDropdownChap");
-  let dropdownVerseFrom = document.getElementById("xuanZhaoDropdownVerseFrom");
-  let dropdownVerseTo = document.getElementById("xuanZhaoDropdownVerseTo");
-  let textBetween = document.getElementById("textBetween");
-  let xuanZhaoTextBox = document.getElementById("xuanZhaoTextBox");
-  generateBibleDropdowns(
-    dropdownBook,
-    dropdownChap,
-    dropdownVerseFrom,
-    dropdownVerseTo,
-    textBetween,
-    xuanZhaoTextBox
-  );
+  createBibleDropdownSet("bibleDropdownSet1", "xuanZhao", "宣召:");
+  createBibleDropdownSet("bibleDropdownSet2", "qiYingJingWen", "启应经文:");
+  createBibleDropdownSet("bibleDropdownSet3", "duJing", "读经:");
 });
 
 document.getElementById("dynamicBirthday").innerHTML =

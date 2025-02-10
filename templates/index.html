@@ -142,38 +142,9 @@
 
           <!-- 第二部分 -->
           <h3>经文自动生成</h3>
-          <div class="row align-items-center mb-3">
-            <div class="col-2">
-              <label for="xuanZhao">宣召:</label>
-              <span id="xuanZhaoTextBox"></span>
-            </div>
-            <div class="col-4">
-              <div class="d-flex gap-2 align-items-center">
-                <select
-                  class="form-select"
-                  id="xuanZhaoDropdownBook"
-                  name="xuanZhaoDropdownBook"></select>
-                <select
-                  class="form-select"
-                  id="xuanZhaoDropdownChap"
-                  name="xuanZhaoDropdownChap"
-                  style="display: none"></select>
-                <select
-                  class="form-select"
-                  name="xuanZhaoDropdownVerseFrom"
-                  id="xuanZhaoDropdownVerseFrom"
-                  style="display: none">
-                </select>
-                <span style="display: none" id="textBetween">至</span>
-                <select
-                  class="form-select"
-                  name="xuanZhaoDropdownVerseTo"
-                  id="xuanZhaoDropdownVerseTo"
-                  style="display: none">
-                </select>
-              </div>
-            </div>
-          </div>
+          <div id="bibleDropdownSet1"></div>
+          <div id="bibleDropdownSet2"></div>
+          <div id="bibleDropdownSet3"></div>
           <!-- <script type="module">
             import { findBibleText } from "../static/findBibleText.js";
             var resultXuanzhao = "";
