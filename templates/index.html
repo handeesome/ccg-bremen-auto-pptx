@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh">
-  <script src="../static/changeMonthly.js"></script>
+  <script src="../static/js/changeMonthly.js"></script>
 
   <head>
     <meta charset="UTF-8" />
@@ -20,7 +20,7 @@
       </div>
       <div class="card-body">
         <form id="pptxForm">
-          <!-- 第一部分：本周事奉名单 Section -->
+          <!-- 第一部分 -->
           <div class="form-section">
             <h3>本周事奉名单</h3>
 
@@ -145,41 +145,8 @@
           <div id="bibleDropdownSet1"></div>
           <div id="bibleDropdownSet2"></div>
           <div id="bibleDropdownSet3"></div>
-          <!-- <script type="module">
-            import { findBibleText } from "../static/findBibleText.js";
-            var resultXuanzhao = "";
-            document
-              .getElementById("xuanZhao")
-              .addEventListener("input", () => {
-                const text = event.target.value;
-                resultXuanzhao = findBibleText(text);
-              });
-          </script> -->
 
-          <label for="qiyingjingwen">启应经文:</label>
-          <input type="text" id="qiyingjingwen" name="qiyingjingwen" required />
-          <!-- <script type="module">
-            import { findBibleText } from "../static/findBibleText.js";
-            var resultQiying = "";
-            document
-              .getElementById("qiyingjingwen")
-              .addEventListener("input", () => {
-                const text = event.target.value;
-                resultQiying = findBibleText(text);
-              });
-          </script> -->
-
-          <label for="dujing">读经:</label>
-          <input type="text" id="dujing" name="dujing" required /><br />
-          <!-- <script type="module">
-            import { findBibleText } from "../static/findBibleText.js";
-            var resultDujing = "";
-            document.getElementById("dujing").addEventListener("input", () => {
-              const text = event.target.value;
-              resultDujing = findBibleText(text);
-            });
-          </script> -->
-
+          <!-- 第三部分 -->
           <h2>诗歌歌词暂时没有办法自动生成</h2>
 
           <label for="songOne">第一首诗歌:</label>
@@ -256,7 +223,7 @@
               dynamicDate + dynamicJinju;
           </script>
           <script type="module">
-            import { findBibleText } from "../static/findBibleText.js";
+            import { findBibleText } from "../static/js/findBibleText.js";
             var resultMeiyue = "";
             document
               .getElementById("meiyuejinju")
@@ -319,10 +286,10 @@
       </div>
     </div>
 
-    <script type="module" src="../static/scripts.js"></script>
+    <script type="module" src="../static/js/scripts.js"></script>
 
     <script type="module">
-      import { findBibleText } from "../static/findBibleText.js";
+      import { findBibleText } from "../static/js/findBibleText.js";
       document.getElementById("button").addEventListener("click", sendData);
       function sendData() {
         var formData = new FormData(document.getElementById("pptxForm"));

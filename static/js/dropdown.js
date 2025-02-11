@@ -3,7 +3,7 @@ import {
   newTestament,
   chapterNumbers,
   chinese_numbers,
-} from "./data/bibleData.js";
+} from "../data/bibleData.js";
 
 export async function getBibleVerses() {
   try {

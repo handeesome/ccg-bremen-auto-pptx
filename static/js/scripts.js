@@ -5,6 +5,8 @@ import {
   resumedVerseData,
 } from "./dropdown.js";
 
+import { findBibleText } from "./findBibleText.js";
+
 document.addEventListener("DOMContentLoaded", async () => {
   await getBibleVerses();
 
@@ -30,6 +32,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   createBibleDropdownSet("bibleDropdownSet3", "duJing", "读经:");
 
   resumedVerseData();
+  let textBox = document.getElementById("qiYingJingWenTextBox");
+  let verses = findBibleText(textBox.textContent);
+  console.log(verses);
 });
 
 document.getElementById("dynamicBirthday").innerHTML =
