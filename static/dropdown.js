@@ -353,63 +353,44 @@ function createDropdown(id, visible) {
 
 function resumedVerseData() {
   let verseData = JSON.parse(localStorage.getItem("verseData"));
-  if (verseData) {
-    for (let category in verseData) {
-      let dropdownBook = document.getElementById(`${category}DropdownBook`);
-      let dropdownChap = document.getElementById(`${category}DropdownChap`);
-      let dropdownVerseFrom = document.getElementById(
-        `${category}DropdownVerseFrom`
-      );
-      let dropdownVerseTo = document.getElementById(
-        `${category}DropdownVerseTo`
-      );
-      let verse = verseData[category][0] || null;
-      if (verse.book === "") {
-        continue;
-      }
-      dropdownBook.value = verse.book;
-      dropdownBook.dispatchEvent(new Event("change"));
+  if (!verseData) return;
 
-      dropdownChap.value = verse.chapter;
-      dropdownChap.dispatchEvent(new Event("change"));
+  for (let category in verseData) {
+    let button = document.getElementById(`${category}Button`);
 
-      dropdownVerseFrom.value = verse.verseFrom;
-      dropdownVerseFrom.dispatchEvent(new Event("change"));
-      dropdownVerseTo.value = verse.verseTo;
-      dropdownVerseTo.dispatchEvent(new Event("change"));
+    verseData[category].forEach((verse, index) => {
+      if (!verse) return;
 
-      let button = document.getElementById(`${category}Button`);
-      for (let index in verseData[category]) {
-        if (index === "0") {
-          continue;
-        }
+      if (index > 0) {
         button.dispatchEvent(new Event("click"));
-        let dropdownBook = document.getElementById(
-          `${category}-${index}DropdownBook`
-        );
-        let dropdownChap = document.getElementById(
-          `${category}-${index}DropdownChap`
-        );
-        let dropdownVerseFrom = document.getElementById(
-          `${category}-${index}DropdownVerseFrom`
-        );
-        let dropdownVerseTo = document.getElementById(
-          `${category}-${index}DropdownVerseTo`
-        );
-        let verse = verseData[category][index];
-        dropdownBook.value = verse.book;
-        dropdownBook.dispatchEvent(new Event("change"));
-
-        dropdownChap.value = verse.chapter;
-        dropdownChap.dispatchEvent(new Event("change"));
-
-        dropdownVerseFrom.value = verse.verseFrom;
-        dropdownVerseFrom.dispatchEvent(new Event("change"));
-        dropdownVerseTo.value = verse.verseTo;
-        dropdownVerseTo.dispatchEvent(new Event("change"));
       }
-    }
+
+      let prefix = index === 0 ? `${category}` : `${category}-${index}`;
+      updateDropdowns(prefix, verse);
+    });
   }
+}
+
+function updateDropdowns(prefix, verse) {
+  let dropdownBook = document.getElementById(`${prefix}DropdownBook`);
+  let dropdownChap = document.getElementById(`${prefix}DropdownChap`);
+  let dropdownVerseFrom = document.getElementById(`${prefix}DropdownVerseFrom`);
+  let dropdownVerseTo = document.getElementById(`${prefix}DropdownVerseTo`);
+
+  if (!dropdownBook || !dropdownChap || !dropdownVerseFrom || !dropdownVerseTo)
+    return;
+
+  dropdownBook.value = verse.book;
+  dropdownBook.dispatchEvent(new Event("change"));
+
+  dropdownChap.value = verse.chapter;
+  dropdownChap.dispatchEvent(new Event("change"));
+
+  dropdownVerseFrom.value = verse.verseFrom;
+  dropdownVerseFrom.dispatchEvent(new Event("change"));
+
+  dropdownVerseTo.value = verse.verseTo;
+  dropdownVerseTo.dispatchEvent(new Event("change"));
 }
 
 export { generateSuffixDropdown, createBibleDropdownSet, resumedVerseData };
