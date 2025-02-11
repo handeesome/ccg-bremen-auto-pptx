@@ -1,10 +1,13 @@
 import {
   generateSuffixDropdown,
-  updateBibleDropdowns,
   createBibleDropdownSet,
+  getBibleVerses,
+  resumedVerseData,
 } from "./dropdown.js";
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  await getBibleVerses();
+
   // Populate dropdowns for form-section
   const dropdownIds = [
     "suffixZhengdao1",
@@ -25,6 +28,8 @@ document.addEventListener("DOMContentLoaded", () => {
   createBibleDropdownSet("bibleDropdownSet1", "xuanZhao", "宣召:");
   createBibleDropdownSet("bibleDropdownSet2", "qiYingJingWen", "启应经文:");
   createBibleDropdownSet("bibleDropdownSet3", "duJing", "读经:");
+
+  resumedVerseData();
 });
 
 document.getElementById("dynamicBirthday").innerHTML =
