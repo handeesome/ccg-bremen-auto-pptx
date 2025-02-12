@@ -8,7 +8,6 @@ import {
 export async function getBibleVerses() {
   try {
     let response = await fetch("../static/data/bibleVerses.json");
-
     window.bibleVerses = await response.json(); // Store in window object
   } catch (error) {
     console.error("Error loading JSON:", error);
@@ -123,11 +122,14 @@ function populateDropdown(dropdown, options, isBook = false) {
   });
 }
 
-function updateVerseData(prefix, key, value, xuanZhaoTextBox) {
+// TODO: move to processData.js
+function updateVerseData(prefix, key, value) {
   let verseData = JSON.parse(localStorage.getItem("verseData")) || {
     xuanZhao: [],
-    qiYingJingWen: [],
+    qiYing: [],
     duJing: [],
+    jinJu: [],
+    jingWen: [],
   };
   let parts = prefix.split("-");
   let verseFor = parts[0];
@@ -143,6 +145,7 @@ function updateVerseData(prefix, key, value, xuanZhaoTextBox) {
       chapter: "1",
       verseFrom: "1",
       verseTo: "1",
+      fullVerse: "book 1:1-1",
     };
   }
   let selectedVerse = verseData[verseFor][index];
@@ -160,13 +163,13 @@ function updateVerseData(prefix, key, value, xuanZhaoTextBox) {
   }
 
   selectedVerse[key] = value;
+  selectedVerse.fullVerse = formatVerse(selectedVerse);
+
   localStorage.setItem("verseData", JSON.stringify(verseData)); // Save to localStorage
-  if (xuanZhaoTextBox) {
-    xuanZhaoTextBox.textContent = formatVerse(selectedVerse);
-  }
 }
 
-function formatVerse(verseData) {
+// TODO: move to processData.js
+export function formatVerse(verseData) {
   return `${verseData.book} ${verseData.chapter}:${verseData.verseFrom}-${verseData.verseTo}`;
 }
 
@@ -176,8 +179,7 @@ function updateBibleDropdowns(
   dropdownChap,
   dropdownVerseFrom,
   dropdownVerseTo,
-  textBetween,
-  xuanZhaoTextBox
+  textBetween
 ) {
   if (dropdownBook) {
     generateBookDropdown(dropdownBook);
@@ -204,7 +206,7 @@ function updateBibleDropdowns(
         option.cloneNode(true)
       );
       bookName = this.value;
-      updateVerseData(prefix, "book", bookName, xuanZhaoTextBox);
+      updateVerseData(prefix, "book", bookName);
     });
 
     if (dropdownChap) {
@@ -219,7 +221,7 @@ function updateBibleDropdowns(
         originalOptions = Array.from(dropdownVerseTo.options).map((option) =>
           option.cloneNode(true)
         );
-        updateVerseData(prefix, "chapter", this.value, xuanZhaoTextBox);
+        updateVerseData(prefix, "chapter", this.value);
       });
     }
 
@@ -237,120 +239,19 @@ function updateBibleDropdowns(
         ) {
           dropdownVerseTo.remove(0);
         }
-        updateVerseData(prefix, "verseFrom", this.value, xuanZhaoTextBox);
+        updateVerseData(prefix, "verseFrom", this.value);
       });
     }
 
     if (dropdownVerseTo) {
       dropdownVerseTo.addEventListener("change", function () {
-        updateVerseData(prefix, "verseTo", this.value, xuanZhaoTextBox);
+        updateVerseData(prefix, "verseTo", this.value);
       });
     }
   }
 }
 
-function createBibleDropdownSet(containerId, prefix, labelText) {
-  let container = document.getElementById(containerId);
-
-  // Create Row
-  let row = document.createElement("div");
-  row.className = "row align-items-center mb-3";
-  row.id = `dropdownSet-${prefix}`;
-
-  // Left Column (Label + TextBox)
-  let colLabel = document.createElement("div");
-  colLabel.className = "d-flex";
-  colLabel.style.flex = "0 0 20%";
-  colLabel.style.maxWidth = "20%";
-
-  let label = document.createElement("label");
-  label.setAttribute("for", prefix);
-  label.textContent = labelText;
-
-  let textBox = document.createElement("span");
-  textBox.className = "ms-auto";
-  textBox.id = `${prefix}TextBox`;
-
-  colLabel.appendChild(label);
-  colLabel.appendChild(textBox);
-
-  // Right Column (Dropdowns)
-  let colDropdowns = document.createElement("div");
-  colDropdowns.className = "col-4";
-
-  let dropdownWrapper = document.createElement("div");
-  dropdownWrapper.className = "d-flex gap-2 align-items-center";
-
-  let dropdownBook = createDropdown(`${prefix}DropdownBook`, true);
-  let dropdownChap = createDropdown(`${prefix}DropdownChap`, false);
-  let dropdownVerseFrom = createDropdown(`${prefix}DropdownVerseFrom`, false);
-  let textBetween = document.createElement("span");
-  textBetween.id = `${prefix}TextBetween`;
-  textBetween.textContent = "至";
-  textBetween.style.display = "none";
-
-  let dropdownVerseTo = createDropdown(`${prefix}DropdownVerseTo`, false);
-
-  let button = document.createElement("button");
-  button.className = "btn btn-primary";
-  button.textContent = " + ";
-  button.type = "button";
-  button.id = `${prefix}Button`;
-  button.onclick = function () {
-    // Count existing rows inside the container
-    let existingSets = document.querySelectorAll(`#${containerId} .row`).length;
-    let newPrefix = `${prefix}-${existingSets}`; // Append number to prefix
-    let newRow = createBibleDropdownSet(containerId, newPrefix, labelText);
-    newRow.querySelector("label").textContent = "";
-
-    // Set the new row's button to "-" (delete)
-    let newButton = newRow.querySelector("button");
-    newButton.textContent = " − ";
-    newButton.className = "btn btn-danger";
-    newButton.onclick = function () {
-      newRow.remove(); // Remove the new row when "-" is clicked
-    };
-  };
-
-  dropdownWrapper.appendChild(dropdownBook);
-  dropdownWrapper.appendChild(dropdownChap);
-  dropdownWrapper.appendChild(dropdownVerseFrom);
-  dropdownWrapper.appendChild(textBetween);
-  dropdownWrapper.appendChild(dropdownVerseTo);
-  dropdownWrapper.appendChild(button);
-
-  colDropdowns.appendChild(dropdownWrapper);
-
-  // Append Columns to Row
-  row.appendChild(colLabel);
-  row.appendChild(colDropdowns);
-
-  // Append Row to Container
-  container.appendChild(row);
-
-  // Initialize dropdowns
-  updateBibleDropdowns(
-    prefix,
-    dropdownBook,
-    dropdownChap,
-    dropdownVerseFrom,
-    dropdownVerseTo,
-    textBetween,
-    textBox
-  );
-  return row;
-}
-
-// Helper function to create a dropdown element
-function createDropdown(id, visible) {
-  let dropdown = document.createElement("select");
-  dropdown.className = "form-select";
-  dropdown.id = id;
-  dropdown.name = id;
-  if (!visible) dropdown.style.display = "none";
-  return dropdown;
-}
-
+// TODO: move to processData.js
 function resumedVerseData() {
   let verseData = JSON.parse(localStorage.getItem("verseData"));
   if (!verseData) return;
@@ -370,8 +271,8 @@ function resumedVerseData() {
     });
   }
 }
-
-function updateDropdowns(prefix, verse) {
+// TODO: move to processData.js
+export function updateDropdowns(prefix, verse) {
   let dropdownBook = document.getElementById(`${prefix}DropdownBook`);
   let dropdownChap = document.getElementById(`${prefix}DropdownChap`);
   let dropdownVerseFrom = document.getElementById(`${prefix}DropdownVerseFrom`);
@@ -393,4 +294,4 @@ function updateDropdowns(prefix, verse) {
   dropdownVerseTo.dispatchEvent(new Event("change"));
 }
 
-export { generateSuffixDropdown, createBibleDropdownSet, resumedVerseData };
+export { generateSuffixDropdown, resumedVerseData, updateBibleDropdowns };

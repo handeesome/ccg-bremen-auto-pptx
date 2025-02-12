@@ -7,8 +7,8 @@
 .form-select-suffix {
   width: 6rem !important;
 }
-.label-container {
-  min-width: 4rem;
+.song-container {
+  min-width: 7rem;
   text-align: right;
 }
 
@@ -30,4 +30,9 @@ h2 {
 
 .form-select {
   width: auto !important;
+}
+
+input[type="radio"]:checked + .card {
+  background-color: #e3f2fd; /* Light blue */
+  border-color: #007bff; /* Bootstrap primary */
 }

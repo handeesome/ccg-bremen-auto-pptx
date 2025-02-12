@@ -23,262 +23,80 @@
           <!-- 第一部分 -->
           <div class="form-section">
             <h3>本周事奉名单</h3>
-
-            <!-- 证道 -->
-            <div class="row align-items-center mb-3">
-              <div class="col-auto label-container">
-                <label class="form-label">证道:</label>
-              </div>
-              <div class="col-4">
-                <div class="d-flex gap-2">
-                  <input
-                    type="text"
-                    class="form-control form-input"
-                    id="zhengdao1"
-                    name="zhengdao1"
-                    required />
-                  <select
-                    class="form-select form-select-suffix"
-                    id="suffixZhengdao1"
-                    name="suffixZhengdao1"></select>
-                </div>
-              </div>
-            </div>
-
-            <!-- 司会 -->
-            <div class="row align-items-center mb-3">
-              <div class="col-auto label-container">
-                <label class="form-label">司会:</label>
-              </div>
-              <div class="col-4">
-                <div class="d-flex gap-2">
-                  <input
-                    type="text"
-                    class="form-control form-input"
-                    id="sihui1"
-                    name="sihui1"
-                    required />
-                  <select
-                    class="form-select form-select-suffix"
-                    id="suffixSihui1"
-                    name="suffixSihui1"></select>
-                </div>
-              </div>
-            </div>
-
-            <!-- PPT -->
-            <div class="row align-items-center mb-3">
-              <div class="col-auto label-container">
-                <label class="form-label">PPT:</label>
-              </div>
-              <div class="col-4">
-                <div class="d-flex gap-2">
-                  <input
-                    type="text"
-                    class="form-control form-input"
-                    id="ppt1"
-                    name="ppt1"
-                    required />
-                  <select
-                    class="form-select form-select-suffix"
-                    id="suffixPpt1"
-                    name="suffixPpt1"></select>
-                </div>
-              </div>
-            </div>
-
-            <!-- 接待 -->
-            <div class="row align-items-center mb-3">
-              <div class="col-auto label-container">
-                <label class="form-label">接待:</label>
-              </div>
-              <div class="col-4">
-                <div class="d-flex gap-2">
-                  <input
-                    type="text"
-                    class="form-control form-input"
-                    id="jiedai1"
-                    name="jiedai1"
-                    required />
-                  <select
-                    class="form-select form-select-suffix"
-                    id="suffixJiedai1"
-                    name="suffixJiedai1"></select>
-                </div>
-              </div>
-            </div>
-
-            <!-- 儿童主日学 -->
-            <div class="row align-items-center mb-3">
-              <div class="col-auto label-container">
-                <label class="form-label">儿童:</label>
-              </div>
-              <div class="col-4">
-                <div class="d-flex gap-2">
-                  <input
-                    type="text"
-                    class="form-control form-input"
-                    id="ertongxue1"
-                    name="ertongxue1"
-                    required />
-                  <select
-                    class="form-select form-select-suffix"
-                    id="suffixErtongxue1"
-                    name="suffixErtongxue1"></select>
-                </div>
-              </div>
-            </div>
-
-            <!-- 日期 -->
-            <div class="row align-items-center mb-3">
-              <div class="col-auto label-container">
-                <label class="form-label">日期:</label>
-              </div>
-              <div class="col-3">
-                <input type="date" id="date1" name="date1" />
-              </div>
-            </div>
+            <div id="thisWeekList"></div>
+            <div id="zhuTi1"></div>
+            <div id="date1"></div>
           </div>
 
           <!-- 第二部分 -->
-          <h3>经文自动生成</h3>
-          <div id="bibleDropdownSet1"></div>
-          <div id="bibleDropdownSet2"></div>
-          <div id="bibleDropdownSet3"></div>
+          <div class="form-section">
+            <h3>经文自动生成</h3>
+            <div id="bibleDropdownSet1"></div>
+            <div id="bibleDropdownSet2"></div>
+            <div id="bibleDropdownSet3"></div>
+          </div>
 
           <!-- 第三部分 -->
-          <h2>诗歌歌词暂时没有办法自动生成</h2>
-
-          <label for="songOne">第一首诗歌:</label>
-          <input type="text" id="songOne" name="songOne" required /><br />
-          <label for="songTwo">第二首诗歌:</label>
-          <input type="text" id="songTwo" name="songTwo" required /><br />
-          <label for="songThree">第三首诗歌:</label>
-          <input type="text" id="songThree" name="songThree" required /><br />
-          <label for="songHuiying">回应诗歌:</label>
-          <input
-            type="text"
-            id="songHuiying"
-            name="songHuiying"
-            required /><br />
-
-          <label for="jiangdaotimu">讲道题目:</label>
-          <input
-            type="text"
-            id="jiangdaotimu"
-            name="jiangdaotimu"
-            required /><br />
-
-          <label>
-            林后 9:6-7
-            “少种的少收，多种的多收”，这话是真的。各人要随本心所酌定的，不要作难，不要勉强，因为捐得乐意的人是神所喜爱的。”</label
-          ><br />
-          <label>
-            罗12:1
-            “所以，弟兄们，我以神的慈悲劝你们，将身体献上，当作活祭，是圣洁的，是神所喜悦的；你们如此事奉乃是理所当然的。”</label
-          ><br />
-          <label for="fengxianjingwen">奉献回应礼经文</label>
-          <select id="fengxianjingwen" name="fengxianjingwen">
-            <option value="0">林后 9:6-7</option>
-            <option value="1">罗12:1</option>
-          </select>
-
-          <br />
-
-          <label for="birthdayDropdown">生日:</label>
-          <select
-            id="birthdayDropdown"
-            name="birthday"
-            onchange="toggleInputBox()">
-            <option value="false">非第一周</option>
-            <option value="true">第一周</option>
-          </select>
-
-          <div id="inputBoxContainer" style="display: none">
-            <label for="birthdayList">本月寿星:</label>
-            <input
-              type="text"
-              id="birthdayList"
-              name="birthdayList"
-              style="width: 400px" />
-            <label id="dynamicBirthday"></label>
+          <div class="form-section">
+            <h3>诗歌歌词暂时没有办法自动生成</h3>
+            <div id="song1"></div>
+            <div id="song2"></div>
+            <div id="song3"></div>
+            <div id="song4"></div>
           </div>
-          <br />
 
-          <script>
-            function toggleInputBox() {
-              var dropdown = document.getElementById("birthdayDropdown");
-              var inputBoxContainer =
-                document.getElementById("inputBoxContainer");
-              inputBoxContainer.style.display =
-                dropdown.value === "true" ? "block" : "none";
-            }
-          </script>
+          <div class="form-section">
+            <div class="mb-3">
+              <h4>奉献回应礼经文</h4>
+            </div>
+            <div id="verseRadio" class="row mb-3"></div>
 
-          <label>每月金句:</label>
-          <input type="text" id="meiyuejinju" name="meiyuejinju" required />
-          <label id="dynamicJinju"></label><br />
-          <script>
-            document.getElementById("dynamicJinju").innerHTML =
-              dynamicDate + dynamicJinju;
-          </script>
-          <script type="module">
-            import { findBibleText } from "../static/js/findBibleText.js";
-            var resultMeiyue = "";
-            document
-              .getElementById("meiyuejinju")
-              .addEventListener("input", () => {
-                const text = event.target.value;
-                resultMeiyue = findBibleText(text);
-              });
-          </script>
+            <label for="birthdayDropdown">生日:</label>
+            <select
+              id="birthdayDropdown"
+              name="birthday"
+              onchange="toggleInputBox()">
+              <option value="false">非第一周</option>
+              <option value="true">第一周</option>
+            </select>
 
-          <label>圣餐礼诗歌：</label>
-          <select id="shengcan" name="shengcan">
-            <option value="None">非第一周</option>
-            <option value="宝架清影">宝架清影</option>
-            <option value="靠近十架">靠近十架</option>
-            <option value="破碎">破碎</option>
-          </select>
-          <h2>下周事奉名单:</h2>
-          <label for="date2">日期:</label>
-          <input type="date" id="date2" name="date2" required /><br />
+            <div id="inputBoxContainer" style="display: none">
+              <label for="birthdayList">本月寿星:</label>
+              <input
+                type="text"
+                id="birthdayList"
+                name="birthdayList"
+                style="width: 400px" />
+              <label id="dynamicBirthday"></label>
+            </div>
+            <br />
 
-          <label for="zhuti">主题:</label>
-          <input type="text" id="zhuti" name="zhuti" required /><br />
+            <script>
+              function toggleInputBox() {
+                var dropdown = document.getElementById("birthdayDropdown");
+                var inputBoxContainer =
+                  document.getElementById("inputBoxContainer");
+                inputBoxContainer.style.display =
+                  dropdown.value === "true" ? "block" : "none";
+              }
+            </script>
 
-          <label for="zhengdao2">证道:</label>
-          <input type="text" id="zhengdao2" name="zhengdao2" required />
-          <select id="suffixZhengdao2" name="suffixZhengdao2"></select>
+            <div id="jinJu"></div>
 
-          <br />
+            <div class="mb-3">
+              <h4>圣餐礼诗歌</h4>
+            </div>
+            <div class="row mb-3" id="lyricsRadio"></div>
+          </div>
 
-          <label for="jingwen">经文:</label>
-          <input type="text" id="jingwen" name="jingwen" required /><br />
+          <div class="form-section">
+            <h3>下周事奉名单:</h3>
+            <div id="date2"> </div>
+            <div id="zhuTi2"></div>
+            <div id="nextWeekJingWen"></div>
 
-          <label for="sihui2">司会:</label>
-          <input type="text" id="sihui2" name="sihui2" required />
-          <select id="suffixSihui2" name="suffixSihui2"></select>
-
-          <br />
-
-          <label for="ppt2">PPT:</label>
-          <input type="text" id="ppt2" name="ppt2" required />
-          <select id="suffixPpt2" name="suffixPpt2"></select>
-
-          <br />
-
-          <label for="jiedai2">接待:</label>
-          <input type="text" id="jiedai2" name="jiedai2" required />
-          <select id="suffixJiedai2" name="suffixJiedai2"></select>
-
-          <br />
-
-          <label for="ertongxue2">儿童主日学:</label>
-          <input type="text" id="ertongxue2" name="ertongxue2" required />
-          <select id="suffixErtongxue2" name="suffixErtongxue2"></select>
-
-          <br />
+            <div id="nextWeekList"></div>
+          </div>
 
           <h2>请注意，新生成的pptx中的音频需要手动设置为跨页播放。</h2>
           <button type="button" id="button">生成PPTX</button>
