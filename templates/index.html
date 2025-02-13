@@ -51,35 +51,10 @@
             </div>
             <div id="verseRadio" class="row mb-3"></div>
 
-            <label for="birthdayDropdown">生日:</label>
-            <select
-              id="birthdayDropdown"
-              name="birthday"
-              onchange="toggleInputBox()">
-              <option value="false">非第一周</option>
-              <option value="true">第一周</option>
-            </select>
-
-            <div id="inputBoxContainer" style="display: none">
-              <label for="birthdayList">本月寿星:</label>
-              <input
-                type="text"
-                id="birthdayList"
-                name="birthdayList"
-                style="width: 400px" />
-              <label id="dynamicBirthday"></label>
+            <div class="mb-3">
+              <h4>活动报告</h4>
             </div>
-            <br />
-
-            <script>
-              function toggleInputBox() {
-                var dropdown = document.getElementById("birthdayDropdown");
-                var inputBoxContainer =
-                  document.getElementById("inputBoxContainer");
-                inputBoxContainer.style.display =
-                  dropdown.value === "true" ? "block" : "none";
-              }
-            </script>
+            <div id="activityTextarea"></div>
 
             <div id="jinJu"></div>
 

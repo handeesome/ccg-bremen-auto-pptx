@@ -4,6 +4,7 @@ import {
   chapterNumbers,
   chinese_numbers,
 } from "../data/bibleData.js";
+import { updateVerseData } from "./processData.js";
 
 export async function getBibleVerses() {
   try {
@@ -122,57 +123,6 @@ function populateDropdown(dropdown, options, isBook = false) {
   });
 }
 
-// TODO: move to processData.js
-function updateVerseData(prefix, key, value) {
-  let verseData = JSON.parse(localStorage.getItem("verseData")) || {
-    xuanZhao: [],
-    qiYing: [],
-    duJing: [],
-    jinJu: [],
-    jingWen: [],
-  };
-  let parts = prefix.split("-");
-  let verseFor = parts[0];
-  let index = parseInt(parts[parts.length - 1], 10) || 0;
-  // Ensure array exists
-  if (!Array.isArray(verseData[verseFor])) {
-    verseData[verseFor] = [];
-  }
-  // Ensure the verse entry exists
-  if (!verseData[verseFor][index]) {
-    verseData[verseFor][index] = {
-      book: "book",
-      chapter: "1",
-      verseFrom: "1",
-      verseTo: "1",
-      fullVerse: "book 1:1-1",
-    };
-  }
-  let selectedVerse = verseData[verseFor][index];
-
-  if (key === "book") {
-    Object.assign(selectedVerse, {
-      chapter: "1",
-      verseFrom: "1",
-      verseTo: "1",
-    });
-  } else if (key === "chapter") {
-    Object.assign(selectedVerse, { verseFrom: "1", verseTo: "1" });
-  } else if (key === "verseFrom") {
-    selectedVerse.verseTo = value;
-  }
-
-  selectedVerse[key] = value;
-  selectedVerse.fullVerse = formatVerse(selectedVerse);
-
-  localStorage.setItem("verseData", JSON.stringify(verseData)); // Save to localStorage
-}
-
-// TODO: move to processData.js
-export function formatVerse(verseData) {
-  return `${verseData.book} ${verseData.chapter}:${verseData.verseFrom}-${verseData.verseTo}`;
-}
-
 function updateBibleDropdowns(
   prefix,
   dropdownBook,
@@ -251,47 +201,4 @@ function updateBibleDropdowns(
   }
 }
 
-// TODO: move to processData.js
-function resumedVerseData() {
-  let verseData = JSON.parse(localStorage.getItem("verseData"));
-  if (!verseData) return;
-
-  for (let category in verseData) {
-    let button = document.getElementById(`${category}Button`);
-
-    verseData[category].forEach((verse, index) => {
-      if (!verse) return;
-
-      if (index > 0) {
-        button.dispatchEvent(new Event("click"));
-      }
-
-      let prefix = index === 0 ? `${category}` : `${category}-${index}`;
-      updateDropdowns(prefix, verse);
-    });
-  }
-}
-// TODO: move to processData.js
-export function updateDropdowns(prefix, verse) {
-  let dropdownBook = document.getElementById(`${prefix}DropdownBook`);
-  let dropdownChap = document.getElementById(`${prefix}DropdownChap`);
-  let dropdownVerseFrom = document.getElementById(`${prefix}DropdownVerseFrom`);
-  let dropdownVerseTo = document.getElementById(`${prefix}DropdownVerseTo`);
-
-  if (!dropdownBook || !dropdownChap || !dropdownVerseFrom || !dropdownVerseTo)
-    return;
-
-  dropdownBook.value = verse.book;
-  dropdownBook.dispatchEvent(new Event("change"));
-
-  dropdownChap.value = verse.chapter;
-  dropdownChap.dispatchEvent(new Event("change"));
-
-  dropdownVerseFrom.value = verse.verseFrom;
-  dropdownVerseFrom.dispatchEvent(new Event("change"));
-
-  dropdownVerseTo.value = verse.verseTo;
-  dropdownVerseTo.dispatchEvent(new Event("change"));
-}
-
-export { generateSuffixDropdown, resumedVerseData, updateBibleDropdowns };
+export { generateSuffixDropdown, updateBibleDropdowns };

@@ -1,2 +1,4 @@
-let columnNumber = Number.isInteger(12 / 2) ? `${12 / 2}` : "auto";
-console.log(columnNumber);
+let oldKeys = [1, 2, 3, 4, 5];
+let newKeys = [0, ...oldKeys];
+newKeys.pop();
+console.log(newKeys);

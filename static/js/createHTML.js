@@ -1,8 +1,9 @@
+import { generateSuffixDropdown, updateBibleDropdowns } from "./dropdown.js";
 import {
-  generateSuffixDropdown,
-  updateBibleDropdowns,
-  formatVerse,
-} from "./dropdown.js";
+  removeActivityData,
+  removeVerseData,
+  updateActivityData,
+} from "./processData.js";
 
 export function createWeekList(weekListId) {
   const roles = [
@@ -80,21 +81,7 @@ export function createBibleDropdownSet(containerId, prefix, labelText) {
     newButton.className = "btn btn-danger";
     newButton.onclick = function () {
       newRow.remove();
-
-      let dropdowns = newRow.querySelectorAll("select");
-      let verse = {
-        book: dropdowns[0].value,
-        chapter: dropdowns[1].value,
-        verseFrom: dropdowns[2].value,
-        verseTo: dropdowns[3].value,
-      };
-      let toRemove = formatVerse(verse);
-      let verseData = JSON.parse(localStorage.getItem("verseData"));
-      let indexToRemove = verseData[prefix].findIndex(
-        (item) => item.fullVerse === toRemove
-      );
-      verseData[prefix].splice(indexToRemove, 1); // Remove the element at found index
-      localStorage.setItem("verseData", JSON.stringify(verseData));
+      removeVerseData(newRow, prefix);
     };
   };
 
@@ -193,4 +180,51 @@ export function createRadio(
       }
     });
   }
+}
+
+function createTextarea(index) {
+  let newTextareaDiv = document.createElement("div");
+  newTextareaDiv.classList.add("mb-3", "d-flex", "align-items-center", "row");
+  let textarea = `
+    <div class="col-6">
+      <textarea
+        class="form-control"
+        rows="2"
+        placeholder="Type something..."
+        ></textarea>
+    </div>
+  `;
+  newTextareaDiv.insertAdjacentHTML("beforeend", textarea);
+  let textareaElement = newTextareaDiv.querySelector("textarea");
+  textareaElement.id = `activity${index}`;
+  textareaElement.addEventListener("change", function () {
+    updateActivityData(index, this.value);
+  });
+  return newTextareaDiv;
+}
+
+export function createActivities(containerId) {
+  let container = document.getElementById(containerId);
+  let textarea = createTextarea(0);
+  container.appendChild(textarea);
+  let buttonPrimary = document.createElement("button");
+  buttonPrimary.className = "btn btn-primary col-auto";
+  buttonPrimary.id = "addTextarea";
+  buttonPrimary.type = "button";
+  buttonPrimary.innerHTML = "+";
+
+  container.insertAdjacentElement("beforeend", buttonPrimary);
+  document.getElementById("addTextarea").addEventListener("click", function () {
+    let index = container.querySelectorAll("textarea").length;
+    let newTextareaDiv = createTextarea(index);
+    let buttonRemove = document.createElement("button");
+    buttonRemove.className = "btn btn-danger ms-2 col-auto";
+    buttonRemove.innerHTML = "-";
+    buttonRemove.onclick = function () {
+      container.removeChild(newTextareaDiv);
+      removeActivityData(index);
+    };
+    newTextareaDiv.appendChild(buttonRemove);
+    buttonPrimary.insertAdjacentElement("beforebegin", newTextareaDiv);
+  });
 }

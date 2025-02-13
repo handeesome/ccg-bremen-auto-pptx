@@ -1,17 +1,18 @@
-import {
-  getBibleVerses,
-  resumedVerseData,
-  updateDropdowns,
-} from "./dropdown.js";
+import { getBibleVerses } from "./dropdown.js";
 import {
   createWeekList,
   createBibleDropdownSet,
   createInput,
   createRadio,
+  createActivities,
 } from "./createHTML.js";
 
 import { findBibleText } from "./findBibleText.js";
-import { parseVerse } from "./processData.js";
+import {
+  parseVerse,
+  resumedVerseData,
+  updateDropdowns,
+} from "./processData.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
   await getBibleVerses();
@@ -50,8 +51,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   createRadio("lyricsRadio", 3, lyricsData["靠近十架"], "靠近十架");
   createRadio("lyricsRadio", 3, lyricsData["破碎"], "破碎");
 
+  createActivities("activityTextarea");
+
   createBibleDropdownSet("jinJu", "jinJu", "每月金句:");
-  console.log(parseVerse(dynamicJinju));
   updateDropdowns("jinJu", parseVerse(dynamicJinju));
 
   createInput("date2", "date", "日期:");
@@ -65,6 +67,3 @@ document.addEventListener("DOMContentLoaded", async () => {
   // let verses = findBibleText(selectedVerse.fullVerse);
   // console.log(verses);
 });
-
-document.getElementById("dynamicBirthday").innerHTML =
-  dynamicDate + dynamicBirthday;
