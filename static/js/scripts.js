@@ -9,7 +9,11 @@ import {
   updateJinJuText,
 } from "./createHTML.js";
 
-import { resumeTextareaData, resumeVerseData } from "./processData.js";
+import {
+  resumeInputData,
+  resumeTextareaData,
+  resumeVerseData,
+} from "./processData.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
   await getBibleVerses();
@@ -33,6 +37,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   createInput("song4", "text", "回应诗歌:");
 
   //Part 4
+  createTextareaSet("activityTextarea", "activity");
+  createFetchButton("fetchButtonParent");
+  createBibleDropdownSet("jinJu", "jinJu", "每月金句:");
+  document.getElementById("jinJuButton").remove();
+  updateJinJuText();
+
+  // Part 5
   createRadio(
     "verseRadio",
     2,
@@ -46,23 +57,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     "林后9:6-7"
   );
 
-  createTextareaSet("activityTextarea", "activity");
-  createFetchButton("fetchButtonParent");
-  createBibleDropdownSet("jinJu", "jinJu", "每月金句:");
-  document.getElementById("jinJuButton").remove();
-  updateJinJuText();
-
+  // Part 6
   createTextareaSet("prayerWorldTextarea", "prayerWorld");
   createTextareaSet("prayerChurchTextarea", "prayerChurch");
 
-  resumeVerseData();
-  resumeTextareaData("activity");
-  resumeTextareaData("prayerWorld");
-  resumeTextareaData("prayerChurch");
-
+  //Part7
   let response = await fetch("../static/data/lyrics.json");
   let lyricsData = await response.json();
   createRadio("lyricsRadio", 3, lyricsData["宝架清影"], "宝架清影");
   createRadio("lyricsRadio", 3, lyricsData["靠近十架"], "靠近十架");
   createRadio("lyricsRadio", 3, lyricsData["破碎"], "破碎");
+
+  //resume from local storage
+  resumeInputData();
+  resumeVerseData();
+  resumeTextareaData("activity");
+  resumeTextareaData("prayerWorld");
+  resumeTextareaData("prayerChurch");
 });

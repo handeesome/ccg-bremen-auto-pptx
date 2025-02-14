@@ -4,6 +4,7 @@ import {
   removeVerseData,
   updateTextareaData,
   updateFromCCGBremen,
+  updateInputData,
 } from "./processData.js";
 import { findBibleText } from "./findBibleText.js";
 
@@ -17,27 +18,35 @@ export function createWeekList(weekListId) {
   ];
   let weekList = document.getElementById(weekListId);
   roles.forEach((role) => {
-    weekList.innerHTML += `
-          <div class="row align-items-center mb-3">
-            <div class="col-auto">
-              <label class="form-label">${role.label}:</label>
-            </div>
-            <div class="col-4">
-              <div class="d-flex gap-2">
-                <input type="text" class="form-control form-input" id="${
-                  weekListId + role.id
-                }" />
-                <select class="form-select form-select-suffix" id="suffix${
-                  weekListId + role.id
-                }" ></select>
-              </div>
-            </div>
+    weekList.insertAdjacentHTML(
+      "beforeend",
+      `
+      <div class="row align-items-center mb-3">
+        <div class="col-auto">
+          <label class="form-label">${role.label}:</label>
+        </div>
+        <div class="col-4">
+          <div class="d-flex gap-2">
+            <input type="text" class="form-control form-input" id="${
+              weekListId + role.id
+            }" />
+            <select class="form-select form-select-suffix" id="suffix${
+              weekListId + role.id
+            }" ></select>
           </div>
-        `;
+        </div>
+      </div>`
+    );
     generateSuffixDropdown(
       `suffix${weekListId + role.id}`,
       `suffix${weekListId + role.id}`.includes("zhengDao")
     );
+    let input = document.getElementById(`${weekListId + role.id}`);
+    let suffix = document.getElementById(`suffix${weekListId + role.id}`);
+
+    input.addEventListener("change", function () {
+      updateInputData(weekListId + role.id, [input.value, suffix.value]);
+    });
   });
 }
 
@@ -115,10 +124,12 @@ export function createInput(containerId, type, labelText) {
   `;
   container.insertAdjacentHTML("beforeend", html);
 
-  if (type === "text") {
-    let input = document.getElementById(`${containerId}Input`);
-    input.className = "form-control";
-  }
+  let input = document.getElementById(`${containerId}Input`);
+  input.className = "form-control";
+
+  input.addEventListener("change", function () {
+    updateInputData(`${containerId}Input`, this.value);
+  });
   if (containerId.includes("song")) {
     let label = document.getElementById(`${containerId}Label`);
     label.className += " song-container";
@@ -252,15 +263,17 @@ export function createFetchButton(containerId) {
 }
 
 export function updateJinJuText() {
-  let verseFrom = document.getElementById("jinJuDropdownVerseTo");
-  verseFrom.addEventListener("change", function () {
+  const updateText = () => {
     let fullverse = JSON.parse(localStorage.getItem("verseData")).jinJu[0]
       .fullVerse;
     let verses = findBibleText(fullverse).verses;
     let text = "";
-    for (const verse of Object.keys(verses).sort()) {
-      text += verses[verse];
-    }
+    verses.forEach((verse) => {
+      text += Object.values(verse)[0];
+    });
     document.getElementById("jinJuText").textContent = text;
+  };
+  ["jinJuDropdownVerseFrom", "jinJuDropdownVerseTo"].forEach((id) => {
+    document.getElementById(id).addEventListener("change", updateText);
   });
 }

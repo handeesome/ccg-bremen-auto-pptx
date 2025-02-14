@@ -207,3 +207,23 @@ export function updateFromCCGBremen() {
       buttonText.innerHTML = `<i class="fas fa-exclamation-circle"></i> 获取失败`;
     });
 }
+
+export function updateInputData(key, value) {
+  let data = JSON.parse(localStorage.getItem("inputData")) || {};
+  data[key] = value;
+  localStorage.setItem("inputData", JSON.stringify(data));
+}
+export function resumeInputData() {
+  let data = JSON.parse(localStorage.getItem("inputData"));
+  if (!data) return;
+  for (let key in data) {
+    if (!document.getElementById(key)) continue;
+    let input = document.getElementById(key);
+
+    if (Array.isArray(data[key])) {
+      input.value = data[key][0];
+    } else {
+      input.value = data[key];
+    }
+  }
+}

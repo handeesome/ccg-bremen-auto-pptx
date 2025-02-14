@@ -1,6 +1,6 @@
 import { Searcher } from "./bibleSearch.js";
 export function findBibleText(searchPrompt) {
-  let result = { fullName: null, verses: {} };
+  let result = { fullName: null, verses: [] };
 
   Searcher.setOptions({
     onError: function (err, source) {
@@ -10,7 +10,7 @@ export function findBibleText(searchPrompt) {
       result.fullName = title;
     },
     onTextLine: function (prefix, text) {
-      result.verses[prefix] = text;
+      result.verses.push({ [prefix]: text });
     },
   });
 

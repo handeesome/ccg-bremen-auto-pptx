@@ -46,7 +46,7 @@ function generateSuffixDropdown(dropdownId, ifPreacher = false) {
     suffixes = ["弟兄", "姊妹"];
   }
   const dropdown = document.getElementById(dropdownId);
-  populateDropdown(dropdown, suffixes);
+  populateDropdown(dropdown, suffixes, true);
 }
 function generateBookDropdown(dropdown) {
   populateDropdown(dropdown, [...oldTestament, ...newTestament], true);
@@ -109,11 +109,11 @@ function generateChapterOptions(bookIndex) {
   return options;
 }
 
-function populateDropdown(dropdown, options, isBook = false) {
+function populateDropdown(dropdown, options, isValue = false) {
   dropdown.innerHTML = "";
   options.forEach((option, index) => {
     const optionElement = document.createElement("option");
-    if (isBook) {
+    if (isValue) {
       optionElement.value = option;
     } else {
       optionElement.value = index + 1;
