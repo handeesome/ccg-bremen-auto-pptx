@@ -1,3 +1,4 @@
+import { createTextareaSet } from "./createHTML.js";
 export function parseVerse(verseString) {
   const regex = /(.+?)\s+(\d+):(\d+)(?:-(\d+))?/;
   const match = verseString.match(regex);
@@ -11,7 +12,7 @@ export function parseVerse(verseString) {
     verseTo: match[4] ? parseInt(match[4], 10) : parseInt(match[3], 10), // Extract ending verse if available
   };
 }
-export function resumedVerseData() {
+export function resumeVerseData() {
   let verseData = JSON.parse(localStorage.getItem("verseData"));
   if (!verseData) return;
 
@@ -118,29 +119,91 @@ export function removeVerseData(newRow, prefix) {
   localStorage.setItem("verseData", JSON.stringify(verseData));
 }
 
-export function updateActivityData(index, value) {
-  let activityData = JSON.parse(localStorage.getItem("activityData")) || {};
-  activityData[index] = value;
-  localStorage.setItem("activityData", JSON.stringify(activityData));
+export function updateTextareaData(index, value, dataName) {
+  let data = JSON.parse(localStorage.getItem(dataName)) || {};
+  data[index] = value;
+  localStorage.setItem(dataName, JSON.stringify(data));
 }
-export function removeActivityData(index) {
-  let activityData = JSON.parse(localStorage.getItem("activityData")) || {};
-  delete activityData[index];
-  let sortedKeys = Object.keys(activityData)
+export function removeTextareaData(index, dataName) {
+  let data = JSON.parse(localStorage.getItem(dataName)) || {};
+  delete data[index];
+  let sortedKeys = Object.keys(data)
     .map(Number)
     .sort((a, b) => a - b);
-  let oldKeys = sortedKeys.slice(index, Object.keys(activityData).length);
+  let oldKeys = sortedKeys.slice(index, Object.keys(data).length);
   let newKeys = [index, ...oldKeys];
   newKeys.pop();
-  let updatedActivityData = {};
+  let updatedData = {};
   sortedKeys.slice(0, index).forEach((key) => {
-    updatedActivityData[key] = activityData[key];
+    updatedData[key] = data[key];
   });
 
   // Assign new keys with old values
   oldKeys.forEach((oldKey, i) => {
-    updatedActivityData[newKeys[i]] = activityData[oldKey];
+    updatedData[newKeys[i]] = data[oldKey];
   });
 
-  localStorage.setItem("activityData", JSON.stringify(updatedActivityData));
+  localStorage.setItem(dataName, JSON.stringify(updatedData));
+}
+
+export function resumeTextareaData(category) {
+  let data = JSON.parse(localStorage.getItem(`${category}Data`));
+  if (!data) return;
+  let index = Object.keys(data).length;
+  let button = document.getElementById(`${category}AddTextarea`);
+  for (let i = 0; i < index; i++) {
+    if (i > 0) {
+      button.dispatchEvent(new Event("click"));
+    }
+    let textarea = document.getElementById(`${category}${i}`);
+    textarea.value = data[i];
+  }
+}
+
+export function updateFromCCGBremen() {
+  let url = "https://ccg-bremen.de/default.php";
+  const proxy = "https://api.allorigins.win/raw?url=";
+  const buttonText = document.getElementById("buttonText");
+  buttonText.innerHTML = `<i class="fas fa-spinner loading-icon"></i> 获取中...`;
+
+  fetch(proxy + encodeURIComponent(url))
+    .then((response) => response.text()) // Convert response to text (HTML)
+    .then((html) => {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, "text/html");
+      // Extract 金句
+      let heading = Array.from(doc.querySelectorAll("h2")).find((h2) =>
+        h2.textContent.includes("金句")
+      );
+      const jinJu = heading?.parentElement
+        .querySelectorAll("p")[1]
+        .textContent.trim();
+
+      updateDropdowns("jinJu", parseVerse(jinJu));
+
+      heading = Array.from(doc.querySelectorAll("h2")).find((h2) =>
+        h2.textContent.includes("教会通讯")
+      );
+      const tongXun = heading?.parentElement.querySelector("ol");
+      const activities = Array.from(tongXun?.querySelectorAll("li") || []).map(
+        (li) => li.textContent
+      );
+      document.getElementById("activityTextarea").innerHTML = "";
+      createTextareaSet("activityTextarea", "activity");
+      let AddTextarea = document.getElementById("activityAddTextarea");
+      localStorage.removeItem("activityData");
+      activities.forEach((activity, index) => {
+        if (!document.getElementById(`activity${index}`)) {
+          AddTextarea.dispatchEvent(new Event("click"));
+        }
+        let textarea = document.getElementById(`activity${index}`);
+        textarea.value = activity;
+        textarea.dispatchEvent(new Event("change"));
+      });
+      buttonText.innerHTML = `<i class="fas fa-check"></i> 获取成功`;
+    })
+    .catch((error) => {
+      console.error("Fetch error:", error);
+      buttonText.innerHTML = `<i class="fas fa-exclamation-circle"></i> 获取失败`;
+    });
 }

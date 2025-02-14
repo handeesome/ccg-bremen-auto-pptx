@@ -4,15 +4,12 @@ import {
   createBibleDropdownSet,
   createInput,
   createRadio,
-  createActivities,
+  createTextareaSet,
+  createFetchButton,
+  updateJinJuText,
 } from "./createHTML.js";
 
-import { findBibleText } from "./findBibleText.js";
-import {
-  parseVerse,
-  resumedVerseData,
-  updateDropdowns,
-} from "./processData.js";
+import { resumeTextareaData, resumeVerseData } from "./processData.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
   await getBibleVerses();
@@ -21,6 +18,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   createWeekList("thisWeekList");
   createInput("zhuTi1", "text", "主题:");
   createInput("date1", "date", "日期:");
+  createInput("date2", "date", "日期:");
+  createInput("zhuTi2", "text", "主题:");
+  createBibleDropdownSet("nextWeekJingWen", "jingWen", "经文:");
+  createWeekList("nextWeekList");
   //Part 2
   createBibleDropdownSet("bibleDropdownSet1", "xuanZhao", "宣召:");
   createBibleDropdownSet("bibleDropdownSet2", "qiYing", "启应:");
@@ -35,7 +36,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   createRadio(
     "verseRadio",
     2,
-    "所以，弟兄们，我以神的慈悲劝你们，将身体献上，当作活祭，是圣洁的，是神所喜悦的；你们如此事奉乃是理所当然的。",
+    "所以，弟兄们，我以神的慈悲劝你们，将身体献上，当作活祭，是圣洁的，是神所喜悦的；你们如此事奉乃是理所当然的。所以，弟兄们",
     "罗12:1"
   );
   createRadio(
@@ -45,25 +46,23 @@ document.addEventListener("DOMContentLoaded", async () => {
     "林后9:6-7"
   );
 
+  createTextareaSet("activityTextarea", "activity");
+  createFetchButton("fetchButtonParent");
+  createBibleDropdownSet("jinJu", "jinJu", "每月金句:");
+  document.getElementById("jinJuButton").remove();
+  updateJinJuText();
+
+  createTextareaSet("prayerWorldTextarea", "prayerWorld");
+  createTextareaSet("prayerChurchTextarea", "prayerChurch");
+
+  resumeVerseData();
+  resumeTextareaData("activity");
+  resumeTextareaData("prayerWorld");
+  resumeTextareaData("prayerChurch");
+
   let response = await fetch("../static/data/lyrics.json");
   let lyricsData = await response.json();
   createRadio("lyricsRadio", 3, lyricsData["宝架清影"], "宝架清影");
   createRadio("lyricsRadio", 3, lyricsData["靠近十架"], "靠近十架");
   createRadio("lyricsRadio", 3, lyricsData["破碎"], "破碎");
-
-  createActivities("activityTextarea");
-
-  createBibleDropdownSet("jinJu", "jinJu", "每月金句:");
-  updateDropdowns("jinJu", parseVerse(dynamicJinju));
-
-  createInput("date2", "date", "日期:");
-  createInput("zhuTi2", "text", "主题:");
-  createBibleDropdownSet("nextWeekJingWen", "jingWen", "经文:");
-  createWeekList("nextWeekList");
-  resumedVerseData();
-
-  // let verseData = JSON.parse(localStorage.getItem("verseData"));
-  // let selectedVerse = verseData.xuanZhao[0];
-  // let verses = findBibleText(selectedVerse.fullVerse);
-  // console.log(verses);
 });

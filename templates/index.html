@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Generate PPTX</title>
     <link rel="stylesheet" href="../static/css/custom.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
 
     <!-- Add Bootstrap CSS -->
     <link
@@ -15,21 +16,34 @@
   </head>
   <body class="container mt-4">
     <div class="card">
-      <div class="card-header bg-primary text-white">
+      <div class="card-header bg-primary text-white text-center">
         <h1 class="mb-0">不来梅教会自动生成周日PPTX</h1>
       </div>
       <div class="card-body">
         <form id="pptxForm">
           <!-- 第一部分 -->
-          <div class="form-section">
-            <h3>本周事奉名单</h3>
-            <div id="thisWeekList"></div>
-            <div id="zhuTi1"></div>
-            <div id="date1"></div>
+          <div class="row justify-content-center">
+            <div class="form-section col-auto text-center mx-3">
+              <h3>本周事奉名单</h3>
+              <div id="date1"></div>
+              <div id="zhuTi1"></div>
+              <select
+                class="mb-3 form-select"
+                style="visibility: hidden"></select>
+              <div id="thisWeekList"></div>
+            </div>
+            <div class="form-section col-auto text-center mx-3">
+              <h3>下周事奉名单</h3>
+              <div id="date2"> </div>
+              <div id="zhuTi2"></div>
+              <div id="nextWeekJingWen"></div>
+              <div id="nextWeekList"></div>
+            </div>
           </div>
 
           <!-- 第二部分 -->
-          <div class="form-section">
+          <div
+            class="form-section col-auto d-flex flex-column align-items-center">
             <h3>经文自动生成</h3>
             <div id="bibleDropdownSet1"></div>
             <div id="bibleDropdownSet2"></div>
@@ -37,7 +51,8 @@
           </div>
 
           <!-- 第三部分 -->
-          <div class="form-section">
+          <div
+            class="form-section col-auto d-flex flex-column align-items-center">
             <h3>诗歌歌词暂时没有办法自动生成</h3>
             <div id="song1"></div>
             <div id="song2"></div>
@@ -45,32 +60,51 @@
             <div id="song4"></div>
           </div>
 
-          <div class="form-section">
+          <!-- 第四部分 -->
+
+          <div
+            class="form-section col-auto d-flex flex-column align-items-center">
+            <div class="text-center relative-container" id="fetchButtonParent">
+              <h4>活动报告</h4>
+            </div>
+            <div id="jinJu" style="margin-top: 1rem"></div>
+            <span id="jinJuText" class="mb-3" style="color: #517495"></span>
+            <div id="activityTextarea" class="col-6"></div>
+          </div>
+
+          <!-- 第五部分 -->
+          <div
+            class="form-section col-auto d-flex flex-column align-items-center">
             <div class="mb-3">
               <h4>奉献回应礼经文</h4>
             </div>
             <div id="verseRadio" class="row mb-3"></div>
+          </div>
 
-            <div class="mb-3">
-              <h4>活动报告</h4>
+          <!-- 第六部分 -->
+          <div class="row justify-content-center">
+            <div class="form-section text-center col-5 mx-3">
+              <div class="mb-3">
+                <h4>为世界及社会祷告</h4>
+              </div>
+              <div id="prayerWorldTextarea"></div>
             </div>
-            <div id="activityTextarea"></div>
 
-            <div id="jinJu"></div>
+            <div class="form-section text-center col-5 mx-3">
+              <div class="mb-3">
+                <h4>为教会及个人祷告</h4>
+              </div>
+              <div id="prayerChurchTextarea"></div>
+            </div>
+          </div>
 
+          <!-- 第七部分 -->
+          <div
+            class="form-section col-auto d-flex flex-column align-items-center">
             <div class="mb-3">
               <h4>圣餐礼诗歌</h4>
             </div>
             <div class="row mb-3" id="lyricsRadio"></div>
-          </div>
-
-          <div class="form-section">
-            <h3>下周事奉名单:</h3>
-            <div id="date2"> </div>
-            <div id="zhuTi2"></div>
-            <div id="nextWeekJingWen"></div>
-
-            <div id="nextWeekList"></div>
           </div>
 
           <h2>请注意，新生成的pptx中的音频需要手动设置为跨页播放。</h2>

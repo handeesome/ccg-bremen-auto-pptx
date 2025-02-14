@@ -69,8 +69,6 @@ def generate_pptx(templatePath, destination, config):
     qiyingLines = config['qiyingLines']
     partSeven(prs, qiyingLines)
 
-    # 主祷文
-
     # 读经 
     dujingLines = config['dujingLines']
     partEight(prs, dujingLines)

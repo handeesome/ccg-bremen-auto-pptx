@@ -1,9 +1,11 @@
 import { generateSuffixDropdown, updateBibleDropdowns } from "./dropdown.js";
 import {
-  removeActivityData,
+  removeTextareaData,
   removeVerseData,
-  updateActivityData,
+  updateTextareaData,
+  updateFromCCGBremen,
 } from "./processData.js";
+import { findBibleText } from "./findBibleText.js";
 
 export function createWeekList(weekListId) {
   const roles = [
@@ -46,7 +48,7 @@ export function createBibleDropdownSet(containerId, prefix, labelText) {
     <div class="row align-items-center mb-3" id="dropdownSet-${prefix}">
       <!-- Label & TextBox -->
       <div class="col-auto">
-        <label class="form-label" for="${prefix}">${labelText}</label>
+        <label for="${prefix}">${labelText}</label>
       </div>
 
       <!-- Dropdowns -->
@@ -104,9 +106,9 @@ export function createInput(containerId, type, labelText) {
   let html = `
     <div class="row align-items-center mb-3">
       <div class="col-auto" id=${containerId}Label>
-        <label class="form-label">${labelText}</label>
+        <label class="col-form-label">${labelText}</label>
       </div>
-      <div class="col-3">
+      <div class="col-auto">
         <input type=${type} id="${containerId}Input"/>
       </div>
     </div>
@@ -134,7 +136,7 @@ export function createRadio(
     ? `${12 / numberOfOptions}`
     : "auto";
   let html = `
-    <div class="col-md-${width}">
+    <div class="col-md-${width} d-flex">
       <label class="w-100">
         <input
           type="radio"
@@ -142,8 +144,8 @@ export function createRadio(
           name="${containerId}Radio"
           class="d-none" 
           checked/>
-        <div class="card p-3">
-          <blockquote class="blockquote mb-0" id="${
+        <div class="card p-3 h-100 d-flex flex-column">
+          <blockquote class="blockquote mb-0 flex-grow-1" id="${
             containerId + contentTitle
           }Blockquote">
             <p>
@@ -160,11 +162,11 @@ export function createRadio(
   );
   if (containerId.includes("verse")) {
     let footer = `
-      <footer class="blockquote-footer text-end">
+      <footer class="blockquote-footer text-end mt-auto mb-auto">
         ${contentTitle}
       </footer>
     `;
-    blockquote.insertAdjacentHTML("beforeend", footer);
+    blockquote.insertAdjacentHTML("afterend", footer);
   }
   if (containerId.includes("lyrics")) {
     blockquote.innerHTML = "";
@@ -182,49 +184,83 @@ export function createRadio(
   }
 }
 
-function createTextarea(index) {
+function createTextarea(index, category) {
   let newTextareaDiv = document.createElement("div");
-  newTextareaDiv.classList.add("mb-3", "d-flex", "align-items-center", "row");
+  newTextareaDiv.classList.add("mb-3", "d-flex", "align-items-center");
   let textarea = `
-    <div class="col-6">
-      <textarea
-        class="form-control"
-        rows="2"
-        placeholder="Type something..."
-        ></textarea>
-    </div>
+    <textarea
+      class="form-control"
+      rows="2"
+      placeholder="Type something..."
+      ></textarea>
   `;
   newTextareaDiv.insertAdjacentHTML("beforeend", textarea);
   let textareaElement = newTextareaDiv.querySelector("textarea");
-  textareaElement.id = `activity${index}`;
+  textareaElement.id = `${category}${index}`;
   textareaElement.addEventListener("change", function () {
-    updateActivityData(index, this.value);
+    updateTextareaData(index, this.value, `${category}Data`);
   });
   return newTextareaDiv;
 }
 
-export function createActivities(containerId) {
+export function createTextareaSet(containerId, category) {
   let container = document.getElementById(containerId);
-  let textarea = createTextarea(0);
+  let textarea = createTextarea(0, category);
   container.appendChild(textarea);
+
+  let buttonContainer = document.createElement("div");
+  buttonContainer.className = "text-center";
   let buttonPrimary = document.createElement("button");
-  buttonPrimary.className = "btn btn-primary col-auto";
-  buttonPrimary.id = "addTextarea";
+  buttonPrimary.className = "btn btn-primary mb-3";
+  buttonPrimary.id = `${category}AddTextarea`;
   buttonPrimary.type = "button";
   buttonPrimary.innerHTML = "+";
+  buttonContainer.insertAdjacentElement("beforeend", buttonPrimary);
+  container.insertAdjacentElement("beforeend", buttonContainer);
 
-  container.insertAdjacentElement("beforeend", buttonPrimary);
-  document.getElementById("addTextarea").addEventListener("click", function () {
+  buttonPrimary.addEventListener("click", function () {
     let index = container.querySelectorAll("textarea").length;
-    let newTextareaDiv = createTextarea(index);
+    let newTextareaDiv = createTextarea(index, category);
     let buttonRemove = document.createElement("button");
+    buttonRemove.type = "button";
     buttonRemove.className = "btn btn-danger ms-2 col-auto";
     buttonRemove.innerHTML = "-";
     buttonRemove.onclick = function () {
       container.removeChild(newTextareaDiv);
-      removeActivityData(index);
+      removeTextareaData(index, `${category}Data`);
     };
     newTextareaDiv.appendChild(buttonRemove);
-    buttonPrimary.insertAdjacentElement("beforebegin", newTextareaDiv);
+    buttonContainer.insertAdjacentElement("beforebegin", newTextareaDiv);
+  });
+}
+
+export function createFetchButton(containerId) {
+  let container = document.getElementById(containerId);
+  let button = document.createElement("button");
+  button.type = "button";
+  button.className = "btn btn-info absolute-btn";
+  button.id = "getFromCCGBremen";
+  let span = document.createElement("span");
+  span.id = "buttonText";
+  span.innerHTML = "从CCG Bremen网站自动获取";
+  button.appendChild(span);
+  container.appendChild(button);
+
+  button.addEventListener("click", function () {
+    updateFromCCGBremen();
+  });
+}
+
+export function updateJinJuText() {
+  let verseFrom = document.getElementById("jinJuDropdownVerseTo");
+  verseFrom.addEventListener("change", function () {
+    let fullverse = JSON.parse(localStorage.getItem("verseData")).jinJu[0]
+      .fullVerse;
+    let verses = findBibleText(fullverse).verses;
+    let text = "";
+    for (const verse of Object.keys(verses).sort()) {
+      text += verses[verse];
+    }
+    document.getElementById("jinJuText").textContent = text;
   });
 }
