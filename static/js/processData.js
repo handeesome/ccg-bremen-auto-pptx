@@ -13,13 +13,14 @@ export function parseVerse(verseString) {
   };
 }
 export function resumeVerseData() {
-  let verseData = JSON.parse(localStorage.getItem("verseData"));
-  if (!verseData) return;
+  let formData = JSON.parse(localStorage.getItem("formData")) || {};
+  if (!formData) return;
+  let verseData = ["xuanZhao", "qiYing", "duJing", "jinJu", "jingWen"];
 
-  for (let category in verseData) {
+  verseData.forEach((category) => {
     let button = document.getElementById(`${category}Button`);
-
-    verseData[category].forEach((verse, index) => {
+    if (!formData[category]) return;
+    formData[category].map((verse, index) => {
       if (!verse) return;
 
       if (index > 0) {
@@ -29,7 +30,7 @@ export function resumeVerseData() {
       let prefix = index === 0 ? `${category}` : `${category}-${index}`;
       updateDropdowns(prefix, verse);
     });
-  }
+  });
 }
 export function updateDropdowns(prefix, verse) {
   let dropdownBook = document.getElementById(`${prefix}DropdownBook`);
@@ -54,23 +55,17 @@ export function updateDropdowns(prefix, verse) {
 }
 
 export function updateVerseData(prefix, key, value) {
-  let verseData = JSON.parse(localStorage.getItem("verseData")) || {
-    xuanZhao: [],
-    qiYing: [],
-    duJing: [],
-    jinJu: [],
-    jingWen: [],
-  };
+  let formData = JSON.parse(localStorage.getItem("formData")) || {};
   let parts = prefix.split("-");
   let verseFor = parts[0];
   let index = parseInt(parts[parts.length - 1], 10) || 0;
   // Ensure array exists
-  if (!Array.isArray(verseData[verseFor])) {
-    verseData[verseFor] = [];
+  if (!Array.isArray(formData[verseFor])) {
+    formData[verseFor] = [];
   }
   // Ensure the verse entry exists
-  if (!verseData[verseFor][index]) {
-    verseData[verseFor][index] = {
+  if (!formData[verseFor][index]) {
+    formData[verseFor][index] = {
       book: "book",
       chapter: "1",
       verseFrom: "1",
@@ -78,7 +73,7 @@ export function updateVerseData(prefix, key, value) {
       fullVerse: "book 1:1-1",
     };
   }
-  let selectedVerse = verseData[verseFor][index];
+  let selectedVerse = formData[verseFor][index];
 
   if (key === "book") {
     Object.assign(selectedVerse, {
@@ -95,11 +90,11 @@ export function updateVerseData(prefix, key, value) {
   selectedVerse[key] = value;
   selectedVerse.fullVerse = formatVerse(selectedVerse);
 
-  localStorage.setItem("verseData", JSON.stringify(verseData)); // Save to localStorage
+  localStorage.setItem("formData", JSON.stringify(formData)); // Save to localStorage
 }
 
-function formatVerse(verseData) {
-  return `${verseData.book} ${verseData.chapter}:${verseData.verseFrom}-${verseData.verseTo}`;
+function formatVerse(verse) {
+  return `${verse.book} ${verse.chapter}:${verse.verseFrom}-${verse.verseTo}`;
 }
 export function removeVerseData(newRow, prefix) {
   let dropdowns = newRow.querySelectorAll("select");
@@ -110,59 +105,45 @@ export function removeVerseData(newRow, prefix) {
     verseTo: dropdowns[3].value,
   };
   let toRemove = formatVerse(verse);
-  console.log(toRemove);
-  let verseData = JSON.parse(localStorage.getItem("verseData"));
-  let indexToRemove = verseData[prefix].findIndex(
+  let formData = JSON.parse(localStorage.getItem("formData"));
+  let indexToRemove = formData[prefix].findIndex(
     (item) => item.fullVerse === toRemove
   );
-  verseData[prefix].splice(indexToRemove, 1); // Remove the element at found index
-  localStorage.setItem("verseData", JSON.stringify(verseData));
+  formData[prefix].splice(indexToRemove, 1); // Remove the element at found index
+  localStorage.setItem("formData", JSON.stringify(formData));
 }
 
-export function updateTextareaData(index, value, dataName) {
-  let data = JSON.parse(localStorage.getItem(dataName)) || {};
-  data[index] = value;
-  localStorage.setItem(dataName, JSON.stringify(data));
+export function updateTextareaData(value, category) {
+  let formData = JSON.parse(localStorage.getItem("formData")) || {};
+  console.log(formData);
+  let textareaData = formData[category] || [];
+  textareaData.push(value);
+  formData[category] = textareaData;
+  localStorage.setItem("formData", JSON.stringify(formData));
 }
-export function removeTextareaData(index, dataName) {
-  let data = JSON.parse(localStorage.getItem(dataName)) || {};
-  delete data[index];
-  let sortedKeys = Object.keys(data)
-    .map(Number)
-    .sort((a, b) => a - b);
-  let oldKeys = sortedKeys.slice(index, Object.keys(data).length);
-  let newKeys = [index, ...oldKeys];
-  newKeys.pop();
-  let updatedData = {};
-  sortedKeys.slice(0, index).forEach((key) => {
-    updatedData[key] = data[key];
-  });
-
-  // Assign new keys with old values
-  oldKeys.forEach((oldKey, i) => {
-    updatedData[newKeys[i]] = data[oldKey];
-  });
-
-  localStorage.setItem(dataName, JSON.stringify(updatedData));
+export function removeTextareaData(index, category) {
+  let formData = JSON.parse(localStorage.getItem("formData")) || {};
+  formData[category].splice(index, 1);
+  localStorage.setItem("formData", JSON.stringify(formData));
 }
 
 export function resumeTextareaData(category) {
-  let data = JSON.parse(localStorage.getItem(`${category}Data`));
-  if (!data) return;
-  let index = Object.keys(data).length;
+  let formData = JSON.parse(localStorage.getItem("formData"));
+  if (!formData) return;
+  let textarea = formData[category] || [];
   let button = document.getElementById(`${category}AddTextarea`);
-  for (let i = 0; i < index; i++) {
+  for (let i = 0; i < textarea.length; i++) {
     if (i > 0) {
       button.dispatchEvent(new Event("click"));
     }
     let textarea = document.getElementById(`${category}${i}`);
-    textarea.value = data[i];
+    textarea.value = formData[category][i];
   }
 }
 
 export function updateFromCCGBremen() {
   let url = "https://ccg-bremen.de/default.php";
-  const proxy = "https://api.allorigins.win/raw?url=";
+  const proxy = "https://corsproxy.io/?";
   const buttonText = document.getElementById("buttonText");
   buttonText.innerHTML = `<i class="fas fa-spinner loading-icon"></i> 获取中...`;
 
@@ -209,21 +190,61 @@ export function updateFromCCGBremen() {
 }
 
 export function updateInputData(key, value) {
-  let data = JSON.parse(localStorage.getItem("inputData")) || {};
-  data[key] = value;
-  localStorage.setItem("inputData", JSON.stringify(data));
+  let formData = JSON.parse(localStorage.getItem("formData")) || {};
+  formData[key] = value;
+  localStorage.setItem("formData", JSON.stringify(formData));
 }
 export function resumeInputData() {
-  let data = JSON.parse(localStorage.getItem("inputData"));
-  if (!data) return;
-  for (let key in data) {
-    if (!document.getElementById(key)) continue;
+  let formData = JSON.parse(localStorage.getItem("formData"));
+  if (!formData) return;
+  let inputData = [
+    "zhuTi1Input",
+    "date1Input",
+    "date2Input",
+    "zhuTi2Input",
+    "song1Input",
+    "song2Input",
+    "song3Input",
+    "song4Input",
+    "nextWeekListerTong",
+    "nextWeekListjieDai",
+    "nextWeekListppt",
+    "nextWeekListsiHui",
+    "nextWeekListzhengDao",
+    "thisWeekListerTong",
+    "thisWeekListjieDai",
+    "thisWeekListppt",
+    "thisWeekListsiHui",
+    "thisWeekListzhengDao",
+  ];
+  inputData.forEach((key) => {
+    if (!document.getElementById(key)) return;
     let input = document.getElementById(key);
-
-    if (Array.isArray(data[key])) {
-      input.value = data[key][0];
+    let arr = formData[key.replace("Input", "")];
+    if (Array.isArray(arr)) {
+      input.value = arr[0];
     } else {
-      input.value = data[key];
+      input.value = arr;
     }
-  }
+  });
+}
+
+export function updateRadioData(category, value) {
+  let formData = JSON.parse(localStorage.getItem("formData")) || {};
+  formData[category] = value;
+  localStorage.setItem("formData", JSON.stringify(formData));
+}
+export function resumeRadioData() {
+  let formData = JSON.parse(localStorage.getItem("formData"));
+  if (!formData) return;
+  let radioData = ["verseRadio", "lyricsRadio"];
+  radioData.forEach((category) => {
+    let radio = formData[category];
+    let radios = document.getElementsByName(category);
+    radios.forEach((r) => {
+      if (r.value === radio) {
+        r.checked = true;
+      }
+    });
+  });
 }

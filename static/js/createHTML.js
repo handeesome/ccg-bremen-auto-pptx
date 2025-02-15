@@ -5,6 +5,7 @@ import {
   updateTextareaData,
   updateFromCCGBremen,
   updateInputData,
+  updateRadioData,
 } from "./processData.js";
 import { findBibleText } from "./findBibleText.js";
 
@@ -128,7 +129,7 @@ export function createInput(containerId, type, labelText) {
   input.className = "form-control";
 
   input.addEventListener("change", function () {
-    updateInputData(`${containerId}Input`, this.value);
+    updateInputData(containerId, this.value);
   });
   if (containerId.includes("song")) {
     let label = document.getElementById(`${containerId}Label`);
@@ -154,6 +155,7 @@ export function createRadio(
           id="${containerId + contentTitle}Radio"
           name="${containerId}Radio"
           class="d-none" 
+          value="${contentTitle}"
           checked/>
         <div class="card p-3 h-100 d-flex flex-column">
           <blockquote class="blockquote mb-0 flex-grow-1" id="${
@@ -193,31 +195,36 @@ export function createRadio(
       }
     });
   }
+  let radio = document.getElementById(`${containerId + contentTitle}Radio`);
+  radio.addEventListener("change", function () {
+    if (this.checked) {
+      updateRadioData(containerId, contentTitle);
+    }
+  });
 }
 
-function createTextarea(index, category) {
+function createTextarea(container, category) {
   let newTextareaDiv = document.createElement("div");
   newTextareaDiv.classList.add("mb-3", "d-flex", "align-items-center");
-  let textarea = `
-    <textarea
-      class="form-control"
-      rows="2"
-      placeholder="Type something..."
-      ></textarea>
-  `;
-  newTextareaDiv.insertAdjacentHTML("beforeend", textarea);
-  let textareaElement = newTextareaDiv.querySelector("textarea");
+
+  let textareaElement = document.createElement("textarea");
+  textareaElement.className = "form-control";
+  textareaElement.rows = 2;
+  textareaElement.placeholder = "Type something...";
+  let index = container.querySelectorAll("textarea").length;
   textareaElement.id = `${category}${index}`;
+
+  newTextareaDiv.appendChild(textareaElement);
+  container.appendChild(newTextareaDiv);
   textareaElement.addEventListener("change", function () {
-    updateTextareaData(index, this.value, `${category}Data`);
+    updateTextareaData(this.value, category);
   });
   return newTextareaDiv;
 }
 
 export function createTextareaSet(containerId, category) {
   let container = document.getElementById(containerId);
-  let textarea = createTextarea(0, category);
-  container.appendChild(textarea);
+  createTextarea(container, category);
 
   let buttonContainer = document.createElement("div");
   buttonContainer.className = "text-center";
@@ -231,14 +238,14 @@ export function createTextareaSet(containerId, category) {
 
   buttonPrimary.addEventListener("click", function () {
     let index = container.querySelectorAll("textarea").length;
-    let newTextareaDiv = createTextarea(index, category);
+    let newTextareaDiv = createTextarea(container, category);
     let buttonRemove = document.createElement("button");
     buttonRemove.type = "button";
     buttonRemove.className = "btn btn-danger ms-2 col-auto";
     buttonRemove.innerHTML = "-";
     buttonRemove.onclick = function () {
       container.removeChild(newTextareaDiv);
-      removeTextareaData(index, `${category}Data`);
+      removeTextareaData(index, category);
     };
     newTextareaDiv.appendChild(buttonRemove);
     buttonContainer.insertAdjacentElement("beforebegin", newTextareaDiv);
@@ -264,13 +271,10 @@ export function createFetchButton(containerId) {
 
 export function updateJinJuText() {
   const updateText = () => {
-    let fullverse = JSON.parse(localStorage.getItem("verseData")).jinJu[0]
+    let fullverse = JSON.parse(localStorage.getItem("formData")).jinJu[0]
       .fullVerse;
     let verses = findBibleText(fullverse).verses;
-    let text = "";
-    verses.forEach((verse) => {
-      text += Object.values(verse)[0];
-    });
+    let text = verses.map((verse) => verse.text).join(" ");
     document.getElementById("jinJuText").textContent = text;
   };
   ["jinJuDropdownVerseFrom", "jinJuDropdownVerseTo"].forEach((id) => {

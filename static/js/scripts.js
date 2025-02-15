@@ -68,6 +68,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   createRadio("lyricsRadio", 3, lyricsData["靠近十架"], "靠近十架");
   createRadio("lyricsRadio", 3, lyricsData["破碎"], "破碎");
 
+  document.querySelectorAll('input[type="radio"]:checked').forEach((radio) => {
+    radio.dispatchEvent(new Event("change"));
+  });
+
   //resume from local storage
   resumeInputData();
   resumeVerseData();

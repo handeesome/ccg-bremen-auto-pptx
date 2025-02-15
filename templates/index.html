@@ -110,7 +110,7 @@
           <h2 class="text-center"
             >请注意，新生成的pptx中的音频需要手动设置为跨页播放。</h2
           >
-          <button type="submit" id="button" class="btn btn-primary w-100"
+          <button type="button" id="submitForm" class="btn btn-primary w-100"
             >生成PPTX</button
           >
         </form>
@@ -120,50 +120,24 @@
     <script type="module" src="../static/js/scripts.js"></script>
 
     <script type="module">
-      import { findBibleText } from "../static/js/findBibleText.js";
-      document.getElementById("button").addEventListener("click", sendData);
-      function sendData() {
-        var formData = new FormData(document.getElementById("pptxForm"));
-        var formDataObject = {};
-        formData.forEach(function (value, key) {
-          formDataObject[key] = value;
+      document
+        .getElementById("submitForm")
+        .addEventListener("click", function () {
+          let formData = localStorage.getItem("formData") || "{}";
+          console.log("Form Data:", formData);
+          fetch("/process-form", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: formData, // Send the entire JSON data
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              console.log("Server Response:", data);
+            })
+            .catch((error) => console.error("Error:", error));
         });
-        var xuanzhaoLines = findBibleText(
-          document.getElementById("xuanZhao").value
-        );
-        var qiyingLines = findBibleText(
-          document.getElementById("qiyingjingwen").value
-        );
-        var dujingLines = findBibleText(
-          document.getElementById("dujing").value
-        );
-        var meiyuejinjuLines = findBibleText(
-          document.getElementById("meiyuejinju").value
-        );
-        formDataObject["xuanzhaoLines"] = xuanzhaoLines;
-        formDataObject["qiyingLines"] = qiyingLines;
-        formDataObject["dujingLines"] = dujingLines;
-        formDataObject["meiyuejinjuLines"] = meiyuejinjuLines;
-        formDataObject["huodongbaogao"] = dynamicHuodongbaogao;
-        formDataObject["daogaoshijie"] = dynamicDaogaoShijie;
-        formDataObject["daogaojiaohui"] = dynamicDaogaoJiaohui;
-        fetch("result", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formDataObject),
-        })
-          .then((response) => response.json())
-          .then((data) => console.log(data))
-          .catch((error) => console.error("Error:", error));
-      }
-    </script>
-    <script>
-      // Enable text selection and copying
-      document.body.style.userSelect = "text";
-      document.body.style.webkitUserSelect = "text";
-      document.body.style.MozUserSelect = "text";
     </script>
   </body>
 </html>

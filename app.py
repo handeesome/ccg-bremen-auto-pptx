@@ -24,17 +24,22 @@ app.config['CWD'] = os.getcwd()
 def home():
    return render_template('index.html')
 
-@app.route('/result',methods = ['POST'])
-def result():
-    if request.method == 'POST':
-        data_from_js = request.json  # Assuming the data is sent as JSON
+@app.route('/process-form',methods = ['POST'])
+def procee_from():
+    try:
+        data = request.json  
+        if not data:
+            return jsonify({"error": "No JSON received"}), 400
         # print(data_from_js)
         destination = app.config['CWD']
-        generate_pptx('docs/template.pptx', destination, config=data_from_js)
-
+        # generate_pptx('docs/template.pptx', destination, config=data_from_js)
+        print("Received data:", data)
         return jsonify({'message': 'Data received successfully'})
 
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
 if __name__ == '__main__':
    dirPath = get_executable_dir()
    os.chdir(dirPath)
-   webview.start()
+   app.run(debug = True)
+#    webview.start()
