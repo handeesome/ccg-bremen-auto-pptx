@@ -114,23 +114,34 @@
             >生成PPTX</button
           >
         </form>
+        <div id="results"></div>
       </div>
     </div>
 
     <script type="module" src="../static/js/scripts.js"></script>
 
     <script type="module">
+      import { findBibleText } from "../static/js/findBibleText.js";
+
       document
         .getElementById("submitForm")
         .addEventListener("click", function () {
-          let formData = localStorage.getItem("formData") || "{}";
+          let formData = JSON.parse(localStorage.getItem("formData")) || "{}";
+          let categories = ["xuanZhao", "qiYing", "duJing", "jinJu", "jingWen"];
+          categories.forEach((category) => {
+            formData[category].forEach((verse, index) => {
+              formData[category][index].fullVerse = findBibleText(
+                verse.fullName
+              );
+            });
+          });
           console.log("Form Data:", formData);
           fetch("/process-form", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
-            body: formData, // Send the entire JSON data
+            body: JSON.stringify(formData), // Send the entire JSON data
           })
             .then((response) => response.json())
             .then((data) => {

@@ -271,9 +271,9 @@ export function createFetchButton(containerId) {
 
 export function updateJinJuText() {
   const updateText = () => {
-    let fullverse = JSON.parse(localStorage.getItem("formData")).jinJu[0]
-      .fullVerse;
-    let verses = findBibleText(fullverse).verses;
+    let fullName = JSON.parse(localStorage.getItem("formData")).jinJu[0]
+      .fullName;
+    let verses = findBibleText(fullName);
     let text = verses.map((verse) => verse.text).join(" ");
     document.getElementById("jinJuText").textContent = text;
   };

@@ -20,6 +20,10 @@
       }
     </style>
   </head>
+  <script type="module">
+    import { findBibleText } from "../static/js/findBibleText.js";
+    console.log(findBibleText("申命记 1:1-1"));
+  </script>
   <body>
     <button id="fetchButton" onclick="fetchData()">
       <span id="buttonText">Fetch Data</span>

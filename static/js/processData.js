@@ -70,7 +70,7 @@ export function updateVerseData(prefix, key, value) {
       chapter: "1",
       verseFrom: "1",
       verseTo: "1",
-      fullVerse: "book 1:1-1",
+      fullName: "book 1:1-1",
     };
   }
   let selectedVerse = formData[verseFor][index];
@@ -88,7 +88,7 @@ export function updateVerseData(prefix, key, value) {
   }
 
   selectedVerse[key] = value;
-  selectedVerse.fullVerse = formatVerse(selectedVerse);
+  selectedVerse.fullName = formatVerse(selectedVerse);
 
   localStorage.setItem("formData", JSON.stringify(formData)); // Save to localStorage
 }
@@ -107,7 +107,7 @@ export function removeVerseData(newRow, prefix) {
   let toRemove = formatVerse(verse);
   let formData = JSON.parse(localStorage.getItem("formData"));
   let indexToRemove = formData[prefix].findIndex(
-    (item) => item.fullVerse === toRemove
+    (item) => item.fullName === toRemove
   );
   formData[prefix].splice(indexToRemove, 1); // Remove the element at found index
   localStorage.setItem("formData", JSON.stringify(formData));
