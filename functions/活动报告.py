@@ -19,7 +19,7 @@ birthdaySong = {"songName": "赐福于你", "audioPath":"docs/生日歌.mp3", "l
         平安喜乐天天充满你
         """)}
 
-def partTwelve(prs, items):
+def partTwelve(prs, items, isCommunion):
     slide = newSlide(prs, '')
     txBox = newCenterBox(slide, '活动报告')
     txBox.text_frame.paragraphs[0].font.color.rgb = RGBColor(0x2E, 0x75, 0xB6)
@@ -34,7 +34,7 @@ def partTwelve(prs, items):
                isNumber=True, character_limit=150)
     
     # add birthday page
-    if isBirthday:
+    if isBirthday and isCommunion:
         slide = newSlide(prs, title)
         txBox = addTextBox(slide, 1.72, 4.5, 21.8, 14.55)
         p = txBox.text_frame.paragraphs[0]

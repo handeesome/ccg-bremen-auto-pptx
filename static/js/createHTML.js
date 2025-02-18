@@ -195,6 +195,19 @@ export function createRadio(
       }
     });
   }
+  if (containerId.includes("isCommunion")) {
+    document.querySelectorAll('[name="isCommunionRadio"]').forEach((radio) => {
+      radio.addEventListener("change", function () {
+        const isCommunion = this.id === "isCommunion圣餐崇拜Radio";
+        document.getElementById("communionTitle").style.display = isCommunion
+          ? "flex"
+          : "none";
+        document.getElementById("lyricsRadio").style.display = isCommunion
+          ? "flex"
+          : "none";
+      });
+    });
+  }
   let radio = document.getElementById(`${containerId + contentTitle}Radio`);
   radio.addEventListener("change", function () {
     if (this.checked) {
@@ -209,12 +222,22 @@ function createTextarea(container, category) {
 
   let textareaElement = document.createElement("textarea");
   textareaElement.className = "form-control";
-  textareaElement.rows = 2;
+  textareaElement.rows = 3;
   textareaElement.placeholder = "Type something...";
   let index = container.querySelectorAll("textarea").length;
   textareaElement.id = `${category}${index}`;
 
+  let buttonRemove = document.createElement("button");
+  buttonRemove.type = "button";
+  buttonRemove.className = "btn btn-danger ms-2 col-auto";
+  buttonRemove.innerHTML = "-";
+  buttonRemove.onclick = function () {
+    container.removeChild(newTextareaDiv);
+    removeTextareaData(index, category);
+  };
+
   newTextareaDiv.appendChild(textareaElement);
+  newTextareaDiv.appendChild(buttonRemove);
   container.appendChild(newTextareaDiv);
   textareaElement.addEventListener("change", function () {
     updateTextareaData(this.value, category);
@@ -237,17 +260,7 @@ export function createTextareaSet(containerId, category) {
   container.insertAdjacentElement("beforeend", buttonContainer);
 
   buttonPrimary.addEventListener("click", function () {
-    let index = container.querySelectorAll("textarea").length;
     let newTextareaDiv = createTextarea(container, category);
-    let buttonRemove = document.createElement("button");
-    buttonRemove.type = "button";
-    buttonRemove.className = "btn btn-danger ms-2 col-auto";
-    buttonRemove.innerHTML = "-";
-    buttonRemove.onclick = function () {
-      container.removeChild(newTextareaDiv);
-      removeTextareaData(index, category);
-    };
-    newTextareaDiv.appendChild(buttonRemove);
     buttonContainer.insertAdjacentElement("beforebegin", newTextareaDiv);
   });
 }
@@ -274,7 +287,7 @@ export function updateJinJuText() {
     let fullName = JSON.parse(localStorage.getItem("formData")).jinJu[0]
       .fullName;
     let verses = findBibleText(fullName);
-    let text = verses.map((verse) => verse.text).join(" ");
+    let text = verses.map((verse) => verse.text).join("");
     document.getElementById("jinJuText").textContent = text;
   };
   ["jinJuDropdownVerseFrom", "jinJuDropdownVerseTo"].forEach((id) => {

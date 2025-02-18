@@ -28,9 +28,9 @@ def _bankPage(prs):
     p.text = '教会奉献账号：'
     setFont(p, 34)
     p = txBox.text_frame.add_paragraph()
-    p.text = '\n\n\n\n'
+    p.text = '\n\n\n\n\n'
     p = txBox.text_frame.add_paragraph()
-    p.text = '如果奉献给神学教育基金，请备注“10”'
+    p.text = '神学教育基金账号：'
     setFont(p, 34)
 
 
@@ -52,6 +52,29 @@ def _bankPage(prs):
     _cellText(table, 1, 3, 'SBREDE22XXX', 20)
     # set first cell in second row as the cells in first row
     # i.e. blue back color and white font
+    cell = table.rows[1].cells[0]
+    cell.fill.solid()
+    cell.fill.fore_color.rgb = RGBColor(0x44, 0x72, 0xC4)
+    cell.text_frame.paragraphs[0].font.color.rgb = RGBColor(0xFF, 0xFF, 0xFF)
+
+
+    # # second table
+    table = slide.shapes.add_table(
+        2, 4, Cm(1.4), Cm(12.09), Cm(22.6), Cm(2.01)).table
+    table.columns[0].width = 915240
+    table.columns[1].width = 2722951
+    table.columns[2].width = 1047136
+    table.columns[3].width = 3451122
+
+    _cellText(table, 0, 0, '户名：', 20, '宋体')
+    _cellText(table, 0, 1, 'Chinesische Christliche Gemeinde Bremen e.V.', 20, isBold=True)
+    _cellText(table, 0, 2, 'IBAN：', 20, isBold=True)
+    _cellText(table, 0, 3, 'DE63 2905 0101 0084 4400 23', 20, isBold=True)
+    _cellText(table, 1, 0, '银行：', 20, '宋体')
+    _cellText(table, 1, 1, 'Sparkasse Bremen', 20)
+    _cellText(table, 1, 2, 'BIC：', 20)
+    _cellText(table, 1, 3, 'SBREDE22XXX', 20)
+
     cell = table.rows[1].cells[0]
     cell.fill.solid()
     cell.fill.fore_color.rgb = RGBColor(0x44, 0x72, 0xC4)
@@ -83,7 +106,7 @@ def _versePage(prs, choice):
 def _lyricsPage(prs):
     
     #2024 奉献回应诗
-    audioPath = 'docs/一切全献上.mp3'
+    audioPath = 'docs/奉献回应诗歌.mp3'
     lyrics = textwrap.dedent("""
     [Page 1]
     主啊  我今完全献上

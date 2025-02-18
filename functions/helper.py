@@ -80,7 +80,7 @@ def verseGroup(verses, character_limit=90, isQiYing=False):
 
     Parameters:
         verses (list): List of verses to be grouped.
-        character_limit(int, optional): The character limit for each group. Default is 90.
+        character_limit (int, optional): The character limit for each group. Default is 90.
         isQiYing (bool, optional): 启应经文 if True. Default is False.
 
     Returns:
@@ -89,15 +89,21 @@ def verseGroup(verses, character_limit=90, isQiYing=False):
     groups = []
     current_group = []
     current_character_count = 0
+
     for verse in verses:
         verse_character_count = len(verse)
+
         if isQiYing and len(current_group) == 2:
-            # If craeting 启应经文 and current group has 2 verses, start a new group
+            # If creating 启应经文 and current group has 2 verses, start a new group
             groups.append(current_group)
             current_group = [verse]
             current_character_count = verse_character_count
+        elif not current_group:  # Ensure first group is NOT empty
+            # Start the first group directly
+            current_group.append(verse)
+            current_character_count = verse_character_count
         elif current_character_count + verse_character_count <= character_limit:
-            # If adding the current verse to the current group doesn't exceed the character limit, add it
+            # If adding the current verse doesn't exceed the character limit, add it
             current_group.append(verse)
             current_character_count += verse_character_count
         else:
@@ -120,7 +126,7 @@ def parseVerses(verses, isQiYing=False):
         if isQiYing:# 启应经文 needs the verses without verse numbers
             verseArr.append(verse[1])
         else:
-            verseArr.append(str(verseFrom) +' '+verse[1])
+            verseArr.append(str(verseFrom) +'.'+verse[1])
             verseFrom += 1
     return verseArr
 
@@ -254,7 +260,7 @@ def itemsPagesHasSpace(prs, title, items, charPerLine, fontSize=36, isNumber=Fal
                 number += 1
                 numbered_item = f'{number} ' + item
             numbered_item = item
-            pattern = re.compile(r'(\d+)\s(.*)')
+            pattern = re.compile(r'(\d+).(.*)')
             match = re.search(pattern, numbered_item)
             if match:
                 number = match.group(1)
@@ -274,8 +280,7 @@ def itemsPagesHasSpace(prs, title, items, charPerLine, fontSize=36, isNumber=Fal
                         # Otherwise, add the line as a new entry
                         substrings.append(line)
                         i += charPerLine  # Move to the next line
-                                
-                p.text = number + ' ' + newLine.join(substrings)
+                p.text = number + '.' + newLine.join(substrings)
                 setFont(p, fontSize)
 
 

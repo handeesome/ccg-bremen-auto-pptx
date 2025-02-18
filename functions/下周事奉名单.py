@@ -40,9 +40,15 @@ def partFourteen(prs, r1, r2, r3, r4, r5, r6, r7, r8):
 
 
 def _cellText(table, row, col, text, fontSize, isBold=False):
-    table.rows[row].cells[col].text = text
     cell = table.rows[row].cells[col].text_frame
+    cell.clear() 
     p = cell.paragraphs[0]
+
+    for i, line in enumerate(text.split("\n")):
+        if i > 0:
+            p.add_run().text = "\n" 
+        p.add_run().text += line 
+
     p.alignment = PP_ALIGN.CENTER
     cell.vertical_anchor = MSO_ANCHOR.MIDDLE
 

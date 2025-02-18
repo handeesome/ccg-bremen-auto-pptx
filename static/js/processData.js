@@ -99,9 +99,14 @@ export function updateVerseData(prefix, key, value) {
 }
 
 function formatVerse(verse, fullName = true) {
-  if (fullName)
-    return `${verse.book} ${verse.chapter}:${verse.verseFrom}-${verse.verseTo}`;
-  else return `${verse.abbr} ${verse.chapter}:${verse.verseFrom}`;
+  let chapterVerse = "";
+  if (verse.verseFrom === verse.verseTo) {
+    chapterVerse = `${verse.chapter}:${verse.verseFrom}`;
+  } else {
+    chapterVerse = `${verse.chapter}:${verse.verseFrom}-${verse.verseTo}`;
+  }
+  if (fullName) return `${verse.book} ${chapterVerse}`;
+  else return `${verse.abbr} ${chapterVerse}`;
 }
 export function removeVerseData(newRow, prefix) {
   let dropdowns = newRow.querySelectorAll("select");
@@ -122,7 +127,6 @@ export function removeVerseData(newRow, prefix) {
 
 export function updateTextareaData(value, category) {
   let formData = JSON.parse(localStorage.getItem("formData")) || {};
-  console.log(formData);
   let textareaData = formData[category] || [];
   textareaData.push(value);
   formData[category] = textareaData;
@@ -150,7 +154,7 @@ export function resumeTextareaData(category) {
 
 export function updateFromCCGBremen() {
   let url = "https://ccg-bremen.de/default.php";
-  const proxy = "https://corsproxy.io/?";
+  const proxy = "https://api.allorigins.win/get?url=";
   const buttonText = document.getElementById("buttonText");
   buttonText.innerHTML = `<i class="fas fa-spinner loading-icon"></i> 获取中...`;
 
@@ -179,7 +183,9 @@ export function updateFromCCGBremen() {
       document.getElementById("activityTextarea").innerHTML = "";
       createTextareaSet("activityTextarea", "activity");
       let AddTextarea = document.getElementById("activityAddTextarea");
-      localStorage.removeItem("activityData");
+      let formData = JSON.parse(localStorage.getItem("formData")) || {};
+      delete formData["activity"];
+      localStorage.setItem("formData", JSON.stringify(formData));
       activities.forEach((activity, index) => {
         if (!document.getElementById(`activity${index}`)) {
           AddTextarea.dispatchEvent(new Event("click"));

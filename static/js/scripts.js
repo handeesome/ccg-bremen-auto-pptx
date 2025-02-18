@@ -19,25 +19,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   await getBibleVerses();
 
   //Part 0
-  createRadio("isCommunion", 2, "圣餐敬拜", "圣餐敬拜");
-  createRadio("isCommunion", 2, "主日敬拜", "主日敬拜");
+  createRadio("isCommunion", 2, "圣餐崇拜", "圣餐崇拜");
+  createRadio("isCommunion", 2, "主日崇拜", "主日崇拜");
 
   let response = await fetch("../static/data/lyrics.json");
   let lyricsData = await response.json();
   createRadio("lyricsRadio", 3, lyricsData["宝架清影"], "宝架清影");
   createRadio("lyricsRadio", 3, lyricsData["靠近十架"], "靠近十架");
   createRadio("lyricsRadio", 3, lyricsData["破碎"], "破碎");
-
-  let zhuRi = document.getElementById("isCommunion主日敬拜Radio");
-  zhuRi.addEventListener("change", function () {
-    document.getElementById("communionTitle").style.display = "none";
-    document.getElementById("lyricsRadio").style.display = "none";
-  });
-  let shengCan = document.getElementById("isCommunion圣餐敬拜Radio");
-  shengCan.addEventListener("change", function () {
-    document.getElementById("communionTitle").style.display = "flex";
-    document.getElementById("lyricsRadio").style.display = "flex";
-  });
 
   // Part 1
   createWeekList("thisWeekList");
@@ -88,9 +77,17 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   //resume from local storage
-  resumeInputData();
-  resumeVerseData();
-  resumeTextareaData("activity");
-  resumeTextareaData("prayerWorld");
-  resumeTextareaData("prayerChurch");
+  const savedData = localStorage.getItem("formData");
+  if (savedData) {
+    const restore = confirm("Would you like to restore your previous session?");
+    if (restore) {
+      resumeInputData();
+      resumeVerseData();
+      resumeTextareaData("activity");
+      resumeTextareaData("prayerWorld");
+      resumeTextareaData("prayerChurch");
+    } else {
+      localStorage.removeItem("formData"); // Clear if user doesn't want to restore
+    }
+  }
 });

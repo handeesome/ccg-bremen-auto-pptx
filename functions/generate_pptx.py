@@ -44,7 +44,8 @@ def generate_pptx(templatePath, formData):
     year = date[0]
     month = date[1]
     day = date[2]
-    partTwo(slide, year, month, day, communion=(formData["isCommunion"]=="圣餐崇拜"))
+    isCommunion = (formData["isCommunion"]=="圣餐崇拜")
+    partTwo(slide, year, month, day, communion=isCommunion)
 
     # 主在圣殿中
     partThree(prs)
@@ -75,7 +76,7 @@ def generate_pptx(templatePath, formData):
 
     # 讲道
     title = formData['zhuTi1']
-    经文 =''.join([jingWen["fullName"] for jingWen in formData['jingWen']])
+    经文 =''.join([jingWen["abbrName"] for jingWen in formData['jingWen']])
     partNine(prs, title, 证道, 经文)
 
     # 回应诗歌 
@@ -88,7 +89,7 @@ def generate_pptx(templatePath, formData):
 
     # 活动报告
     activities = formData['activity']
-    partTwelve(prs, activities)
+    partTwelve(prs, activities, isCommunion=isCommunion)
 
     # 每月金句
     jinjuLines = formData['jinJu']
@@ -97,12 +98,12 @@ def generate_pptx(templatePath, formData):
     # 下周事奉名单
     日期 = formData['date2']
     主题 = formData['zhuTi2']
-    证道 = ''.join(formData['nextWeekListzhengDao'])
+    证道 = ' '.join(formData['nextWeekListzhengDao'])
     经文 = '\n'.join(verses["fullName"] for verses in formData['jingWen'])
-    司会 = ''.join(formData['nextWeekListsiHui'])
-    PPT = ''.join(formData['nextWeekListppt'])
-    接待 = ''.join(formData['nextWeekListjieDai'])
-    儿童主日学 = ''.join(formData['nextWeekListerTong'])
+    司会 = ' '.join(formData['nextWeekListsiHui'])
+    PPT = ' '.join(formData['nextWeekListppt'])
+    接待 = ' '.join(formData['nextWeekListjieDai'])
+    儿童主日学 = ' '.join(formData['nextWeekListerTong'])
     partFourteen(prs, 日期, 主题, 证道, 经文, 司会, PPT, 接待, 儿童主日学)
 
     # 欢迎新朋友
@@ -110,7 +111,7 @@ def generate_pptx(templatePath, formData):
 
     # 圣餐礼
     shengcanSong = formData['lyricsRadio']
-    if shengcanSong != 'None':
+    if isCommunion:
         partSixteen(prs, shengcanSong)
 
     # 三一颂
