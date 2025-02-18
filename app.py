@@ -18,16 +18,12 @@ def procee_from():
 
         if not data:
             return jsonify({"error": "No JSON received"}), 400
-
+        generate_pptx("./docs/template.pptx", data)
         return jsonify({"message": "Success"}), 200
     except Exception as e:
         print("Error processing form:", str(e))
         return jsonify({"error": str(e)}), 400
     
-    # Access form data
-    form_data = request.form
-    # Process your data here
-    return {'status': 'success', 'data': dict(form_data)}
 if __name__ == '__main__':
 
    app.run(debug = True)

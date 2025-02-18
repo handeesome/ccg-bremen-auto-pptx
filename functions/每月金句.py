@@ -14,9 +14,8 @@ def partThirteen(prs, month, verseLines):
     else:
         ValueError("Invalid input, must be between 1 and 12.")
     title = month + '月份金句'
-    chunks = parseVerses(verseLines, isQiYing=True)[0]
-    fullName = chunks[0]
-    verses = chunks[2]
+    fullName = verseLines[0]["fullName"]
+    verses = [verses[1] for verses in verseLines[0]["fullVerse"]]
     slide = newSlide(prs, title)
     txBox = addTextBox(slide, 1.72, 4.5, 21.8, 14.55)
     p = txBox.text_frame.paragraphs[0]

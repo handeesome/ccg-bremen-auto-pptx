@@ -71,7 +71,7 @@ export const books = new Array(
   "启示录"
 );
 
-var simple_books = new Array(
+export const simple_books = new Array(
   "创",
   "出",
   "利",

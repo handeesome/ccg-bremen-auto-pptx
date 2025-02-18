@@ -7,14 +7,12 @@ from .helper import *
 
 def partSeven(prs, verseLines):
     firstSlide = newSlide(prs, '启应经文')
-    chunks = parseVerses(verseLines, isQiYing=True)
-    fullNames = '\n'.join([chunk[0] for chunk in chunks])
+    fullNames = '\n'.join(verses["fullName"] for verses in verseLines)
     newCenterBox(firstSlide, fullNames)
-
-    for chunk in chunks:
-        abbrName = chunk[1]
-        verses = chunk[2]
-        groups = verseGroup(verses, isQiYing=True)
+    for verses in verseLines:
+        verse = parseVerses(verses, isQiYing=True)
+        abbrName = verses["abbrName"]
+        groups = verseGroup(verse, isQiYing=True)
         title = '启应经文（' + abbrName + '）'
         for group in groups:
             slide = newSlide(prs, title)

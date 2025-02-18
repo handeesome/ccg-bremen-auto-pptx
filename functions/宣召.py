@@ -7,14 +7,11 @@ from .helper import *
 
 
 def partFour(prs, verseLines):
-
-    chunks = parseVerses(verseLines)
     slide = newSlide(prs, '宣召')
-    content = "\n".join([chunk[0] for chunk in chunks])
-
-    newCenterBox(slide, content)
-    for chunk in chunks:
-        abbrName = chunk[1]
-        title = '宣召（' + abbrName + '）'
-        itemsPagesHasSpace(prs, title, chunk[2], charPerLine=15)
+    verseNames = '\n'.join(verses["fullName"] for verses in verseLines)
+    newCenterBox(slide, verseNames)
+    for verses in verseLines:
+        verse = parseVerses(verses)
+        title = '宣召（' + verses["abbrName"] + '）'
+        itemsPagesHasSpace(prs, title, verse, charPerLine=15)
         # itemsPages(prs, title, chunk[2], fontSize=36)

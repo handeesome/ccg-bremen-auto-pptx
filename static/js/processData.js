@@ -1,4 +1,5 @@
 import { createTextareaSet } from "./createHTML.js";
+import { books, simple_books } from "./bibleIndexes.js";
 export function parseVerse(verseString) {
   const regex = /(.+?)\s+(\d+):(\d+)(?:-(\d+))?/;
   const match = verseString.match(regex);
@@ -88,13 +89,19 @@ export function updateVerseData(prefix, key, value) {
   }
 
   selectedVerse[key] = value;
-  selectedVerse.fullName = formatVerse(selectedVerse);
+  let fullName = formatVerse(selectedVerse);
+  let abbrWord = simple_books[books.indexOf(selectedVerse.book)];
+  selectedVerse.fullName = fullName;
+  selectedVerse.abbr = abbrWord;
+  selectedVerse.abbrName = formatVerse(selectedVerse, false);
 
   localStorage.setItem("formData", JSON.stringify(formData)); // Save to localStorage
 }
 
-function formatVerse(verse) {
-  return `${verse.book} ${verse.chapter}:${verse.verseFrom}-${verse.verseTo}`;
+function formatVerse(verse, fullName = true) {
+  if (fullName)
+    return `${verse.book} ${verse.chapter}:${verse.verseFrom}-${verse.verseTo}`;
+  else return `${verse.abbr} ${verse.chapter}:${verse.verseFrom}`;
 }
 export function removeVerseData(newRow, prefix) {
   let dropdowns = newRow.querySelectorAll("select");

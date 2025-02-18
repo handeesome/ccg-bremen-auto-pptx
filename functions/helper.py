@@ -113,50 +113,16 @@ def verseGroup(verses, character_limit=90, isQiYing=False):
     return groups
 
 
-def parseVerses(verseLines, isQiYing=False):
-    """
-    Parse and extract verses from a text file and organize them into chunks.
-
-    Parameters:
-        versePath (str): The path to the text file containing verses.
-        isQiYing (bool, optional): 启应经文 if True. Default is False.
-
-    Returns:
-        list: A list of chunks, each containing the full name, abbreviation, and verses.
-    """
-    chunks = []
-    # with open(versePath, 'r', encoding='utf-8') as file:
-    # file_contents = file.read()
-    
-    parts = verseLines.split('$')
-    if len(parts) > 0:
-        parts.pop(0)
-    for part in parts:
-        match = re.search(r'(.*)\n(..)', part)
-        # abbreviation of the book
-        if(match.group(2)[1].isdigit()):
-            abbr = match.group(2)[0]
+def parseVerses(verses, isQiYing=False):
+    verseArr = []
+    verseFrom = int(verses["verseFrom"])
+    for verse in verses["fullVerse"]:
+        if isQiYing:# 启应经文 needs the verses without verse numbers
+            verseArr.append(verse[1])
         else:
-            abbr = match.group(2)
-        fullName = match.group(1)
-        number = fullName.split(' ')[1]
-        if isQiYing:
-            # 启应经文 needs the verses without verse numbers
-            verses = re.findall(r' (.*)', part)
-            verses.pop(0)
-        else:
-            # Extract verses with their verse numbers
-            verses = re.findall(r'.\d+:(\d+.*)', part)
-
-            # Remove the first element if its length is less than 4
-            # i.e. 创1:1 --> '1' after parsing
-            if len(verses[0]) < 6:
-                verses.pop(0)
-
-        # Create a return value with the full name, abbreviation, and verses
-        chunks.append([fullName, f"{abbr} {number}", verses])
-    return chunks
-
+            verseArr.append(str(verseFrom) +' '+verse[1])
+            verseFrom += 1
+    return verseArr
 
 def divide_verse_evenly(verse):
     """

@@ -19,7 +19,7 @@ birthdaySong = {"songName": "赐福于你", "audioPath":"docs/生日歌.mp3", "l
         平安喜乐天天充满你
         """)}
 
-def partTwelve(prs, items, isBirthday=False, birthdayList=None):
+def partTwelve(prs, items, isBirthday=False, birthdayList='None'):
     slide = newSlide(prs, '')
     txBox = newCenterBox(slide, '活动报告')
     txBox.text_frame.paragraphs[0].font.color.rgb = RGBColor(0x2E, 0x75, 0xB6)

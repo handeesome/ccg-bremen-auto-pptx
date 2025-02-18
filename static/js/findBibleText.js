@@ -7,7 +7,7 @@ export function findBibleText(searchPrompt) {
       console.error(source ? err + ": " + source : err);
     },
     onTextLine: function (prefix, text) {
-      result.push({ [prefix]: text });
+      result.push([prefix, text]);
     },
   });
 

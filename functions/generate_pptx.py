@@ -44,19 +44,19 @@ def generate_pptx(templatePath, formData):
     year = date[0]
     month = date[1]
     day = date[2]
-    partTwo(slide, year, month, day, communion=formData['shengcan']!="None")
+    partTwo(slide, year, month, day)
 
     # 主在圣殿中
     partThree(prs)
 
     # 宣召
-    xuanzhaoLines = formData['xuanzhaoLines']
-    partFour(prs, xuanzhaoLines)
+    
+    partFour(prs, formData['xuanZhao'])
 
     # 敬拜赞美 
-    songOne = formData['songOne']
-    songTwo = formData['songTwo']
-    songThree = formData['songThree']
+    songOne = formData['song1']
+    songTwo = formData['song2']
+    songThree = formData['song3']
     partFive(prs, songOne, songTwo, songThree)
 
     # 为儿童祷告
@@ -66,51 +66,50 @@ def generate_pptx(templatePath, formData):
     partSix(prs)
 
     # 启应经文
-    qiyingLines = formData['qiyingLines']
+    qiyingLines = formData['qiYing']
     partSeven(prs, qiyingLines)
 
     # 读经 
-    dujingLines = formData['dujingLines']
+    dujingLines = formData['duJing']
     partEight(prs, dujingLines)
+
     # 讲道
-    title = formData['jiangdaotimu']
-    经文 = formData['dujing']
+    title = formData['zhuTi1']
+    经文 =''.join([jingWen["fullName"] for jingWen in formData['jingWen']])
     partNine(prs, title, 证道, 经文)
 
     # 回应诗歌 
-    songHuiying = formData['songHuiying']
+    songHuiying = formData['song4']
     partTen(prs, songHuiying)
 
     # 奉献回应礼
-    fengxianjingwen = formData['fengxianjingwen']
+    fengxianjingwen = formData['verseRadio']
     partEleven(prs, fengxianjingwen)
 
     # 活动报告
-    pattern = r'\d+\.\s'
-    reports = re.split(pattern, formData['huodongbaogao'])
-    reports = [item.strip() for item in reports if item.strip()]
-    partTwelve(prs, reports, isBirthday=formData['birthday']=='true', birthdayList=formData['birthdayList'])
+    activity = formData['activity']
+    partTwelve(prs, activity, isBirthday='true')
 
     # 每月金句
-    jinjuLines = formData['meiyuejinjuLines']
+    jinjuLines = formData['jinJu']
     partThirteen(prs, int(month), jinjuLines)
 
     # 下周事奉名单
     日期 = formData['date2']
-    主题 = formData['zhuti']
-    证道 = formData['zhengdao2'] + formData['suffixZhengdao2']
-    经文 = formData['jingwen']
-    司会 = formData['sihui2'] + formData['suffixSihui2']
-    PPT = formData['ppt2'] + formData['suffixPpt2']
-    接待 = formData['jiedai2'] + formData['suffixJiedai2']
-    儿童主日学 = formData['ertongxue2'] + formData['suffixErtongxue2']
+    主题 = formData['zhuTi2']
+    证道 = ''.join(formData['nextWeekListzhengDao'])
+    经文 = '\n'.join(verses["fullName"] for verses in formData['jingWen'])
+    司会 = ''.join(formData['nextWeekListsiHui'])
+    PPT = ''.join(formData['nextWeekListppt'])
+    接待 = ''.join(formData['nextWeekListjieDai'])
+    儿童主日学 = ''.join(formData['nextWeekListerTong'])
     partFourteen(prs, 日期, 主题, 证道, 经文, 司会, PPT, 接待, 儿童主日学)
 
     # 欢迎新朋友
     partFifteen(prs)
 
     # 圣餐礼
-    shengcanSong = formData['shengcan']
+    shengcanSong = formData['lyricsRadio']
     if shengcanSong != 'None':
         partSixteen(prs, shengcanSong)
 
@@ -127,15 +126,12 @@ def generate_pptx(templatePath, formData):
     partTwenty(prs)
 
     # 祷告会
-    pattern = r'\d+\.\s'
-    prayerWorld = re.split(pattern, formData['daogaoshijie'])
-    prayerWorld = [item.strip() for item in prayerWorld if item.strip()]
-    prayerChurch = re.split(pattern, formData['daogaojiaohui'])
-    prayerChurch = [item.strip() for item in prayerChurch if item.strip()]
+    prayerWorld = formData['prayerWorld']
+    prayerChurch = formData['prayerChurch']
     partTwentyOne(prs, prayerWorld, prayerChurch)
 
-    os.chdir(destination)
     fileName = formData['date1'] + '.pptx'
     prs.save(fileName)
-    print(fileName + "生成成功，请在" + destination + "中查看")
+    print(fileName + "生成成功，请在当前目录中查看")
+    # print(fileName + "生成成功，请在" + destination + "中查看")
 

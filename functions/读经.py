@@ -6,13 +6,13 @@ from .helper import *
 
 def partEight(prs, verseLines):
     firstSlide = newSlide(prs, '读经')
-    chunks = parseVerses(verseLines)
-    fullNames = '\n'.join([chunk[0] for chunk in chunks])
+    fullNames = '\n'.join(verses["fullName"] for verses in verseLines)
     newCenterBox(firstSlide, fullNames)
 
-    for chunk in chunks:
-        abbrName = chunk[1]
+    for verses in verseLines:
+        verse = parseVerses(verses)
+        abbrName = verses["abbrName"]
         title = '读经（' + abbrName + '）'
-        itemsPagesHasSpace(prs, title, chunk[2], charPerLine=15)
+        itemsPagesHasSpace(prs, title, verse, charPerLine=15)
         # itemsPages(prs, title, chunk[2], fontSize=36)
         
