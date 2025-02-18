@@ -71,14 +71,3 @@ If you'd like to contribute to the project, please follow these guidelines:
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
-
-First Name: Han
-Last Name: Wu
-Cell Phone: +86 13484255936
-Email-Address: inkittyuanyue@gmail.com
-Permanant Address: 101 Brooklyn St, North Adams, Massachusetts 01247-2558
-Citizenship: China
-Current Visa Status: Living in the USA with a Visa
-Visa Type: F1 Visa Student
-Visa Expiration Date: 07/18/2027
-School That lssued Current 1-20: Grace Christian School

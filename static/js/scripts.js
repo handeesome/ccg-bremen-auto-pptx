@@ -18,6 +18,27 @@ import {
 document.addEventListener("DOMContentLoaded", async () => {
   await getBibleVerses();
 
+  //Part 0
+  createRadio("isCommunion", 2, "圣餐敬拜", "圣餐敬拜");
+  createRadio("isCommunion", 2, "主日敬拜", "主日敬拜");
+
+  let response = await fetch("../static/data/lyrics.json");
+  let lyricsData = await response.json();
+  createRadio("lyricsRadio", 3, lyricsData["宝架清影"], "宝架清影");
+  createRadio("lyricsRadio", 3, lyricsData["靠近十架"], "靠近十架");
+  createRadio("lyricsRadio", 3, lyricsData["破碎"], "破碎");
+
+  let zhuRi = document.getElementById("isCommunion主日敬拜Radio");
+  zhuRi.addEventListener("change", function () {
+    document.getElementById("communionTitle").style.display = "none";
+    document.getElementById("lyricsRadio").style.display = "none";
+  });
+  let shengCan = document.getElementById("isCommunion圣餐敬拜Radio");
+  shengCan.addEventListener("change", function () {
+    document.getElementById("communionTitle").style.display = "flex";
+    document.getElementById("lyricsRadio").style.display = "flex";
+  });
+
   // Part 1
   createWeekList("thisWeekList");
   createInput("zhuTi1", "text", "主题:");
@@ -61,13 +82,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   createTextareaSet("prayerWorldTextarea", "prayerWorld");
   createTextareaSet("prayerChurchTextarea", "prayerChurch");
 
-  //Part7
-  let response = await fetch("../static/data/lyrics.json");
-  let lyricsData = await response.json();
-  createRadio("lyricsRadio", 3, lyricsData["宝架清影"], "宝架清影");
-  createRadio("lyricsRadio", 3, lyricsData["靠近十架"], "靠近十架");
-  createRadio("lyricsRadio", 3, lyricsData["破碎"], "破碎");
-
+  // Make sure the radio buttons trigger at start once
   document.querySelectorAll('input[type="radio"]:checked').forEach((radio) => {
     radio.dispatchEvent(new Event("change"));
   });

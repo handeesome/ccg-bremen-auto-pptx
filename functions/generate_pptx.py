@@ -44,7 +44,7 @@ def generate_pptx(templatePath, formData):
     year = date[0]
     month = date[1]
     day = date[2]
-    partTwo(slide, year, month, day)
+    partTwo(slide, year, month, day, communion=(formData["isCommunion"]=="圣餐崇拜"))
 
     # 主在圣殿中
     partThree(prs)
@@ -87,8 +87,8 @@ def generate_pptx(templatePath, formData):
     partEleven(prs, fengxianjingwen)
 
     # 活动报告
-    activity = formData['activity']
-    partTwelve(prs, activity, isBirthday='true')
+    activities = formData['activity']
+    partTwelve(prs, activities)
 
     # 每月金句
     jinjuLines = formData['jinJu']

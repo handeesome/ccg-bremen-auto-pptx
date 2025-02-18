@@ -1,7 +1,5 @@
 <!DOCTYPE html>
 <html lang="zh">
-  <script src="../static/js/changeMonthly.js"></script>
-
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -21,6 +19,16 @@
       </div>
       <div class="card-body">
         <form id="pptxForm">
+          <!-- 第零部分 -->
+          <div
+            class="form-section col-auto d-flex flex-column align-items-center">
+            <div id="isCommunion" class="row mb-3"></div>
+            <div class="mb-3" id="communionTitle">
+              <h4>圣餐礼诗歌</h4>
+            </div>
+            <div class="row mb-3" id="lyricsRadio"></div>
+          </div>
+
           <!-- 第一部分 -->
           <div class="row justify-content-center">
             <div class="form-section col-auto text-center mx-3">
@@ -96,15 +104,6 @@
               </div>
               <div id="prayerChurchTextarea"></div>
             </div>
-          </div>
-
-          <!-- 第七部分 -->
-          <div
-            class="form-section col-auto d-flex flex-column align-items-center">
-            <div class="mb-3">
-              <h4>圣餐礼诗歌</h4>
-            </div>
-            <div class="row mb-3" id="lyricsRadio"></div>
           </div>
 
           <h2 class="text-center"
