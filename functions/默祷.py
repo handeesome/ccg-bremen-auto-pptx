@@ -8,6 +8,6 @@ from .helper import *
 
 def partTwenty(prs):
     slide = newSlide(prs, '')
-    slide.shapes.add_picture('docs/默祷.jpg', 0, 0)
+    slide.shapes.add_picture('docs/默祷.png', 0, 0)
     addAudio(slide, 'docs/默祷.mp3')
     return slide

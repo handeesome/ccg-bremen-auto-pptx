@@ -79,7 +79,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   //resume from local storage
   const savedData = localStorage.getItem("formData");
   if (savedData) {
-    const restore = confirm("Would you like to restore your previous session?");
+    const restore = confirm("你想要恢复上一次的内容吗？");
     if (restore) {
       resumeInputData();
       resumeVerseData();
@@ -88,6 +88,15 @@ document.addEventListener("DOMContentLoaded", async () => {
       resumeTextareaData("prayerChurch");
     } else {
       localStorage.removeItem("formData"); // Clear if user doesn't want to restore
+      document
+        .getElementById("isCommunion主日崇拜Radio")
+        .dispatchEvent(new Event("change"));
+      document
+        .getElementById("verseRadio林后9:6-7Radio")
+        .dispatchEvent(new Event("change"));
+      document
+        .getElementById("lyricsRadio破碎Radio")
+        .dispatchEvent(new Event("change"));
     }
   }
 });

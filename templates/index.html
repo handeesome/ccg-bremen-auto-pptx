@@ -126,6 +126,7 @@
         .addEventListener("click", function () {
           let formData = JSON.parse(localStorage.getItem("formData")) || "{}";
           let categories = ["xuanZhao", "qiYing", "duJing", "jinJu", "jingWen"];
+
           categories.forEach((category) => {
             formData[category].forEach((verse, index) => {
               formData[category][index].fullVerse = findBibleText(

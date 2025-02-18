@@ -106,21 +106,25 @@ def _versePage(prs, choice):
 def _lyricsPage(prs):
     
     #2024 奉献回应诗
-    audioPath = 'docs/奉献回应诗歌.mp3'
+    audioPath = 'docs/奉献回应诗歌.m4a'
     lyrics = textwrap.dedent("""
     [Page 1]
-    主啊  我今完全献上
-    一切所有归于祢
-    一生行事尽依靠祢
-    日日与祢不分离
+    主 我是一个活祭
+    我不再属于自己
+    甘心乐意献给你
+    一生一世永属你
                              
     [Page 2]
-    一切全献上
-    一切全献上
-    我将所有全归耶稣
-    一切全献上
+    我的生命 每个气息
+    全是你所赐予
+    财富能力 血汗热情
+    理当献上归你
+
+    [Page 3]
+    膏我 用我 从天降下火
+    愿你 悦纳 献上的所有
     """)
-    song = '奉献回应诗：一切全献上'
+    song = '奉献回应诗：活祭'
     lyricsPages(prs, song, lyrics, audioPath, titleFontSize=36)
 
     song = '奉献回应礼'

@@ -231,13 +231,13 @@ export function resumeInputData() {
     "thisWeekListzhengDao",
   ];
   inputData.forEach((key) => {
-    if (!document.getElementById(key)) return;
     let input = document.getElementById(key);
-    let arr = formData[key.replace("Input", "")];
-    if (Array.isArray(arr)) {
-      input.value = arr[0];
-    } else {
-      input.value = arr;
+    if (!input) return; // Skip if input field does not exist
+
+    let dataKey = key.replace("Input", "");
+    if (formData.hasOwnProperty(dataKey) && formData[dataKey] !== undefined) {
+      let value = formData[dataKey];
+      input.value = Array.isArray(value) ? value[0] || "" : value;
     }
   });
 }
