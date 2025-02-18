@@ -144,7 +144,11 @@
           })
             .then((response) => response.json())
             .then((data) => {
-              console.log("Server Response:", data);
+              if (data.fileName) {
+                window.location.href = "/download/" + data.fileName; // Redirect to download
+              } else {
+                alert("Error generating PPTX");
+              }
             })
             .catch((error) => console.error("Error:", error));
         });

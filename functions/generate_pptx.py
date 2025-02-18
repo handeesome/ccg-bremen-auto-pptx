@@ -131,8 +131,10 @@ def generate_pptx(templatePath, formData):
     prayerChurch = formData['prayerChurch']
     partTwentyOne(prs, prayerWorld, prayerChurch)
 
-    fileName = formData['date1'] + '.pptx'
-    prs.save(fileName)
-    print(fileName + "生成成功，请在当前目录中查看")
-    # print(fileName + "生成成功，请在" + destination + "中查看")
+    fileName = formData['date1'] + '.pptx'  # Name the file based on the date
+    filePath = os.path.join("docs", fileName)  # Save inside "docs/"
+    prs.save(filePath)  # Save the file
+    print(filePath + " 生成成功，请在 docs/ 目录中查看")
+
+    return fileName  # Return the filename for Flask to use
 
