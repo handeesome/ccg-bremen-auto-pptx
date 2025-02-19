@@ -61,3 +61,9 @@ input[type="radio"]:checked + .card {
     transform: rotate(360deg);
   }
 }
+
+.logo {
+  height: 4rem; /* Adjust height */
+  margin-right: 10px; /* Add spacing between logo and text */
+  vertical-align: middle; /* Aligns with text */
+}
