@@ -1,5 +1,6 @@
 import os
-from flask import Flask, render_template, request, jsonify, send_file
+import io
+from flask import Flask, render_template, request, jsonify, send_file, after_this_request
 from functions.generate_pptx import generate_pptx
 import datetime
 
@@ -41,9 +42,36 @@ def process_form():
 def download_pptx(fileName):
     try:
         pptx_path = os.path.join("docs", fileName)
-        return send_file(pptx_path, as_attachment=True, download_name=fileName)
+        
+        # Read the file into memory and close it immediately
+        with open(pptx_path, 'rb') as f:
+            file_data = f.read()
+        
+        # Create a BytesIO object from the file data
+        file_stream = io.BytesIO(file_data)
+        file_stream.seek(0)  # Reset the stream position to the beginning
+        
+        @after_this_request
+        def cleanup(response):
+            try:
+                if os.path.exists(pptx_path):
+                    os.remove(pptx_path)
+                    print(f"Successfully deleted: {pptx_path}")
+                else:
+                    print(f"File not found: {pptx_path}")
+            except Exception as e:
+                print(f"Error deleting file: {e}")
+            return response
+        
+        # Send the in-memory file as a response
+        return send_file(
+            file_stream,
+            as_attachment=True,
+            download_name=fileName,
+            mimetype='application/vnd.openxmlformats-officedocument.presentationml.presentation'
+        )
+    
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
 if __name__ == '__main__':
     application.run()  
