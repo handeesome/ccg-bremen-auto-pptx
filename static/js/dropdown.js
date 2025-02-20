@@ -41,7 +41,7 @@ function addTextBox(container, textBoxCounter, itemName, itemID) {
 function generateSuffixDropdown(dropdownId, ifPreacher = false) {
   let suffixes = [];
   if (ifPreacher) {
-    suffixes = ["牧师", "师母", "传道"];
+    suffixes = ["牧师", "师母", "传道", "神学生"];
   } else {
     suffixes = ["弟兄", "姊妹"];
   }

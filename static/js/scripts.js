@@ -13,6 +13,7 @@ import {
   resumeInputData,
   resumeTextareaData,
   resumeVerseData,
+  initializeFormData,
 } from "./processData.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -88,15 +89,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       resumeTextareaData("prayerChurch");
     } else {
       localStorage.removeItem("formData"); // Clear if user doesn't want to restore
-      document
-        .getElementById("isCommunion主日崇拜Radio")
-        .dispatchEvent(new Event("change"));
-      document
-        .getElementById("verseRadio林后9:6-7Radio")
-        .dispatchEvent(new Event("change"));
-      document
-        .getElementById("lyricsRadio破碎Radio")
-        .dispatchEvent(new Event("change"));
+      initializeFormData();
     }
   }
 });

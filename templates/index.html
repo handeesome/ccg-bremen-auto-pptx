@@ -134,45 +134,6 @@
 
     <script type="module" src="../static/js/scripts.js"></script>
 
-    <script type="module">
-      import { findBibleText } from "../static/js/findBibleText.js";
-      document
-        .getElementById("submitForm")
-        .addEventListener("click", function () {
-          let formData = JSON.parse(localStorage.getItem("formData")) || "{}";
-          let categories = ["xuanZhao", "qiYing", "duJing", "jinJu", "jingWen"];
-
-          try {
-            categories.forEach((category) => {
-              formData[category].forEach((verse, index) => {
-                formData[category][index].fullVerse = findBibleText(
-                  verse.fullName
-                );
-              });
-            });
-          } catch (error) {
-            alert("你有一些经文输入有误，请检查后再试。");
-            return;
-          }
-
-          fetch("/process-form", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(formData), // Send the entire JSON data
-          })
-            .then((response) => response.json())
-            .then((data) => {
-              if (data.fileName) {
-                window.location.href = "/download/" + data.fileName; // Redirect to download
-                alert("PPTX生成成功");
-              } else {
-                alert("你有一些地方是空白的或者没有选择，请检查后再试。");
-              }
-            })
-            .catch((error) => console.error("Error:", error));
-        });
-    </script>
+    <script type="module" src="../static/js/main.js"></script>
   </body>
 </html>

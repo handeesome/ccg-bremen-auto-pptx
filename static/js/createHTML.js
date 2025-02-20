@@ -42,11 +42,14 @@ export function createWeekList(weekListId) {
       `suffix${weekListId + role.id}`,
       `suffix${weekListId + role.id}`.includes("zhengDao")
     );
+
     let input = document.getElementById(`${weekListId + role.id}`);
     let suffix = document.getElementById(`suffix${weekListId + role.id}`);
-
     input.addEventListener("change", function () {
-      updateInputData(weekListId + role.id, [input.value, suffix.value]);
+      updateInputData(weekListId + role.id, [this.value, suffix.value]);
+    });
+    suffix.addEventListener("input", function () {
+      updateInputData(weekListId + role.id, [input.value, this.value]);
     });
   });
 }
@@ -128,7 +131,8 @@ export function createInput(containerId, type, labelText) {
   let input = document.getElementById(`${containerId}Input`);
   input.className = "form-control";
 
-  input.addEventListener("change", function () {
+  updateInputData(containerId, input.value); //initializa inputData
+  input.addEventListener("input", function () {
     updateInputData(containerId, this.value);
   });
   if (containerId.includes("song")) {
@@ -216,7 +220,7 @@ export function createRadio(
   });
 }
 
-function createTextarea(container, category) {
+function createTextarea(container, category, buttonPrimary) {
   let newTextareaDiv = document.createElement("div");
   newTextareaDiv.classList.add("mb-3", "d-flex", "align-items-center");
 
@@ -234,6 +238,9 @@ function createTextarea(container, category) {
   buttonRemove.onclick = function () {
     container.removeChild(newTextareaDiv);
     removeTextareaData(index, category);
+    if (container.querySelectorAll("textarea").length == 0) {
+      buttonPrimary.dispatchEvent(new Event("click"));
+    }
   };
 
   newTextareaDiv.appendChild(textareaElement);
@@ -247,7 +254,6 @@ function createTextarea(container, category) {
 
 export function createTextareaSet(containerId, category) {
   let container = document.getElementById(containerId);
-  createTextarea(container, category);
 
   let buttonContainer = document.createElement("div");
   buttonContainer.className = "text-center";
@@ -260,9 +266,10 @@ export function createTextareaSet(containerId, category) {
   container.insertAdjacentElement("beforeend", buttonContainer);
 
   buttonPrimary.addEventListener("click", function () {
-    let newTextareaDiv = createTextarea(container, category);
+    let newTextareaDiv = createTextarea(container, category, buttonPrimary);
     buttonContainer.insertAdjacentElement("beforebegin", newTextareaDiv);
   });
+  buttonPrimary.dispatchEvent(new Event("click"));
 }
 
 export function createFetchButton(containerId) {
