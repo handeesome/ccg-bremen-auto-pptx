@@ -41,7 +41,6 @@ document.getElementById("submitForm").addEventListener("click", function () {
       });
     });
   } catch (error) {
-    event.preventDefault(); // Prevent form submission
     navigateToUnselectedDropdowns();
     alert("你有经文未选择，请检查后再试。");
     return;

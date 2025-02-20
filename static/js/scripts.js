@@ -13,6 +13,7 @@ import {
   resumeInputData,
   resumeTextareaData,
   resumeVerseData,
+  initialFormData,
   initializeFormData,
 } from "./processData.js";
 
@@ -78,18 +79,21 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   //resume from local storage
-  const savedData = localStorage.getItem("formData");
+  const savedData = JSON.parse(localStorage.getItem("formData"));
+  let init = initialFormData;
   if (savedData) {
-    const restore = confirm("你想要恢复上一次的内容吗？");
-    if (restore) {
-      resumeInputData();
-      resumeVerseData();
-      resumeTextareaData("activity");
-      resumeTextareaData("prayerWorld");
-      resumeTextareaData("prayerChurch");
-    } else {
-      localStorage.removeItem("formData"); // Clear if user doesn't want to restore
-      initializeFormData();
+    if (JSON.stringify(savedData) !== JSON.stringify(init)) {
+      const restore = confirm("你想要恢复上一次的内容吗？");
+      if (restore) {
+        resumeInputData();
+        resumeVerseData();
+        resumeTextareaData("activity");
+        resumeTextareaData("prayerWorld");
+        resumeTextareaData("prayerChurch");
+      } else {
+        localStorage.removeItem("formData"); // Clear if user doesn't want to restore
+        initializeFormData();
+      }
     }
   }
 });

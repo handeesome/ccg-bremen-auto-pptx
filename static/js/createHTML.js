@@ -131,7 +131,6 @@ export function createInput(containerId, type, labelText) {
   let input = document.getElementById(`${containerId}Input`);
   input.className = "form-control";
 
-  updateInputData(containerId, input.value); //initializa inputData
   input.addEventListener("input", function () {
     updateInputData(containerId, this.value);
   });

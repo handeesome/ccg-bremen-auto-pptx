@@ -261,33 +261,31 @@ export function resumeRadioData() {
     });
   });
 }
-
+export const initialFormData = {
+  isCommunion: "主日崇拜",
+  lyricsRadio: "破碎",
+  verseRadio: "林后9:6-7",
+  date2: "",
+  zhuTi1: "",
+  thisWeekListsiHui: ["", ""],
+  thisWeekListppt: ["", ""],
+  zhuTi2: "",
+  song1: "",
+  song2: "",
+  song3: "",
+  song4: "",
+  thisWeekListzhengDao: ["", ""],
+  thisWeekListjieDai: ["", ""],
+  thisWeekListerTong: ["", ""],
+  nextWeekListzhengDao: ["", ""],
+  nextWeekListsiHui: ["", ""],
+  nextWeekListppt: ["", ""],
+  nextWeekListjieDai: ["", ""],
+  nextWeekListerTong: ["", ""],
+  activity: [""],
+  prayerWorld: [],
+  prayerChurch: [],
+};
 export function initializeFormData() {
-  let formData = {
-    isCommunion: "主日崇拜",
-    lyricsRadio: "破碎",
-    verseRadio: "林后9:6-7",
-    date2: "",
-    zhuTi1: "",
-    thisWeekListsiHui: ["", ""],
-    thisWeekListppt: ["", ""],
-    zhuTi2: "",
-    song1: "",
-    song2: "",
-    song3: "",
-    song4: "",
-    thisWeekListzhengDao: ["", ""],
-    thisWeekListjieDai: ["", ""],
-    thisWeekListerTong: ["", ""],
-    nextWeekListzhengDao: ["", ""],
-    nextWeekListsiHui: ["", ""],
-    nextWeekListppt: ["", ""],
-    nextWeekListjieDai: ["", ""],
-    nextWeekListerTong: ["", ""],
-    activity: [""],
-    prayerWorld: [],
-    prayerChurch: [],
-  };
-  localStorage.setItem("formData", JSON.stringify(formData));
-  return formData;
+  localStorage.setItem("formData", JSON.stringify(initialFormData));
 }
