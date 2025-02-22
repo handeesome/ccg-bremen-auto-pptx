@@ -138,6 +138,7 @@ export function createInput(containerId, type, labelText) {
     let label = document.getElementById(`${containerId}Label`);
     label.className += " song-container";
   }
+  return container;
 }
 
 export function createRadio(
@@ -160,7 +161,7 @@ export function createRadio(
           class="d-none" 
           value="${contentTitle}"
           checked/>
-        <div class="card p-3 h-100 d-flex flex-column">
+        <div class="card p-3 h-100 d-flex flex-column clickable">
           <blockquote class="blockquote mb-0 flex-grow-1" id="${
             containerId + contentTitle
           }Blockquote">
@@ -298,5 +299,25 @@ export function updateJinJuText() {
   };
   ["jinJuDropdownVerseFrom", "jinJuDropdownVerseTo"].forEach((id) => {
     document.getElementById(id).addEventListener("change", updateText);
+  });
+}
+
+export function createSongInput(songId, text) {
+  const input = createInput(songId, "text", text);
+  const showSearchBtn = document.createElement("button");
+  showSearchBtn.className = "showSearchBtn col-auto";
+  showSearchBtn.type = "button";
+  showSearchBtn.textContent = "从Google Drive中搜索";
+  input.firstElementChild.appendChild(showSearchBtn);
+
+  const popupOverlay = document.getElementById("popup-overlay");
+  const searchContainer = document.getElementById("search-container");
+  showSearchBtn.addEventListener("click", function () {
+    const parentDiv = this.closest('div[id^="song"]');
+    window.clickedInput = parentDiv.querySelector('input[type="text"]');
+
+    searchContainer.style.display = "block";
+    popupOverlay.style.display = "block";
+    document.body.style.overflow = "hidden"; // Disable scrolling
   });
 }

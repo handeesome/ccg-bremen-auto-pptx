@@ -1,0 +1,111 @@
+#search-input {
+  padding: 10px;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 16px;
+}
+
+#search-results {
+  list-style: none;
+  padding: 0;
+  max-width: 50rem;
+}
+
+#search-results li {
+  background: #fff;
+  padding: 10px;
+  margin-bottom: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  list-style-type: none;
+}
+
+.popup {
+  display: none;
+  position: fixed;
+  left: 50%;
+  top: 20%;
+  transform: translate(-50%, 0%); /* Center the popup */
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000; /* Make sure the popup appears above other elements */
+}
+
+/* Content inside the popup */
+.popup-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+}
+
+/* Close button style */
+#closeSearchBtn {
+  background-color: #f44336; /* Red color */
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+#closeSearchBtn:hover {
+  background-color: #d32f2f; /* Darker red */
+}
+
+/* Style for the button to show the popup */
+.showSearchBtn {
+  padding: 10px 15px;
+  background-color: #4caf50; /* Green */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.showSearchBtn:hover {
+  background-color: #45a049; /* Darker green */
+}
+
+a {
+  text-decoration: none !important; /* Remove underline */
+  color: inherit !important; /* Keep the default text color */
+}
+
+a:visited {
+  color: inherit !important; /* Keep the color even after being clicked */
+}
+
+a:hover {
+  color: inherit !important; /* Keep the color when hovering */
+}
+
+a:focus {
+  outline: none !important; /* Remove outline on focus */
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  display: none; /* Hidden by default */
+  justify-content: center;
+  align-items: center;
+  z-index: 999; /* Higher than the rest of the page */
+}
+.no-results {
+  color: #888;
+  font-style: italic;
+  text-align: center;
+  padding: 10px;
+  font-size: 0.9em;
+}
+
+.clickable {
+  cursor: pointer;
+}

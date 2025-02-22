@@ -7,6 +7,7 @@ import {
   createTextareaSet,
   createFetchButton,
   updateJinJuText,
+  createSongInput,
 } from "./createHTML.js";
 
 import {
@@ -16,6 +17,7 @@ import {
   initialFormData,
   initializeFormData,
 } from "./processData.js";
+import { searchSongPopup } from "./popup.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
   await getBibleVerses();
@@ -38,15 +40,18 @@ document.addEventListener("DOMContentLoaded", async () => {
   createInput("zhuTi2", "text", "主题:");
   createBibleDropdownSet("nextWeekJingWen", "jingWen", "经文:");
   createWeekList("nextWeekList");
+
   //Part 2
   createBibleDropdownSet("bibleDropdownSet1", "xuanZhao", "宣召:");
   createBibleDropdownSet("bibleDropdownSet2", "qiYing", "启应:");
   createBibleDropdownSet("bibleDropdownSet3", "duJing", "读经:");
+
   //Part 3
-  createInput("song1", "text", "第一首诗歌:");
-  createInput("song2", "text", "第二首诗歌:");
-  createInput("song3", "text", "第三首诗歌:");
-  createInput("song4", "text", "回应诗歌:");
+  createSongInput("song1", "第一首诗歌");
+  createSongInput("song2", "第二首诗歌");
+  createSongInput("song3", "第三首诗歌");
+  createSongInput("song4", "回应诗歌");
+  searchSongPopup();
 
   //Part 4
   createTextareaSet("activityTextarea", "activity");
@@ -59,7 +64,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   createRadio(
     "verseRadio",
     2,
-    "所以，弟兄们，我以神的慈悲劝你们，将身体献上，当作活祭，是圣洁的，是神所喜悦的；你们如此事奉乃是理所当然的。所以，弟兄们",
+    "所以，弟兄们，我以神的慈悲劝你们，将身体献上，当作活祭，是圣洁的，是神所喜悦的；你们如此事奉乃是理所当然的。",
     "罗12:1"
   );
   createRadio(

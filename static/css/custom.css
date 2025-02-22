@@ -30,13 +30,13 @@ h2 {
 
 .form-select {
   width: auto !important;
+  cursor: pointer;
 }
 
 input[type="radio"]:checked + .card {
   background-color: #e3f2fd; /* Light blue */
   border-color: #007bff; /* Bootstrap primary */
 }
-
 .absolute-btn {
   position: absolute;
   left: 120%;
