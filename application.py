@@ -25,7 +25,7 @@ def get_latest_mod_time(directory):
 @application.route('/', methods=['GET'])
 def index():
     last_modified = get_latest_mod_time(os.getcwd())  # Scan all project files
-    get_gdrive_folder_structure('serviceAccountKey.json', '13Czs3mdHpL-5XDggphM9n2em4z2ZkSf4', 'temp')
+    get_gdrive_folder_structure('serviceAccountKey.json', '13Czs3mdHpL-5XDggphM9n2em4z2ZkSf4', 'static/temp')
     return render_template('index.html', last_modified=last_modified)
 
 @application.route('/process-form', methods=['POST'])

@@ -12,7 +12,7 @@ export function searchSongPopup() {
   });
 
   // Fetch the JSON data
-  fetch("../temp/GDriveSongs.json")
+  fetch("/static/temp/GDriveSongs.json")
     .then((response) => response.json())
     .then((data) => {
       const flattenedData = [];
