@@ -3,6 +3,7 @@ import io
 from flask import Flask, render_template, request, jsonify, send_file, after_this_request
 from functions.generate_pptx import generate_pptx
 import datetime
+from functions.getGDrive import get_gdrive_folder_structure
 
 # AWS requires the Flask app to be named "application"
 application = Flask(__name__)
@@ -24,6 +25,7 @@ def get_latest_mod_time(directory):
 @application.route('/', methods=['GET'])
 def index():
     last_modified = get_latest_mod_time(os.getcwd())  # Scan all project files
+    get_gdrive_folder_structure('serviceAccountKey.json', '13Czs3mdHpL-5XDggphM9n2em4z2ZkSf4', 'temp')
     return render_template('index.html', last_modified=last_modified)
 
 @application.route('/process-form', methods=['POST'])
