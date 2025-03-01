@@ -17,7 +17,7 @@ import {
   initialFormData,
   initializeFormData,
 } from "./processData.js";
-import { searchSongPopup } from "./popup.js";
+import { searchSongPopup, DIYpopup } from "./popup.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
   await getBibleVerses();
@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   createSongInput("song3", "第三首诗歌");
   createSongInput("song4", "回应诗歌");
   searchSongPopup();
-
+  DIYpopup();
   //Part 4
   createTextareaSet("activityTextarea", "activity");
   createFetchButton("fetchButtonParent");

@@ -307,7 +307,7 @@ export function createSongInput(songId, text) {
   const showSearchBtn = document.createElement("button");
   showSearchBtn.className = "showSearchBtn col-auto";
   showSearchBtn.type = "button";
-  showSearchBtn.textContent = "从Google Drive中搜索";
+  showSearchBtn.textContent = "从Google Drive中搜索下载";
   input.firstElementChild.appendChild(showSearchBtn);
 
   const popupOverlay = document.getElementById("popup-overlay");
@@ -319,5 +319,18 @@ export function createSongInput(songId, text) {
     searchContainer.style.display = "block";
     popupOverlay.style.display = "block";
     document.body.style.overflow = "hidden"; // Disable scrolling
+  });
+
+  const DIYBtn = document.createElement("button");
+  DIYBtn.className = "col-auto";
+  DIYBtn.type = "button";
+  DIYBtn.textContent = "自己制作";
+  input.firstElementChild.appendChild(DIYBtn);
+  const overlayDIY = document.getElementById("overlay-DIY");
+  const DIYContainer = document.getElementById("DIY-container");
+  DIYBtn.addEventListener("click", function () {
+    DIYContainer.style.display = "block";
+    overlayDIY.style.display = "block";
+    document.body.style.overflow = "hidden";
   });
 }

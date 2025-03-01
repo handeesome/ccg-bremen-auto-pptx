@@ -13,3 +13,4 @@ Pipfile.lock
 .vem/
 serviceAccountKey.json
 *test*
+*.zip

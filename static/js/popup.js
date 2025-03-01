@@ -148,3 +148,13 @@ export function searchSongPopup() {
     })
     .catch((err) => console.error("Error loading JSON:", err));
 }
+
+export function DIYpopup() {
+  const popupOverlay = document.getElementById("overlay-DIY");
+  popupOverlay.addEventListener("click", function (event) {
+    if (event.target === popupOverlay) {
+      popupOverlay.style.display = "none";
+      document.body.style.overflow = "auto";
+    }
+  });
+}
