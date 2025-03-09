@@ -21,7 +21,6 @@
 }
 
 .popup {
-  display: none;
   position: fixed;
   left: 50%;
   top: 20%;
@@ -32,7 +31,6 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   z-index: 1000; /* Make sure the popup appears above other elements */
 }
-
 /* Content inside the popup */
 .popup-content {
   display: flex;
@@ -57,12 +55,13 @@
 
 /* Style for the button to show the popup */
 .showSearchBtn {
-  padding: 10px 15px;
+  padding: 6px 12px;
   background-color: #4caf50; /* Green */
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  margin-right: 1rem;
 }
 
 .showSearchBtn:hover {

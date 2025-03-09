@@ -1,0 +1,37 @@
+.popup-DIY {
+  top: 10%;
+}
+
+.popup-DIY .DIY-pages {
+  display: none;
+}
+
+.draggable {
+  cursor: grab;
+}
+.lyrics-container {
+  min-height: 200px;
+  max-height: 70vh;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background: #f8f9fa;
+  overflow: auto;
+}
+.drop-indicator {
+  width: 4px;
+  min-height: 5rem;
+  background: #007bff;
+  position: absolute;
+  display: none;
+  top: 0;
+}
+.card .card-btn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  display: none;
+}
+.draggable:hover .card-btn {
+  display: block;
+}

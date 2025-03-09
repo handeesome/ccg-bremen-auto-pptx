@@ -51,8 +51,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   createSongInput("song2", "第二首诗歌");
   createSongInput("song3", "第三首诗歌");
   createSongInput("song4", "回应诗歌");
-  searchSongPopup();
-  DIYpopup();
   //Part 4
   createTextareaSet("activityTextarea", "activity");
   createFetchButton("fetchButtonParent");

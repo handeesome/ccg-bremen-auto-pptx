@@ -8,6 +8,7 @@ import {
   updateRadioData,
 } from "./processData.js";
 import { findBibleText } from "./findBibleText.js";
+import { openDIYpopup } from "./popup.js";
 
 export function createWeekList(weekListId) {
   const roles = [
@@ -322,15 +323,47 @@ export function createSongInput(songId, text) {
   });
 
   const DIYBtn = document.createElement("button");
-  DIYBtn.className = "col-auto";
+  DIYBtn.className = "col-auto btn btn-primary";
   DIYBtn.type = "button";
   DIYBtn.textContent = "自己制作";
   input.firstElementChild.appendChild(DIYBtn);
-  const overlayDIY = document.getElementById("overlay-DIY");
-  const DIYContainer = document.getElementById("DIY-container");
+
+  const overlayDIY = `
+    <div id="overlay-DIY-${songId}" class="overlay">
+      <div class="popup popup-DIY col-10">
+        <h1 class="text-center">DIY歌词顺序</h1>
+        <div class="popup-content DIY-input">
+          <div class="row justify-content-center">
+            <div class="col-6">
+              <textarea
+                id="lyricsInput${songId}"
+                rows="10"
+                class="form-control text-center"
+                placeholder="输入歌词，繁體会被自动转换成简体"></textarea>
+              <button type="button" class="btn btn-primary w-100"
+                >生成</button
+              >
+            </div>
+          </div>
+        </div>
+        <div class="row DIY-pages">
+          <div class="col-3">
+            <div id="lyricsContainer${songId}" class="lyrics-container"> </div>
+          </div>
+          <div class="col-9">
+            <div
+              id="slidePreviewContainer${songId}"
+              class="lyrics-container mb-10">
+              <div class="row"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    `;
+  const songContainer = document.getElementById(songId);
+  songContainer.insertAdjacentHTML("afterend", overlayDIY);
   DIYBtn.addEventListener("click", function () {
-    DIYContainer.style.display = "block";
-    overlayDIY.style.display = "block";
-    document.body.style.overflow = "hidden";
+    openDIYpopup(songId);
   });
 }

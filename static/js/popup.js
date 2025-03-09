@@ -149,12 +149,255 @@ export function searchSongPopup() {
     .catch((err) => console.error("Error loading JSON:", err));
 }
 
-export function DIYpopup() {
-  const popupOverlay = document.getElementById("overlay-DIY");
+export function openDIYpopup(songId) {
+  const overlayDIY = document.getElementById(`overlay-DIY-${songId}`);
+  overlayDIY.style.display = "block";
+  document.body.style.overflow = "hidden";
+  DIYpopup(overlayDIY, songId);
+}
+export function DIYpopup(popupOverlay, songId) {
   popupOverlay.addEventListener("click", function (event) {
     if (event.target === popupOverlay) {
       popupOverlay.style.display = "none";
       document.body.style.overflow = "auto";
     }
   });
+  const btn = popupOverlay.querySelector(".btn-primary");
+  btn.addEventListener("click", function () {
+    const DIYInput = popupOverlay.querySelector(".DIY-input");
+    DIYInput.style.display = "none";
+    const DIYPages = popupOverlay.querySelector(".DIY-pages");
+    DIYPages.style.display = "flex";
+    splitLyrics(songId);
+  });
+}
+
+function splitLyrics(songId) {
+  const lyrics = document.getElementById(`lyricsInput${songId}`).value.trim();
+  const container = document.getElementById(`lyricsContainer${songId}`);
+  container.innerHTML = ""; // Clear previous content
+
+  let paragraphs;
+
+  if (lyrics.includes("\n\n")) {
+    // Split by double line breaks
+    paragraphs = lyrics.split("\n\n").filter((p) => p.trim() !== "");
+  } else {
+    // Split into paragraphs every 4 lines
+    const lines = lyrics.split("\n").filter((line) => line.trim() !== "");
+    paragraphs = [];
+    for (let i = 0; i < lines.length; i += 4) {
+      paragraphs.push(lines.slice(i, i + 4).join("\n"));
+    }
+  }
+
+  // Generate cards for each paragraph
+  paragraphs.forEach((text, index) => {
+    const card = document.createElement("div");
+    card.classList.add("card", "mb-2", "draggable", "form-control");
+    card.draggable = true;
+    card.innerHTML = `
+      <div class="card-body">
+          <button class="btn btn-sm btn-secondary card-btn" type="button">编辑</button>
+          <div>${text.replace(/\n/g, "<br>")}</div>
+      </div>`;
+    card.setAttribute("data-index", index);
+    container.appendChild(card);
+
+    card.querySelector(".card-btn").addEventListener("click", (e) => {
+      e.target.style.visibility = "hidden";
+      card.draggable = false;
+      card.setAttribute("contenteditable", true);
+      card.style.cursor = "text";
+      card.focus();
+      card.onblur = () => {
+        card.draggable = true;
+        card.setAttribute("contenteditable", false);
+        card.style.cursor = "grab";
+        e.target.style.visibility = "visible";
+      };
+    });
+  });
+
+  makeDraggable(songId);
+}
+
+function makeDraggable(songId) {
+  const lyricsContainer = document.getElementById(`lyricsContainer${songId}`);
+  const slidePreviewContainer = document.getElementById(
+    `slidePreviewContainer${songId}`
+  );
+  let draggedItem = null;
+  let sourceContainer = null;
+  let dropIndicator = document.createElement("div");
+  dropIndicator.classList.add("drop-indicator");
+
+  [lyricsContainer, slidePreviewContainer].forEach((container) => {
+    container.addEventListener("dragstart", (e) => {
+      if (e.target.classList.contains("draggable")) {
+        sourceContainer = container;
+        if (container === lyricsContainer) {
+          // Clone only if dragging from lyrics container
+          draggedItem = e.target.cloneNode(true);
+          const btn = draggedItem.querySelector(".card-btn");
+          if (btn) {
+            btn.remove();
+          }
+          draggedItem.classList.add("dragging");
+          // Add slide number div if it doesn't exist
+          if (!draggedItem.querySelector(".slide-number")) {
+            const slideNumberDiv = document.createElement("div");
+            slideNumberDiv.classList.add("slide-number", "text-center", "mt-1");
+            draggedItem.appendChild(slideNumberDiv);
+          }
+        } else {
+          draggedItem = e.target;
+          draggedItem.classList.add("dragging");
+        }
+        setTimeout(() => (e.target.style.opacity = "0.3"), 0);
+      }
+    });
+
+    container.addEventListener("dragend", (e) => {
+      if (draggedItem) {
+        draggedItem.classList.remove("dragging");
+        e.target.style.opacity = "1";
+        draggedItem = null;
+        sourceContainer = null;
+      }
+      dropIndicator.style.display = "none";
+    });
+    container.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      const closest = getDragAfterElement(container, e.clientX, e.clientY);
+      if (closest.element) {
+        const parentCol = closest.element.parentElement;
+        if (!parentCol.contains(dropIndicator)) {
+          parentCol.appendChild(dropIndicator);
+        }
+        dropIndicator.style.height = "100%";
+        dropIndicator.style.display = "block";
+        dropIndicator.style.left = closest.isLeft ? "0px" : "100%";
+      } else {
+        dropIndicator.style.display = "none";
+      }
+    });
+    if (container === slidePreviewContainer) {
+      container.addEventListener("drop", (e) => {
+        e.preventDefault();
+        if (draggedItem) {
+          console.log(draggedItem);
+          const btn = document.createElement("button");
+          btn.classList.add("card-btn", "btn", "btn-sm", "btn-danger");
+          btn.textContent = "删除";
+          btn.type = "button";
+          draggedItem.appendChild(btn);
+          btn.addEventListener("click", (e) => {
+            e.target.parentElement.parentElement.remove();
+            updateSlideNumbers();
+          });
+          if (sourceContainer === lyricsContainer) {
+            const colContainer = document.createElement("div");
+            colContainer.classList.add("col-4", "mt-2");
+            colContainer.style.position = "relative";
+            colContainer.appendChild(draggedItem);
+          }
+          const { element, isLeft } = getDragAfterElement(
+            container,
+            e.clientX,
+            e.clientY
+          );
+          if (element) {
+            const parentCol = element.parentElement;
+            if (isLeft) {
+              parentCol.parentNode.insertBefore(
+                draggedItem.parentElement,
+                parentCol
+              );
+            } else {
+              parentCol.parentNode.insertBefore(
+                draggedItem.parentElement,
+                parentCol.nextSibling
+              );
+            }
+          } else {
+            container.firstElementChild.appendChild(draggedItem.parentElement);
+          }
+        }
+        updateSlideNumbers();
+      });
+    }
+  });
+
+  function getDragAfterElement(container, x, y) {
+    const draggableElements = [
+      ...container.querySelectorAll(".card:not(.dragging)"),
+    ];
+
+    let closestElement = null;
+    let isLeft = false;
+    let minDistance = Number.POSITIVE_INFINITY;
+
+    draggableElements.forEach((child) => {
+      const box = child.getBoundingClientRect();
+      const centerX = box.left + box.width / 2;
+      const centerY = box.top + box.height / 2;
+
+      const dx = x - centerX;
+      const dy = y - centerY;
+      const distance = Math.sqrt(dx * dx + dy * dy); // Use Pythagorean theorem
+
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestElement = child;
+        isLeft = x < centerX; // Check if mouse is on the left or right
+      }
+    });
+
+    // Check if the mouse is beyond the last element
+    const last3Element = draggableElements[draggableElements.length - 3];
+    if (last3Element) {
+      const last3Box = last3Element.getBoundingClientRect();
+      if (y > last3Box.bottom) {
+        if (x < last3Box.left) {
+          return { element: closestElement, isLeft };
+        }
+        return { element: null, isLeft: false }; // Indicate to add at the end
+      }
+    }
+
+    return { element: closestElement, isLeft };
+  }
+}
+
+function updateSlideNumbers() {
+  const slidePreviewContainer = document.getElementById(
+    "slidePreviewContainer"
+  );
+  const slides = slidePreviewContainer.querySelectorAll(".draggable");
+  slides.forEach((slide, index) => {
+    let slideNumber = slide.querySelector(".slide-number");
+    if (!slideNumber) {
+      slideNumber = document.createElement("div");
+      slideNumber.classList.add("slide-number", "text-center", "mt-1");
+      slide.appendChild(slideNumber);
+    }
+    slideNumber.textContent = `${index + 1}`;
+  });
+  adjustContainerHeight(slidePreviewContainer, 100);
+}
+function adjustContainerHeight(container, extraHeight) {
+  const elements = container.children;
+
+  if (elements.length === 0) return; // No elements, do nothing
+
+  const lastElement = elements[elements.length - 1]; // Get the last element
+  const containerBottom = container.getBoundingClientRect().bottom;
+  const lastElementBottom = lastElement.getBoundingClientRect().bottom;
+
+  const gap = containerBottom - lastElementBottom; // Calculate space
+  if (gap < extraHeight) {
+    container.style.height =
+      container.offsetHeight + (extraHeight - gap) + "px"; // Increase height
+  }
 }
