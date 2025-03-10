@@ -181,7 +181,16 @@ export function DIYpopup(popupOverlay, songId) {
     const saveBtn = popupOverlay.querySelector(".save-btn");
     saveBtn.style.visibility = "visible";
     saveBtn.addEventListener("click", function () {
-      console.log("save");
+      const slidePreviewContainer = document.getElementById(`slidePreviewContainer${songId}`);
+      const pages = slidePreviewContainer.querySelectorAll(".card-body")
+      let contentLst = []
+      pages.forEach(page=> {
+        let originalText = Array.from(page.querySelectorAll('div')).map(div => div.textContent).join('\n');
+        contentLst.push(originalText);
+      });
+      let formData = JSON.parse(localStorage.getItem("formData")) || {};
+      formData[`${songId}Pages`] = contentLst;
+      localStorage.setItem("formData", JSON.stringify(formData));
     });
   });
 }
@@ -219,7 +228,7 @@ function splitLyrics(songId) {
     card.innerHTML = `
       <div class="card-body">
           <button class="btn btn-sm btn-secondary card-btn" type="button">编辑</button>
-          <div>${text.replace(/\n/g, "<br>")}</div>
+          ${text.split('\n').map(line => `<div>${line}</div>`).join('')}
       </div>`;
     card.setAttribute("data-index", index);
     container.appendChild(card);
@@ -403,20 +412,4 @@ function updateSlideNumbers(songId) {
     }
     slideNumber.textContent = `${index + 1}`;
   });
-  adjustContainerHeight(slidePreviewContainer, 100);
-}
-function adjustContainerHeight(container, extraHeight) {
-  const elements = container.children;
-
-  if (elements.length === 0) return; // No elements, do nothing
-
-  const lastElement = elements[elements.length - 1]; // Get the last element
-  const containerBottom = container.getBoundingClientRect().bottom;
-  const lastElementBottom = lastElement.getBoundingClientRect().bottom;
-
-  const gap = containerBottom - lastElementBottom; // Calculate space
-  if (gap < extraHeight) {
-    container.style.height =
-      container.offsetHeight + (extraHeight - gap) + "px"; // Increase height
-  }
 }

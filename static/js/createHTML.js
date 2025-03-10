@@ -350,12 +350,12 @@ export function createSongInput(songId, text) {
         </div>
         <div class="row DIY-pages">
           <div class="col-3">
-            <div id="lyricsContainer${songId}" class="lyrics-container"> </div>
+            <div id="lyricsContainer${songId}" class="lyrics-container vh-100"> </div>
           </div>
           <div class="col-9">
             <div
               id="slidePreviewContainer${songId}"
-              class="lyrics-container mb-10">
+              class="lyrics-container mb-10 vh-100">
             </div>
           </div>
         </div>
