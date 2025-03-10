@@ -29,12 +29,10 @@ export function createWeekList(weekListId) {
         </div>
         <div class="col-4">
           <div class="d-flex gap-2">
-            <input type="text" class="form-control form-input" id="${
-              weekListId + role.id
-            }" />
-            <select class="form-select form-select-suffix" id="suffix${
-              weekListId + role.id
-            }" ></select>
+            <input type="text" class="form-control form-input" id="${weekListId + role.id
+      }" />
+            <select class="form-select form-select-suffix" id="suffix${weekListId + role.id
+      }" ></select>
           </div>
         </div>
       </div>`
@@ -163,9 +161,8 @@ export function createRadio(
           value="${contentTitle}"
           checked/>
         <div class="card p-3 h-100 d-flex flex-column clickable">
-          <blockquote class="blockquote mb-0 flex-grow-1" id="${
-            containerId + contentTitle
-          }Blockquote">
+          <blockquote class="blockquote mb-0 flex-grow-1" id="${containerId + contentTitle
+    }Blockquote">
             <p>
               ${content}
             </p>
@@ -326,6 +323,7 @@ export function createSongInput(songId, text) {
   DIYBtn.className = "col-auto btn btn-primary";
   DIYBtn.type = "button";
   DIYBtn.textContent = "自己制作";
+  DIYBtn.id = `DIYBtn${songId}`;
   input.firstElementChild.appendChild(DIYBtn);
 
   const overlayDIY = `
