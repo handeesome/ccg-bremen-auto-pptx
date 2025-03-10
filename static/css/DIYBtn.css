@@ -35,15 +35,25 @@
 .draggable:hover .card-btn {
   display: block;
 }
-.back-btn {
-  position: absolute;
-  top: calc(0.3125rem + 20px);
-  right: 5rem;
-  visibility: hidden;
-}
-.save-btn {
+.top-corner-buttons {
   position: absolute;
   top: calc(0.3125rem + 20px);
   right: calc(0.75rem + 5px);
   visibility: hidden;
+}
+
+.confirm-dialog {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+}
+.confirm-buttons {
+  margin-top: 15px;
+  gap: 10px;
+  display: flex;
+  justify-content: center;
+}
+.confirm-buttons button {
+  margin: 0 5px;
 }

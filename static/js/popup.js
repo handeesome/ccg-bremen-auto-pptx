@@ -152,7 +152,6 @@ export function searchSongPopup() {
     .catch((err) => console.error("Error loading JSON:", err));
 }
 
-
 export function openDIYpopup(songId) {
   const overlayDIY = document.getElementById(`overlay-DIY-${songId}`);
   overlayDIY.style.display = "block";
@@ -167,25 +166,15 @@ export function openDIYpopup(songId) {
 }
 
 export function DIYpopup(popupOverlay, songId) {
-  // Save initial state when popup opens
-  const saveInitialState = () => {
-    const slidePreviewContainer = document.getElementById(`slidePreviewContainer${songId}`);
-    const pages = slidePreviewContainer.querySelectorAll(".card-body");
-    const state = Array.from(pages).map(page =>
-      Array.from(page.querySelectorAll("div"))
-        .map(div => div.textContent)
-        .join("\n")
-    );
-    savedStates.set(songId, state);
-  };
-
   // Check if changes were made
   const hasChanges = () => {
-    const slidePreviewContainer = document.getElementById(`slidePreviewContainer${songId}`);
+    const slidePreviewContainer = document.getElementById(
+      `slidePreviewContainer${songId}`
+    );
     const pages = slidePreviewContainer.querySelectorAll(".card-body");
-    const currentState = Array.from(pages).map(page =>
+    const currentState = Array.from(pages).map((page) =>
       Array.from(page.querySelectorAll("div"))
-        .map(div => div.textContent)
+        .map((div) => div.textContent)
         .join("\n")
     );
     const savedState = savedStates.get(songId) || [];
@@ -196,13 +185,15 @@ export function DIYpopup(popupOverlay, songId) {
   const restoreState = () => {
     const savedState = savedStates.get(songId) || [];
     if (savedState) {
-      const slidePreviewContainer = document.getElementById(`slidePreviewContainer${songId}`);
+      const slidePreviewContainer = document.getElementById(
+        `slidePreviewContainer${songId}`
+      );
       slidePreviewContainer.innerHTML = "";
       const row = document.createElement("div");
       row.classList.add("row");
       slidePreviewContainer.appendChild(row);
 
-      savedState.forEach(text => {
+      savedState.forEach((text) => {
         const colContainer = document.createElement("div");
         colContainer.classList.add("col-4", "mt-2");
         colContainer.style.position = "relative";
@@ -212,7 +203,10 @@ export function DIYpopup(popupOverlay, songId) {
         card.draggable = true;
         card.innerHTML = `
           <div class="card-body">
-            ${text.split("\n").map(line => `<div>${line}</div>`).join("")}
+            ${text
+              .split("\n")
+              .map((line) => `<div>${line}</div>`)
+              .join("")}
           </div>`;
 
         colContainer.appendChild(card);
@@ -224,10 +218,15 @@ export function DIYpopup(popupOverlay, songId) {
   popupOverlay.addEventListener("click", function (event) {
     if (event.target === popupOverlay) {
       if (hasChanges()) {
-        showConfirmationDialog(songId, () => {
-          popupOverlay.style.display = "none";
-          document.body.style.overflow = "auto";
-        }, restoreState);
+        showConfirmationDialog(
+          songId,
+          popupOverlay,
+          () => {
+            popupOverlay.style.display = "none";
+            document.body.style.overflow = "auto";
+          },
+          restoreState
+        );
       } else {
         popupOverlay.style.display = "none";
         document.body.style.overflow = "auto";
@@ -241,39 +240,19 @@ export function DIYpopup(popupOverlay, songId) {
     const DIYPages = popupOverlay.querySelector(".DIY-pages");
     DIYPages.style.display = "flex";
     splitLyrics(songId);
+    const topCornerBtns = popupOverlay.querySelector(".top-corner-buttons");
+    topCornerBtns.style.visibility = "visible";
     const backBtn = popupOverlay.querySelector(".back-btn");
-    backBtn.style.visibility = "visible";
     backBtn.addEventListener("click", function () {
       DIYInput.style.display = "flex";
       DIYPages.style.display = "none";
       backBtn.style.visibility = "hidden";
       saveBtn.style.visibility = "hidden";
-      savedStates.delete(songId)
+      savedStates.delete(songId);
     });
     const saveBtn = popupOverlay.querySelector(".save-btn");
-    saveBtn.style.visibility = "visible";
     saveBtn.addEventListener("click", function () {
-      const slidePreviewContainer = document.getElementById(
-        `slidePreviewContainer${songId}`
-      );
-      const pages = slidePreviewContainer.querySelectorAll(".card-body");
-      let contentLst = [];
-      pages.forEach((page) => {
-        let originalText = Array.from(page.querySelectorAll("div"))
-          .map((div) => div.textContent)
-          .join("\n");
-        contentLst.push(originalText);
-      });
-      let formData = JSON.parse(localStorage.getItem("formData")) || {};
-      formData[`${songId}Pages`] = contentLst;
-      localStorage.setItem("formData", JSON.stringify(formData));
-      popupOverlay.style.display = "none";
-      document.body.style.overflow = "auto";
-      const DIYbtn = document.getElementById(`DIYBtn${songId}`);
-      DIYbtn.textContent = "查看歌词";
-      DIYbtn.classList.remove("btn-primary");
-      DIYbtn.classList.add("btn-secondary");
-      saveInitialState();
+      saveDIY(popupOverlay, songId);
     });
   });
 }
@@ -312,9 +291,9 @@ function splitLyrics(songId) {
       <div class="card-body">
           <button class="btn btn-sm btn-secondary card-btn" type="button">编辑</button>
           ${text
-        .split("\n")
-        .map((line) => `<div>${line}</div>`)
-        .join("")}
+            .split("\n")
+            .map((line) => `<div>${line}</div>`)
+            .join("")}
       </div>`;
     card.setAttribute("data-index", index);
     container.appendChild(card);
@@ -500,7 +479,7 @@ function updateSlideNumbers(songId) {
   });
 }
 
-function showConfirmationDialog(songId, onConfirm, onDiscard) {
+function showConfirmationDialog(songId, popupOverlay, onConfirm, onDiscard) {
   // Create confirmation dialog if it doesn't exist
   let confirmDialog = document.getElementById("confirm-dialog-overlay");
   if (!confirmDialog) {
@@ -509,36 +488,15 @@ function showConfirmationDialog(songId, onConfirm, onDiscard) {
     confirmDialog.id = "confirm-dialog-overlay";
     confirmDialog.innerHTML = `
       <div class="confirm-dialog">
-        <p>Do you want to save your changes?</p>
+        <p>你想要保存更改吗</p>
         <div class="confirm-buttons">
-          <button class="btn btn-primary save-btn">Save</button>
-          <button class="btn btn-secondary discard-btn">Discard</button>
-          <button class="btn btn-light cancel-btn">Cancel</button>
+          <button class="btn btn-secondary discard-btn">放弃更改</button>
+          <button class="btn btn-success save-btn">保存</button>
+          <button class="btn btn-light cancel-btn">继续</button>
         </div>
       </div>
     `;
     document.body.appendChild(confirmDialog);
-
-    // Add styles
-    const style = document.createElement("style");
-    style.textContent = `
-      .confirm-dialog {
-        background: white;
-        padding: 20px;
-        border-radius: 8px;
-        text-align: center;
-      }
-      .confirm-buttons {
-        margin-top: 15px;
-        gap: 10px;
-        display: flex;
-        justify-content: center;
-      }
-      .confirm-buttons button {
-        margin: 0 5px;
-      }
-    `;
-    document.head.appendChild(style);
   }
 
   // Show dialog and handle button clicks
@@ -547,8 +505,7 @@ function showConfirmationDialog(songId, onConfirm, onDiscard) {
   const handleClick = (e) => {
     const target = e.target;
     if (target.classList.contains("save-btn")) {
-      // Handle save logic here
-      saveChanges();
+      saveDIY(popupOverlay, songId);
       onConfirm();
     } else if (target.classList.contains("discard-btn")) {
       if (onDiscard) onDiscard();
@@ -564,4 +521,38 @@ function showConfirmationDialog(songId, onConfirm, onDiscard) {
   };
 
   confirmDialog.addEventListener("click", handleClick);
+}
+
+function saveDIY(popupOverlay, songId) {
+  // Save initial state when popup opens
+  const saveInitialState = (slidePreviewContainer) => {
+    const pages = slidePreviewContainer.querySelectorAll(".card-body");
+    const state = Array.from(pages).map((page) =>
+      Array.from(page.querySelectorAll("div"))
+        .map((div) => div.textContent)
+        .join("\n")
+    );
+    savedStates.set(songId, state);
+  };
+  const slidePreviewContainer = document.getElementById(
+    `slidePreviewContainer${songId}`
+  );
+  const pages = slidePreviewContainer.querySelectorAll(".card-body");
+  let contentLst = [];
+  pages.forEach((page) => {
+    let originalText = Array.from(page.querySelectorAll("div"))
+      .map((div) => div.textContent)
+      .join("\n");
+    contentLst.push(originalText);
+  });
+  let formData = JSON.parse(localStorage.getItem("formData")) || {};
+  formData[`${songId}Pages`] = contentLst;
+  localStorage.setItem("formData", JSON.stringify(formData));
+  popupOverlay.style.display = "none";
+  document.body.style.overflow = "auto";
+  const DIYbtn = document.getElementById(`DIYBtn${songId}`);
+  DIYbtn.textContent = "查看歌词";
+  DIYbtn.classList.remove("btn-primary");
+  DIYbtn.classList.add("btn-secondary");
+  saveInitialState(slidePreviewContainer);
 }

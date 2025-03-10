@@ -29,10 +29,12 @@ export function createWeekList(weekListId) {
         </div>
         <div class="col-4">
           <div class="d-flex gap-2">
-            <input type="text" class="form-control form-input" id="${weekListId + role.id
-      }" />
-            <select class="form-select form-select-suffix" id="suffix${weekListId + role.id
-      }" ></select>
+            <input type="text" class="form-control form-input" id="${
+              weekListId + role.id
+            }" />
+            <select class="form-select form-select-suffix" id="suffix${
+              weekListId + role.id
+            }" ></select>
           </div>
         </div>
       </div>`
@@ -161,8 +163,9 @@ export function createRadio(
           value="${contentTitle}"
           checked/>
         <div class="card p-3 h-100 d-flex flex-column clickable">
-          <blockquote class="blockquote mb-0 flex-grow-1" id="${containerId + contentTitle
-    }Blockquote">
+          <blockquote class="blockquote mb-0 flex-grow-1" id="${
+            containerId + contentTitle
+          }Blockquote">
             <p>
               ${content}
             </p>
@@ -330,8 +333,10 @@ export function createSongInput(songId, text) {
     <div id="overlay-DIY-${songId}" class="overlay">
       <div class="popup popup-DIY col-10">
         <h1 class="text-center">DIY歌词顺序</h1>
-        <div class="back-btn btn btn-secondary">后退</div>
-        <div class="save-btn btn btn-success">保存</div>
+        <div class="top-corner-buttons">
+          <div class="back-btn btn btn-secondary">后退</div>
+          <div class="save-btn btn btn-success">保存</div>
+        </div>
         <div class="popup-content DIY-input">
           <div class="row justify-content-center">
             <div class="col-6">
