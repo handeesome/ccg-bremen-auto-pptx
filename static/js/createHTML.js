@@ -332,6 +332,8 @@ export function createSongInput(songId, text) {
     <div id="overlay-DIY-${songId}" class="overlay">
       <div class="popup popup-DIY col-10">
         <h1 class="text-center">DIY歌词顺序</h1>
+        <div class="back-btn btn btn-secondary">后退</div>
+        <div class="save-btn btn btn-success">保存</div>
         <div class="popup-content DIY-input">
           <div class="row justify-content-center">
             <div class="col-6">
@@ -354,7 +356,6 @@ export function createSongInput(songId, text) {
             <div
               id="slidePreviewContainer${songId}"
               class="lyrics-container mb-10">
-              <div class="row"></div>
             </div>
           </div>
         </div>

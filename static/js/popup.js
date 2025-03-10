@@ -154,6 +154,7 @@ export function openDIYpopup(songId) {
   overlayDIY.style.display = "block";
   document.body.style.overflow = "hidden";
   DIYpopup(overlayDIY, songId);
+  makeDraggable(songId);
 }
 export function DIYpopup(popupOverlay, songId) {
   popupOverlay.addEventListener("click", function (event) {
@@ -169,6 +170,19 @@ export function DIYpopup(popupOverlay, songId) {
     const DIYPages = popupOverlay.querySelector(".DIY-pages");
     DIYPages.style.display = "flex";
     splitLyrics(songId);
+    const backBtn = popupOverlay.querySelector(".back-btn");
+    backBtn.style.visibility = "visible";
+    backBtn.addEventListener("click", function () {
+      DIYInput.style.display = "flex";
+      DIYPages.style.display = "none";
+      backBtn.style.visibility = "hidden";
+      saveBtn.style.visibility = "hidden";
+    });
+    const saveBtn = popupOverlay.querySelector(".save-btn");
+    saveBtn.style.visibility = "visible";
+    saveBtn.addEventListener("click", function () {
+      console.log("save");
+    });
   });
 }
 
@@ -176,7 +190,13 @@ function splitLyrics(songId) {
   const lyrics = document.getElementById(`lyricsInput${songId}`).value.trim();
   const container = document.getElementById(`lyricsContainer${songId}`);
   container.innerHTML = ""; // Clear previous content
-
+  const slidePreviewContainer = document.getElementById(
+    `slidePreviewContainer${songId}`
+  );
+  slidePreviewContainer.innerHTML = "";
+  const row = document.createElement("div");
+  row.classList.add("row");
+  slidePreviewContainer.appendChild(row);
   let paragraphs;
 
   if (lyrics.includes("\n\n")) {
@@ -218,8 +238,6 @@ function splitLyrics(songId) {
       };
     });
   });
-
-  makeDraggable(songId);
 }
 
 function makeDraggable(songId) {
@@ -267,6 +285,7 @@ function makeDraggable(songId) {
       }
       dropIndicator.style.display = "none";
     });
+
     container.addEventListener("dragover", (e) => {
       e.preventDefault();
       const closest = getDragAfterElement(container, e.clientX, e.clientY);
@@ -282,11 +301,11 @@ function makeDraggable(songId) {
         dropIndicator.style.display = "none";
       }
     });
+
     if (container === slidePreviewContainer) {
       container.addEventListener("drop", (e) => {
         e.preventDefault();
         if (draggedItem) {
-          console.log(draggedItem);
           const btn = document.createElement("button");
           btn.classList.add("card-btn", "btn", "btn-sm", "btn-danger");
           btn.textContent = "删除";
@@ -294,7 +313,7 @@ function makeDraggable(songId) {
           draggedItem.appendChild(btn);
           btn.addEventListener("click", (e) => {
             e.target.parentElement.parentElement.remove();
-            updateSlideNumbers();
+            updateSlideNumbers(songId);
           });
           if (sourceContainer === lyricsContainer) {
             const colContainer = document.createElement("div");
@@ -324,7 +343,7 @@ function makeDraggable(songId) {
             container.firstElementChild.appendChild(draggedItem.parentElement);
           }
         }
-        updateSlideNumbers();
+        updateSlideNumbers(songId);
       });
     }
   });
@@ -370,9 +389,9 @@ function makeDraggable(songId) {
   }
 }
 
-function updateSlideNumbers() {
+function updateSlideNumbers(songId) {
   const slidePreviewContainer = document.getElementById(
-    "slidePreviewContainer"
+    `slidePreviewContainer${songId}`
   );
   const slides = slidePreviewContainer.querySelectorAll(".draggable");
   slides.forEach((slide, index) => {

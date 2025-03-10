@@ -35,3 +35,15 @@
 .draggable:hover .card-btn {
   display: block;
 }
+.back-btn {
+  position: absolute;
+  top: calc(0.3125rem + 20px);
+  right: 5rem;
+  visibility: hidden;
+}
+.save-btn {
+  position: absolute;
+  top: calc(0.3125rem + 20px);
+  right: calc(0.75rem + 5px);
+  visibility: hidden;
+}
