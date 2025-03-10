@@ -333,10 +333,6 @@ export function createSongInput(songId, text) {
     <div id="overlay-DIY-${songId}" class="overlay">
       <div class="popup popup-DIY col-10">
         <h1 class="text-center">DIY歌词顺序</h1>
-        <div class="top-corner-buttons">
-          <div class="back-btn btn btn-secondary">后退</div>
-          <div class="save-btn btn btn-success">保存</div>
-        </div>
         <div class="popup-content DIY-input">
           <div class="row justify-content-center">
             <div class="col-6">
@@ -350,6 +346,11 @@ export function createSongInput(songId, text) {
               >
             </div>
           </div>
+        </div>
+        <div class="top-corner-buttons">
+          <div class="back-btn btn btn-secondary">后退</div>
+          <div class="save-btn btn btn-success">保存</div>
+          <div class="download-btn btn btn-primary">保存并下载</div>
         </div>
         <div class="row DIY-pages">
           <div class="col-3">

@@ -215,6 +215,77 @@ export function DIYpopup(popupOverlay, songId) {
     }
   };
 
+  // download song pptx
+  const dlSongPPTX = (songId) => {
+    const dialogId = "song-name-dialog";
+    const dialogText = "请输入诗歌名:";
+    const buttonCount = 2;
+    const confirmDialog = createDialog(dialogId, dialogText, buttonCount);
+
+    // Create a form element
+    const form = document.createElement("form");
+    form.id = "song-name-form";
+    form.classList.add("confirm-dialog");
+
+    // Add input
+    const input = document.createElement("input");
+    input.type = "text";
+    input.id = `${songId}-name-input`;
+    input.placeholder = "请输入诗歌名";
+
+    if (confirmDialog && !confirmDialog.querySelector("input")) {
+      const buttons = confirmDialog.querySelectorAll(".btn");
+      buttons[0].classList.add("btn-primary", "cancel-btn");
+      buttons[0].textContent = "取消";
+      buttons[0].type = "button";
+      buttons[1].classList.add("btn-success", "enter-btn");
+      buttons[1].textContent = "确定";
+      confirmDialog.querySelector("p").insertAdjacentElement("afterend", input);
+      form.appendChild(confirmDialog.firstElementChild);
+      confirmDialog.appendChild(form);
+    }
+    confirmDialog.style.display = "flex";
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      const formData = JSON.parse(localStorage.getItem("formData")) || {};
+      const songPages = formData[`${songId}Pages`];
+      if (!songPages) {
+        console.error(`No song pages found for songId: ${songId}`);
+        return;
+      }
+      const dataToSend = {
+        songName: input.value,
+        pages: songPages,
+      };
+      // Send the data using fetch
+      fetch("/submit-song", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json", // Specify JSON data format
+        },
+        body: JSON.stringify(dataToSend), // Convert the dataToSend object to a JSON string
+      })
+        .then((response) => response.json()) // Assuming the server returns JSON
+        .then((data) => {
+          console.log("Success:", data); // Handle success response
+          // You can show a success message to the user, update UI, etc.
+        })
+        .catch((error) => {
+          console.error("Error:", error); // Handle error response
+          // You can show an error message to the user, etc.
+        });
+    });
+    confirmDialog.querySelector(".cancel-btn").addEventListener("click", () => {
+      form.reset();
+      confirmDialog.style.display = "none";
+      document.body.style.overflow = "auto";
+    });
+
+    // Prepare the data to be sent
+  };
+
   popupOverlay.addEventListener("click", function (event) {
     if (event.target === popupOverlay) {
       if (hasChanges()) {
@@ -233,6 +304,7 @@ export function DIYpopup(popupOverlay, songId) {
       }
     }
   });
+  //生成歌词 button
   const btn = popupOverlay.querySelector(".btn-primary");
   btn.addEventListener("click", function () {
     const DIYInput = popupOverlay.querySelector(".DIY-input");
@@ -253,6 +325,13 @@ export function DIYpopup(popupOverlay, songId) {
     const saveBtn = popupOverlay.querySelector(".save-btn");
     saveBtn.addEventListener("click", function () {
       saveDIY(popupOverlay, songId);
+    });
+    const downloadBtn = popupOverlay.querySelector(".download-btn");
+    downloadBtn.addEventListener("click", function () {
+      saveDIY(popupOverlay, songId);
+      popupOverlay.style.display = "block";
+      document.body.style.overflow = "hidden";
+      dlSongPPTX(songId);
     });
   });
 }
@@ -480,28 +559,6 @@ function updateSlideNumbers(songId) {
 }
 
 function showConfirmationDialog(songId, popupOverlay, onConfirm, onDiscard) {
-  // Create confirmation dialog if it doesn't exist
-  let confirmDialog = document.getElementById("confirm-dialog-overlay");
-  if (!confirmDialog) {
-    confirmDialog = document.createElement("div");
-    confirmDialog.className = "overlay";
-    confirmDialog.id = "confirm-dialog-overlay";
-    confirmDialog.innerHTML = `
-      <div class="confirm-dialog">
-        <p>你想要保存更改吗</p>
-        <div class="confirm-buttons">
-          <button class="btn btn-secondary discard-btn">放弃更改</button>
-          <button class="btn btn-success save-btn">保存</button>
-          <button class="btn btn-light cancel-btn">继续</button>
-        </div>
-      </div>
-    `;
-    document.body.appendChild(confirmDialog);
-  }
-
-  // Show dialog and handle button clicks
-  confirmDialog.style.display = "flex";
-
   const handleClick = (e) => {
     const target = e.target;
     if (target.classList.contains("save-btn")) {
@@ -519,8 +576,24 @@ function showConfirmationDialog(songId, popupOverlay, onConfirm, onDiscard) {
       confirmDialog.style.display = "none";
     }
   };
+  // Create confirmation dialog if it doesn't exist
+  const dialogId = "confirm-dialog-overlay";
+  const dialogText = "你想要保存更改吗";
+  const buttonCount = 3;
+  const confirmDialog = createDialog(dialogId, dialogText, buttonCount);
+  if (confirmDialog) {
+    const buttons = confirmDialog.querySelectorAll(".btn");
+    buttons[0].classList.add("btn-secondary", "discard-btn");
+    buttons[0].textContent = "放弃更改";
+    buttons[1].classList.add("btn-success", "save-btn");
+    buttons[1].textContent = "保存";
+    buttons[2].classList.add("btn-primary", "cancel-btn");
+    buttons[2].textContent = "继续";
 
-  confirmDialog.addEventListener("click", handleClick);
+    // Show dialog and handle button clicks
+    confirmDialog.style.display = "flex";
+    confirmDialog.addEventListener("click", handleClick);
+  }
 }
 
 function saveDIY(popupOverlay, songId) {
@@ -555,4 +628,38 @@ function saveDIY(popupOverlay, songId) {
   DIYbtn.classList.remove("btn-primary");
   DIYbtn.classList.add("btn-secondary");
   saveInitialState(slidePreviewContainer);
+}
+
+function createDialog(id, text, buttonCount) {
+  let dialog = document.getElementById(id);
+  if (!dialog) {
+    dialog = document.createElement("div");
+    dialog.className = "overlay";
+    dialog.id = id;
+
+    // Create the dialog container
+    const dialogBox = document.createElement("div");
+    dialogBox.className = "confirm-dialog";
+
+    // Create the text element
+    const message = document.createElement("p");
+    message.textContent = text;
+    dialogBox.appendChild(message);
+
+    // Create the buttons container
+    const buttonsContainer = document.createElement("div");
+    buttonsContainer.className = "confirm-buttons";
+
+    // Generate buttons based on count
+    for (let i = 0; i < buttonCount; i++) {
+      const button = document.createElement("button");
+      button.className = "btn";
+      buttonsContainer.appendChild(button);
+    }
+
+    dialogBox.appendChild(buttonsContainer);
+    dialog.appendChild(dialogBox);
+    document.getElementById("dialogs-container").appendChild(dialog);
+  }
+  return dialog;
 }
