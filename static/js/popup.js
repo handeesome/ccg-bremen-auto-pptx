@@ -204,9 +204,9 @@ export function DIYpopup(popupOverlay, songId) {
         card.innerHTML = `
           <div class="card-body">
             ${text
-              .split("\n")
-              .map((line) => `<div>${line}</div>`)
-              .join("")}
+            .split("\n")
+            .map((line) => `<div>${line}</div>`)
+            .join("")}
           </div>`;
 
         colContainer.appendChild(card);
@@ -269,8 +269,14 @@ export function DIYpopup(popupOverlay, songId) {
       })
         .then((response) => response.json()) // Assuming the server returns JSON
         .then((data) => {
-          console.log("Success:", data); // Handle success response
-          // You can show a success message to the user, update UI, etc.
+          // First hide the dialog
+          confirmDialog.style.display = "none";
+          document.body.style.overflow = "auto";
+
+          // Use setTimeout to ensure dialog hiding is processed first
+          window.location.href = "/download/" + data.fileName;
+
+          alert("PPTX生成成功");
         })
         .catch((error) => {
           console.error("Error:", error); // Handle error response
@@ -370,9 +376,9 @@ function splitLyrics(songId) {
       <div class="card-body">
           <button class="btn btn-sm btn-secondary card-btn" type="button">编辑</button>
           ${text
-            .split("\n")
-            .map((line) => `<div>${line}</div>`)
-            .join("")}
+        .split("\n")
+        .map((line) => `<div>${line}</div>`)
+        .join("")}
       </div>`;
     card.setAttribute("data-index", index);
     container.appendChild(card);

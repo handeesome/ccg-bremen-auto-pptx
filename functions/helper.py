@@ -175,7 +175,7 @@ def addAudio(slide, audioPath):
         5), Cm(2.28), poster_frame_image=None)
 
 
-def lyricsPages(prs, song, lyrics, audioPath, isOnePage=False, titleFontSize=42):
+def lyricsPages(prs, song, lyrics, audioPath=None, isOnePage=False, titleFontSize=42):
     """
     Create PowerPoint slides for song lyrics and audio.
 
@@ -220,7 +220,8 @@ def lyricsPages(prs, song, lyrics, audioPath, isOnePage=False, titleFontSize=42)
         p.text = title
         p = slide.shapes[1].text_frame.paragraphs[0]
         setFont(p, 48)
-    addAudio(slide, audioPath)
+    if(audioPath):
+        addAudio(slide, audioPath)
 
 
 def itemsPagesHasSpace(prs, title, items, charPerLine, fontSize=36, isNumber=False, character_limit=90):
