@@ -1,6 +1,10 @@
 const savedStates = new Map(); // Store states for each songId
 const initializedDraggables = new Set();
 
+// Initialize OpenCC Converters
+const s2tConverter = OpenCC.Converter({ from: "cn", to: "tw" });
+const t2sConverter = OpenCC.Converter({ from: "tw", to: "cn" });
+
 export function searchSongPopup() {
   const popupOverlay = document.getElementById("popup-overlay");
   popupOverlay.addEventListener("click", function (event) {
@@ -51,18 +55,12 @@ export function searchSongPopup() {
 
       // Start traversal from the root folder
       traverseFolder("13Czs3mdHpL-5XDggphM9n2em4z2ZkSf4");
-
       // Initialize Fuse.js
       const options = {
         keys: ["name", "path"],
         threshold: 0.3,
       };
-
       const fuse = new Fuse(flattenedData, options);
-
-      // Initialize OpenCC Converters
-      const s2tConverter = OpenCC.Converter({ from: "cn", to: "tw" });
-      const t2sConverter = OpenCC.Converter({ from: "tw", to: "cn" });
 
       // Search functionality
       const searchInput = document.getElementById("search-input");
@@ -342,6 +340,8 @@ export function DIYpopup(popupOverlay, songId) {
 
 function splitLyrics(songId) {
   const lyrics = document.getElementById(`lyricsInput${songId}`).value.trim();
+  // convert lyrics to simplified
+  const simplifiedLyrics = t2sConverter(lyrics);
   const container = document.getElementById(`lyricsContainer${songId}`);
   container.innerHTML = ""; // Clear previous content
   const slidePreviewContainer = document.getElementById(
@@ -353,12 +353,14 @@ function splitLyrics(songId) {
   slidePreviewContainer.appendChild(row);
   let paragraphs;
 
-  if (lyrics.includes("\n\n")) {
+  if (simplifiedLyrics.includes("\n\n")) {
     // Split by double line breaks
-    paragraphs = lyrics.split("\n\n").filter((p) => p.trim() !== "");
+    paragraphs = simplifiedLyrics.split("\n\n").filter((p) => p.trim() !== "");
   } else {
     // Split into paragraphs every 4 lines
-    const lines = lyrics.split("\n").filter((line) => line.trim() !== "");
+    const lines = simplifiedLyrics
+      .split("\n")
+      .filter((line) => line.trim() !== "");
     paragraphs = [];
     for (let i = 0; i < lines.length; i += 4) {
       paragraphs.push(lines.slice(i, i + 4).join("\n"));
