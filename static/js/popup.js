@@ -1,3 +1,5 @@
+import { createLyricsPages } from "./createHTML.js";
+
 const savedStates = new Map(); // Store states for each songId
 const initializedDraggables = new Set();
 
@@ -181,35 +183,9 @@ export function DIYpopup(popupOverlay, songId) {
 
   // Restore saved state
   const restoreState = () => {
-    const savedState = savedStates.get(songId) || [];
-    if (savedState) {
-      const slidePreviewContainer = document.getElementById(
-        `slidePreviewContainer${songId}`
-      );
-      slidePreviewContainer.innerHTML = "";
-      const row = document.createElement("div");
-      row.classList.add("row");
-      slidePreviewContainer.appendChild(row);
-
-      savedState.forEach((text) => {
-        const colContainer = document.createElement("div");
-        colContainer.classList.add("col-4", "mt-2");
-        colContainer.style.position = "relative";
-
-        const card = document.createElement("div");
-        card.classList.add("card", "mb-2", "draggable", "form-control");
-        card.draggable = true;
-        card.innerHTML = `
-          <div class="card-body">
-            ${text
-              .split("\n")
-              .map((line) => `<div>${line}</div>`)
-              .join("")}
-          </div>`;
-
-        colContainer.appendChild(card);
-        row.appendChild(colContainer);
-      });
+    const pages = savedStates.get(songId) || [];
+    if (pages) {
+      createLyricsPages(songId, pages);
     }
   };
 
@@ -315,6 +291,13 @@ export function DIYpopup(popupOverlay, songId) {
     const DIYPages = popupOverlay.querySelector(".DIY-pages");
     DIYPages.style.display = "flex";
     splitLyrics(songId);
+    // save lyrics input to formData
+    let formData = JSON.parse(localStorage.getItem("formData")) || {};
+    formData[`${songId}Lyrics`] = document.getElementById(
+      `lyricsInput${songId}`
+    ).value;
+    localStorage.setItem("formData", JSON.stringify(formData));
+
     const topCornerBtns = popupOverlay.querySelector(".top-corner-buttons");
     topCornerBtns.style.visibility = "visible";
     const backBtn = popupOverlay.querySelector(".back-btn");
@@ -373,7 +356,7 @@ function splitLyrics(songId) {
     card.classList.add("card", "mb-2", "draggable", "form-control");
     card.draggable = true;
     card.innerHTML = `
-      <div class="card-body">
+      <div class="card-body text-center">
           <button class="btn btn-sm btn-secondary card-btn" type="button">编辑</button>
           ${text
             .split("\n")
@@ -624,9 +607,11 @@ function saveDIY(popupOverlay, songId) {
       .join("\n");
     contentLst.push(originalText);
   });
+  // save lyrics pages to formData
   let formData = JSON.parse(localStorage.getItem("formData")) || {};
   formData[`${songId}Pages`] = contentLst;
   localStorage.setItem("formData", JSON.stringify(formData));
+
   popupOverlay.style.display = "none";
   document.body.style.overflow = "auto";
   const DIYbtn = document.getElementById(`DIYBtn${songId}`);

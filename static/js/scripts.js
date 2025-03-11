@@ -14,6 +14,7 @@ import {
   resumeInputData,
   resumeTextareaData,
   resumeVerseData,
+  resumeLyricsData,
   initialFormData,
   initializeFormData,
 } from "./processData.js";
@@ -91,6 +92,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (restore) {
         resumeInputData();
         resumeVerseData();
+        resumeLyricsData();
         resumeTextareaData("activity");
         resumeTextareaData("prayerWorld");
         resumeTextareaData("prayerChurch");

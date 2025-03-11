@@ -1,5 +1,6 @@
 import { createTextareaSet } from "./createHTML.js";
 import { books, simple_books } from "./bibleIndexes.js";
+import { createLyricsPages } from "./createHTML.js";
 export function parseVerse(verseString) {
   const regex = /(.+?)\s+(\d+):(\d+)(?:-(\d+))?/;
   const match = verseString.match(regex);
@@ -288,4 +289,25 @@ export const initialFormData = {
 };
 export function initializeFormData() {
   localStorage.setItem("formData", JSON.stringify(initialFormData));
+}
+
+export function resumeLyricsData() {
+  let formData = JSON.parse(localStorage.getItem("formData")) || {};
+  let songs = ["song1", "song2", "song3", "song4"];
+  songs.forEach((song) => {
+    let lyrics = formData[`${song}Lyrics`];
+    if (!lyrics) return;
+    document.getElementById(`lyricsInput${song}`).value = lyrics;
+    document.getElementById(`DIYBtn${song}`).dispatchEvent(new Event("click"));
+    document
+      .getElementById(`lyricsInput${song}`)
+      .nextElementSibling.dispatchEvent(new Event("click"));
+    document
+      .getElementById(`overlay-DIY-${song}`)
+      .querySelector(".save-btn")
+      .dispatchEvent(new Event("click"));
+    let pages = formData[`${song}Pages`];
+    if (!pages) return;
+    createLyricsPages(song, pages);
+  });
 }

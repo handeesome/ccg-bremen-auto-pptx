@@ -372,3 +372,33 @@ export function createSongInput(songId, text) {
     openDIYpopup(songId);
   });
 }
+
+export function createLyricsPages(songId, pages) {
+  const slidePreviewContainer = document.getElementById(
+    `slidePreviewContainer${songId}`
+  );
+  slidePreviewContainer.innerHTML = "";
+  const row = document.createElement("div");
+  row.classList.add("row");
+  slidePreviewContainer.appendChild(row);
+
+  pages.forEach((text) => {
+    const colContainer = document.createElement("div");
+    colContainer.classList.add("col-4", "mt-2");
+    colContainer.style.position = "relative";
+
+    const card = document.createElement("div");
+    card.classList.add("card", "mb-2", "draggable", "form-control");
+    card.draggable = true;
+    card.innerHTML = `
+      <div class="card-body">
+        ${text
+          .split("\n")
+          .map((line) => `<div>${line}</div>`)
+          .join("")}
+      </div>`;
+
+    colContainer.appendChild(card);
+    row.appendChild(colContainer);
+  });
+}
