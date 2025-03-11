@@ -323,8 +323,7 @@ export function DIYpopup(popupOverlay, songId) {
     backBtn.addEventListener("click", function () {
       DIYInput.style.display = "flex";
       DIYPages.style.display = "none";
-      backBtn.style.visibility = "hidden";
-      saveBtn.style.visibility = "hidden";
+      topCornerBtns.style.visibility = "hidden";
       savedStates.delete(songId);
     });
     const saveBtn = popupOverlay.querySelector(".save-btn");
