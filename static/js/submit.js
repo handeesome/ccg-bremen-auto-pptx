@@ -32,6 +32,19 @@ function navigateToUnselectedDropdowns() {
 
 document.getElementById("submitForm").addEventListener("click", function () {
   let formData = JSON.parse(localStorage.getItem("formData")) || "{}";
+
+  // Check if the required date field is present
+  if (!formData["date1"]) {
+    let date = document.getElementById("date1Input");
+    date.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+    });
+    date.focus();
+    alert("请输入日期");
+    return; // Exit the function to prevent form submission
+  }
+
   let categories = ["xuanZhao", "qiYing", "duJing", "jinJu", "jingWen"];
 
   try {
@@ -59,18 +72,11 @@ document.getElementById("submitForm").addEventListener("click", function () {
         window.location.href = "/download/" + data.fileName; // Redirect to download
         alert("PPTX生成成功");
       } else {
-        if (!formData["date1"]) {
-          let date = document.getElementById("date1Input");
-          date.scrollIntoView({
-            behavior: "smooth",
-            block: "center",
-          });
-          date.focus();
-          alert("请输入日期");
-        } else {
-          alert("发生了一些错误，请检查后再试。");
-        }
+        alert("发生了一些错误，请检查后再试。");
       }
     })
-    .catch((error) => console.error("Error:", error));
+    .catch((error) => {
+      console.error("Error:", error);
+      alert("网络错误，请稍后再试。");
+    });
 });

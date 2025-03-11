@@ -204,9 +204,9 @@ export function DIYpopup(popupOverlay, songId) {
         card.innerHTML = `
           <div class="card-body">
             ${text
-            .split("\n")
-            .map((line) => `<div>${line}</div>`)
-            .join("")}
+              .split("\n")
+              .map((line) => `<div>${line}</div>`)
+              .join("")}
           </div>`;
 
         colContainer.appendChild(card);
@@ -275,8 +275,7 @@ export function DIYpopup(popupOverlay, songId) {
 
           // Use setTimeout to ensure dialog hiding is processed first
           window.location.href = "/download/" + data.fileName;
-
-          alert("PPTX生成成功");
+          createAlertDialog("pptx-success-dialog", "PPTX生成成功");
         })
         .catch((error) => {
           console.error("Error:", error); // Handle error response
@@ -376,9 +375,9 @@ function splitLyrics(songId) {
       <div class="card-body">
           <button class="btn btn-sm btn-secondary card-btn" type="button">编辑</button>
           ${text
-        .split("\n")
-        .map((line) => `<div>${line}</div>`)
-        .join("")}
+            .split("\n")
+            .map((line) => `<div>${line}</div>`)
+            .join("")}
       </div>`;
     card.setAttribute("data-index", index);
     container.appendChild(card);
@@ -667,5 +666,19 @@ function createDialog(id, text, buttonCount) {
     dialog.appendChild(dialogBox);
     document.getElementById("dialogs-container").appendChild(dialog);
   }
+  return dialog;
+}
+function createAlertDialog(id, text) {
+  let dialog = document.getElementById(id);
+  if (!dialog) {
+    dialog = createDialog(id, text, 1);
+    const btn = dialog.querySelector(".btn");
+    btn.classList.add("btn-primary");
+    btn.textContent = "确定";
+    btn.addEventListener("click", () => {
+      dialog.style.display = "none";
+    });
+  }
+  dialog.style.display = "flex";
   return dialog;
 }
