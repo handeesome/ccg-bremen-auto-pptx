@@ -220,6 +220,11 @@ export function DIYpopup(popupOverlay, songId) {
     }
     confirmDialog.style.display = "flex";
 
+    let songName = document.getElementById(`${songId}Input`).value;
+    if (songName !== "") {
+      input.value = songName;
+    }
+
     form.addEventListener("submit", (event) => {
       event.preventDefault();
 
