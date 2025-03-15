@@ -264,7 +264,6 @@ export function DIYpopup(popupOverlay, songId) {
     confirmDialog.querySelector(".cancel-btn").addEventListener("click", () => {
       form.reset();
       confirmDialog.style.display = "none";
-      document.body.style.overflow = "auto";
     });
 
     // Prepare the data to be sent
