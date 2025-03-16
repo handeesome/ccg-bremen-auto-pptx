@@ -70,7 +70,7 @@ document.getElementById("submitForm").addEventListener("click", function () {
     .then((data) => {
       if (data.fileName) {
         window.location.href = "/download/" + data.fileName; // Redirect to download
-        alert("PPTX生成成功");
+        alert("PPTX下载成功，记得放在Google Drive上哦！");
       } else {
         alert("发生了一些错误，请检查后再试。");
       }

@@ -254,7 +254,10 @@ export function DIYpopup(popupOverlay, songId) {
 
           // Use setTimeout to ensure dialog hiding is processed first
           window.location.href = "/download/" + data.fileName;
-          createAlertDialog("pptx-success-dialog", "PPTX生成成功");
+          createAlertDialog(
+            "pptx-success-dialog",
+            "PPTX下载成功，记得放在Google Drive上哦！"
+          );
         })
         .catch((error) => {
           console.error("Error:", error); // Handle error response

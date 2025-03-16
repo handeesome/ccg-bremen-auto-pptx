@@ -5,6 +5,7 @@ from functions.generate_pptx import generate_pptx
 from functions.generate_lyrics_pptx import generate_lyrics_pptx
 import datetime
 from functions.getGDrive import get_gdrive_folder_structure
+import threading
 
 # AWS requires the Flask app to be named "application"
 application = Flask(__name__)
@@ -26,7 +27,10 @@ def get_latest_mod_time(directory):
 @application.route('/', methods=['GET'])
 def index():
     last_modified = get_latest_mod_time(os.getcwd())  # Scan all project files
-    get_gdrive_folder_structure('serviceAccountKey.json', '13Czs3mdHpL-5XDggphM9n2em4z2ZkSf4', 'static/temp')
+    
+    # Run get_gdrive_folder_structure in a separate thread
+    threading.Thread(target=get_gdrive_folder_structure, args=('serviceAccountKey.json', '13Czs3mdHpL-5XDggphM9n2em4z2ZkSf4', 'static/temp')).start()
+    
     return render_template('index.html', last_modified=last_modified)
 
 @application.route('/process-form', methods=['POST'])
