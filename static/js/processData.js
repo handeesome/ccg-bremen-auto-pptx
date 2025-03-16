@@ -297,17 +297,21 @@ export function resumeLyricsData() {
   songs.forEach((song) => {
     let lyrics = formData[`${song}Lyrics`];
     if (!lyrics) return;
-    document.getElementById(`lyricsInput${song}`).value = lyrics;
     document.getElementById(`DIYBtn${song}`).dispatchEvent(new Event("click"));
-    document
-      .getElementById(`lyricsInput${song}`)
-      .nextElementSibling.dispatchEvent(new Event("click"));
-    document
-      .getElementById(`overlay-DIY-${song}`)
-      .querySelector(".save-btn")
-      .dispatchEvent(new Event("click"));
     let pages = formData[`${song}Pages`];
-    if (!pages) return;
-    createLyricsPages(song, pages);
+    resumeLyricsPages(song, lyrics, pages);
   });
+}
+export function resumeLyricsPages(songId, lyrics, pages) {
+  document.getElementById(`lyricsInput${songId}`).value = lyrics;
+  document
+    .getElementById(`lyricsInput${songId}`)
+    .nextElementSibling.dispatchEvent(new Event("click"));
+
+  if (!pages) return;
+  createLyricsPages(songId, pages);
+  document
+    .getElementById(`overlay-DIY-${songId}`)
+    .querySelector(".save-btn")
+    .dispatchEvent(new Event("click"));
 }

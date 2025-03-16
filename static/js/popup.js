@@ -1,4 +1,7 @@
 import { createLyricsPages } from "./createHTML.js";
+import { parseLRC } from "./parseLRC.js";
+import { resumeLyricsPages } from "./processData.js";
+import { dlSongPPTX } from "./submit.js";
 
 const savedStates = new Map(); // Store states for each songId
 const initializedDraggables = new Set();
@@ -190,15 +193,15 @@ export function DIYpopup(popupOverlay, songId) {
   };
 
   // download song pptx
-  const dlSongPPTX = (songId) => {
-    const dialogId = "song-name-dialog";
+  const createDialogWForm = (songId, onSubmit) => {
+    const dialogId = `${songId}-name-dialog`;
     const dialogText = "请输入诗歌名:";
     const buttonCount = 2;
     const confirmDialog = createDialog(dialogId, dialogText, buttonCount);
 
     // Create a form element
     const form = document.createElement("form");
-    form.id = "song-name-form";
+    form.id = `${songId}-name-form`;
     form.classList.add("confirm-dialog");
 
     // Add input
@@ -220,49 +223,18 @@ export function DIYpopup(popupOverlay, songId) {
     }
     confirmDialog.style.display = "flex";
 
-    let songName = document.getElementById(`${songId}Input`).value;
+    const songInput = document.getElementById(`${songId}Input`);
+    let songName = songInput.value;
     if (songName !== "") {
       input.value = songName;
     }
 
     form.addEventListener("submit", (event) => {
       event.preventDefault();
-
-      const formData = JSON.parse(localStorage.getItem("formData")) || {};
-      const songPages = formData[`${songId}Pages`];
-      if (!songPages) {
-        console.error(`No song pages found for songId: ${songId}`);
-        return;
-      }
-      const dataToSend = {
-        songName: input.value,
-        pages: songPages,
-      };
-      // Send the data using fetch
-      fetch("/submit-song", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json", // Specify JSON data format
-        },
-        body: JSON.stringify(dataToSend), // Convert the dataToSend object to a JSON string
-      })
-        .then((response) => response.json()) // Assuming the server returns JSON
-        .then((data) => {
-          // First hide the dialog
-          confirmDialog.style.display = "none";
-          document.body.style.overflow = "auto";
-
-          // Use setTimeout to ensure dialog hiding is processed first
-          window.location.href = "/download/" + data.fileName;
-          createAlertDialog(
-            "pptx-success-dialog",
-            "PPTX下载成功，记得放在Google Drive上哦！"
-          );
-        })
-        .catch((error) => {
-          console.error("Error:", error); // Handle error response
-          // You can show an error message to the user, etc.
-        });
+      songInput.value = input.value;
+      onSubmit();
+      confirmDialog.style.display = "none";
+      document.body.style.overflow = "auto";
     });
     confirmDialog.querySelector(".cancel-btn").addEventListener("click", () => {
       form.reset();
@@ -290,6 +262,61 @@ export function DIYpopup(popupOverlay, songId) {
       }
     }
   });
+
+  const getLyrics = async (songInput) => {
+    const url = `/get_lyrics?song=${songInput}`;
+
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+
+      if (data.href) {
+        console.log("First link:", data.href);
+        return data.href;
+      } else {
+        console.error("Error:", data.error);
+        return null;
+      }
+    } catch (error) {
+      console.error("Fetch error:", error);
+      return null;
+    }
+  };
+  const getBtn = popupOverlay.querySelector(".get-btn");
+  getBtn.addEventListener("click", function () {
+    const songInput = document.getElementById(`${songId}Input`).value;
+    if (songInput === "") {
+      // createAlertDialog("get-btn-dialog", "请先输入诗歌名");
+      createDialogWForm(songId, () => dlSongPPTX(songId));
+      return;
+    }
+    fetch("/static/temp/lyrics.lrc")
+      .then((response) => response.text()) // Read file as text
+      .then((lrcText) => {
+        const { lyrics, pages } = parseLRC(lrcText);
+        let formData = JSON.parse(localStorage.getItem("formData")) || {};
+        formData[`${songId}Pages`] = pages;
+        formData[`${songId}Lyrics`] = lyrics;
+        localStorage.setItem("formData", JSON.stringify(formData));
+        resumeLyricsPages(songId, lyrics, pages);
+        updateSlideNumbers(songId);
+        document
+          .getElementById(`DIYBtn${songId}`)
+          .dispatchEvent(new Event("click"));
+        const overlayDIY = document.getElementById(`overlay-DIY-${songId}`);
+        const getBtn = overlayDIY.querySelector(".get-btn");
+        getBtn.style.visibility = "hidden";
+      })
+      .catch((error) => console.error("Error loading LRC file:", error));
+    // getLyrics(songInput).then((link) => {
+    //   if (link) {
+    //     console.log("Extracted link:", link);
+    //   } else {
+    //     console.log("No link found.");
+    //   }
+    // });
+  });
+
   //生成歌词 button
   const btn = popupOverlay.querySelector(".btn-primary");
   btn.addEventListener("click", function () {
@@ -307,11 +334,14 @@ export function DIYpopup(popupOverlay, songId) {
 
     const topCornerBtns = popupOverlay.querySelector(".top-corner-buttons");
     topCornerBtns.style.visibility = "visible";
+    const getBtn = popupOverlay.querySelector(".get-btn");
+    getBtn.style.visibility = "hidden";
     const backBtn = popupOverlay.querySelector(".back-btn");
     backBtn.addEventListener("click", function () {
       DIYInput.style.display = "flex";
       DIYPages.style.display = "none";
       topCornerBtns.style.visibility = "hidden";
+      getBtn.style.visibility = "visible";
       savedStates.delete(songId);
     });
     const saveBtn = popupOverlay.querySelector(".save-btn");
@@ -323,7 +353,8 @@ export function DIYpopup(popupOverlay, songId) {
       saveDIY(popupOverlay, songId);
       popupOverlay.style.display = "block";
       document.body.style.overflow = "hidden";
-      dlSongPPTX(songId);
+
+      createDialogWForm(songId, () => dlSongPPTX(songId));
     });
   });
 }
@@ -661,7 +692,7 @@ function createDialog(id, text, buttonCount) {
   }
   return dialog;
 }
-function createAlertDialog(id, text) {
+export function createAlertDialog(id, text) {
   let dialog = document.getElementById(id);
   if (!dialog) {
     dialog = createDialog(id, text, 1);

@@ -1,6 +1,7 @@
 // main.js
 
 import { findBibleText } from "./findBibleText.js";
+import { createAlertDialog } from "./popup.js";
 
 function navigateToUnselectedDropdowns() {
   // Get all select elements
@@ -80,3 +81,38 @@ document.getElementById("submitForm").addEventListener("click", function () {
       alert("网络错误，请稍后再试。");
     });
 });
+
+export function dlSongPPTX(songId) {
+  const formData = JSON.parse(localStorage.getItem("formData")) || {};
+  const songPages = formData[`${songId}Pages`];
+  if (!songPages) {
+    console.error(`No song pages found for songId: ${songId}`);
+    return;
+  }
+  const input = document.getElementById(`${songId}-name-input`);
+  const dataToSend = {
+    songName: input.value,
+    pages: songPages,
+  };
+  // Send the data using fetch
+  fetch("/submit-song", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json", // Specify JSON data format
+    },
+    body: JSON.stringify(dataToSend), // Convert the dataToSend object to a JSON string
+  })
+    .then((response) => response.json()) // Assuming the server returns JSON
+    .then((data) => {
+      // Use setTimeout to ensure dialog hiding is processed first
+      window.location.href = "/download/" + data.fileName;
+      createAlertDialog(
+        "pptx-success-dialog",
+        "PPTX下载成功，记得放在Google Drive上哦！"
+      );
+    })
+    .catch((error) => {
+      console.error("Error:", error); // Handle error response
+      // You can show an error message to the user, etc.
+    });
+}

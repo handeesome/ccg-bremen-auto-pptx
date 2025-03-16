@@ -6,6 +6,8 @@ from functions.generate_lyrics_pptx import generate_lyrics_pptx
 import datetime
 from functions.getGDrive import get_gdrive_folder_structure
 import threading
+import requests
+from bs4 import BeautifulSoup
 
 # AWS requires the Flask app to be named "application"
 application = Flask(__name__)
@@ -32,6 +34,78 @@ def index():
     threading.Thread(target=get_gdrive_folder_structure, args=('serviceAccountKey.json', '13Czs3mdHpL-5XDggphM9n2em4z2ZkSf4', 'static/temp')).start()
     
     return render_template('index.html', last_modified=last_modified)
+
+@application.route("/get_lyrics", methods=["GET"])
+def get_lyrics():
+    song_input = request.args.get("song")  # Get songInput from the frontend
+    if not song_input:
+        return jsonify({"error": "Missing song input"}), 400
+
+    url = f"https://www.zanmei.ai/search/song/{song_input}"
+
+    try:
+        response = requests.get(url, timeout=10)  # Fetch page
+        response.raise_for_status()  # Raise error if status code is not 200
+
+        soup = BeautifulSoup(response.text, "html.parser")
+        first_link = soup.select_one(".mainbody table a")  # Find first <a> inside <table> in .mainbody
+
+        if first_link:
+            return jsonify({"href": first_link["href"]})  # Return the href link
+        else:
+            return jsonify({"error": "No link found"}), 404
+
+    except requests.exceptions.RequestException as e:
+        return jsonify({"error": str(e)}), 500
+
+def get_lyrics():
+    baseURL = "https://www.zanmei.ai"
+    searchURL = baseURL + "/search/song/"
+    song_input = request.args.get("song")  # Get songInput from the frontend
+    if not song_input:
+        return jsonify({"error": "Missing song input"}), 400
+
+    searchURL = searchURL + song_input
+
+    try:
+        response = requests.get(searchURL, timeout=10)  # Fetch page
+        response.raise_for_status()  # Raise error if status code is not 200
+
+        soup = BeautifulSoup(response.text, "html.parser")
+        songs = soup.select(".mainbody table tr")
+        for idx, song in enumerate(songs, 1):
+            first_link = song.select_one("a")  # Get the first <a> inside the table
+            href = first_link["href"] if first_link else "No link found"
+            songURL = baseURL + href
+            response = requests.get(songURL, timeout=10)
+            response.raise_for_status()
+            soup = BeautifulSoup(response.text, "html.parser")
+            lrc_link = soup.find(lambda tag: tag.name == "a" and tag.text.strip() == "下载LRC")
+            if lrc_link:
+                lrc_url = baseURL + lrc_link["href"]  # Get LRC file URL
+                print(f"Downloading LRC from: {lrc_url}")
+
+                # Define save path
+                save_dir = "static/temp"
+                os.makedirs(save_dir, exist_ok=True)  # Ensure directory exists
+                save_path = os.path.join(save_dir, "lyrics.lrc")
+
+                # Download LRC file
+                response = requests.get(lrc_url, timeout=10)
+                if response.status_code == 200:
+                    with open(save_path, "wb") as file:
+                        file.write(response.content)
+                    print(f"LRC file saved to {save_path}")
+                    return jsonify({"message": "Success"}), 200
+                else:
+                    print(f"Failed to download LRC file. Status code: {response.status_code}")
+                    return jsonify({"error": "Failed to download LRC file"}), 500
+            else:
+                print("下载LRC link not found.")
+                return jsonify({"error": "LRC link not found"}), 404
+    except requests.exceptions.RequestException as e:
+        print(e)
+        return jsonify({"error": "RequestException"}), 500
 
 @application.route('/process-form', methods=['POST'])
 def process_form():

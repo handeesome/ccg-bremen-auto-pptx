@@ -1,15 +1,37 @@
+# Ignore compiled Python files
 __pycache__/
 .pytest_cache/
 *.pyc
 *.pyo
 *.pyd
+
+# Ignore Python virtual environment
 .venv/
 venv/
 env/
 virtualenv/
+
+# Ignore environment variable files
+.env
+.env.local
+
+# Ignore IDE/editor settings
+.vscode/
+.idea/
+
+# Ignore Flask cache and logs
+instance/
+*.log
+
+# Ignore temporary files
+.DS_Store
+
+# Ignore node_modules (dependencies should be installed via package.json)
+node_modules/
+
+# Ignore custom files
 build/
 dist/
-Pipfile.lock
 .vem/
 serviceAccountKey.json
 *test*

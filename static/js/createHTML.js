@@ -348,6 +348,7 @@ export function createSongInput(songId, text) {
           </div>
         </div>
         <div class="top-corner-buttons">
+          <div class="get-btn btn btn-info" style="visibility: visible;">从网络自动获取歌词</div>
           <div class="back-btn btn btn-secondary">后退</div>
           <div class="save-btn btn btn-success">保存</div>
           <div class="download-btn btn btn-primary">保存并下载</div>
@@ -391,7 +392,7 @@ export function createLyricsPages(songId, pages) {
     card.classList.add("card", "mb-2", "draggable", "form-control");
     card.draggable = true;
     card.innerHTML = `
-      <div class="card-body">
+      <div class="card-body text-center">
         ${text
           .split("\n")
           .map((line) => `<div>${line}</div>`)
