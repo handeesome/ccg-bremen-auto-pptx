@@ -37,28 +37,6 @@ def index():
 
 @application.route("/get_lyrics", methods=["GET"])
 def get_lyrics():
-    song_input = request.args.get("song")  # Get songInput from the frontend
-    if not song_input:
-        return jsonify({"error": "Missing song input"}), 400
-
-    url = f"https://www.zanmei.ai/search/song/{song_input}"
-
-    try:
-        response = requests.get(url, timeout=10)  # Fetch page
-        response.raise_for_status()  # Raise error if status code is not 200
-
-        soup = BeautifulSoup(response.text, "html.parser")
-        first_link = soup.select_one(".mainbody table a")  # Find first <a> inside <table> in .mainbody
-
-        if first_link:
-            return jsonify({"href": first_link["href"]})  # Return the href link
-        else:
-            return jsonify({"error": "No link found"}), 404
-
-    except requests.exceptions.RequestException as e:
-        return jsonify({"error": str(e)}), 500
-
-def get_lyrics():
     baseURL = "https://www.zanmei.ai"
     searchURL = baseURL + "/search/song/"
     song_input = request.args.get("song")  # Get songInput from the frontend
@@ -66,7 +44,6 @@ def get_lyrics():
         return jsonify({"error": "Missing song input"}), 400
 
     searchURL = searchURL + song_input
-
     try:
         response = requests.get(searchURL, timeout=10)  # Fetch page
         response.raise_for_status()  # Raise error if status code is not 200

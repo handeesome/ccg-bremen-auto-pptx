@@ -269,12 +269,27 @@ export function DIYpopup(popupOverlay, songId) {
     try {
       const response = await fetch(url);
       const data = await response.json();
-
-      if (data.href) {
-        console.log("First link:", data.href);
-        return data.href;
+      if (data.message === "Success") {
+        fetch("/static/temp/lyrics.lrc")
+          .then((response) => response.text()) // Read file as text
+          .then((lrcText) => {
+            const { lyrics, pages } = parseLRC(lrcText);
+            let formData = JSON.parse(localStorage.getItem("formData")) || {};
+            formData[`${songId}Pages`] = pages;
+            formData[`${songId}Lyrics`] = lyrics;
+            localStorage.setItem("formData", JSON.stringify(formData));
+            resumeLyricsPages(songId, lyrics, pages);
+            updateSlideNumbers(songId);
+            document
+              .getElementById(`DIYBtn${songId}`)
+              .dispatchEvent(new Event("click"));
+            const overlayDIY = document.getElementById(`overlay-DIY-${songId}`);
+            const getBtn = overlayDIY.querySelector(".get-btn");
+            getBtn.style.visibility = "hidden";
+          })
+          .catch((error) => console.error("Error loading LRC file:", error));
       } else {
-        console.error("Error:", data.error);
+        alert("获取歌词失败，请检查歌名是否正确");
         return null;
       }
     } catch (error) {
@@ -286,35 +301,12 @@ export function DIYpopup(popupOverlay, songId) {
   getBtn.addEventListener("click", function () {
     const songInput = document.getElementById(`${songId}Input`).value;
     if (songInput === "") {
-      // createAlertDialog("get-btn-dialog", "请先输入诗歌名");
-      createDialogWForm(songId, () => dlSongPPTX(songId));
+      createDialogWForm(songId, () => {
+        getLyrics(songInput);
+      });
       return;
     }
-    fetch("/static/temp/lyrics.lrc")
-      .then((response) => response.text()) // Read file as text
-      .then((lrcText) => {
-        const { lyrics, pages } = parseLRC(lrcText);
-        let formData = JSON.parse(localStorage.getItem("formData")) || {};
-        formData[`${songId}Pages`] = pages;
-        formData[`${songId}Lyrics`] = lyrics;
-        localStorage.setItem("formData", JSON.stringify(formData));
-        resumeLyricsPages(songId, lyrics, pages);
-        updateSlideNumbers(songId);
-        document
-          .getElementById(`DIYBtn${songId}`)
-          .dispatchEvent(new Event("click"));
-        const overlayDIY = document.getElementById(`overlay-DIY-${songId}`);
-        const getBtn = overlayDIY.querySelector(".get-btn");
-        getBtn.style.visibility = "hidden";
-      })
-      .catch((error) => console.error("Error loading LRC file:", error));
-    // getLyrics(songInput).then((link) => {
-    //   if (link) {
-    //     console.log("Extracted link:", link);
-    //   } else {
-    //     console.log("No link found.");
-    //   }
-    // });
+    getLyrics(songInput);
   });
 
   //生成歌词 button
