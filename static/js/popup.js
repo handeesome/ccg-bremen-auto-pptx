@@ -299,14 +299,16 @@ export function DIYpopup(popupOverlay, songId) {
   };
   const getBtn = popupOverlay.querySelector(".get-btn");
   getBtn.addEventListener("click", function () {
-    const songInput = document.getElementById(`${songId}Input`).value;
-    if (songInput === "") {
+    const songInput = document.getElementById(`${songId}Input`);
+    let inputValue = songInput.value;
+    if (inputValue === "") {
       createDialogWForm(songId, () => {
-        getLyrics(songInput);
+        inputValue = songInput.value;
+        getLyrics(inputValue);
       });
       return;
     }
-    getLyrics(songInput);
+    getLyrics(inputValue);
   });
 
   //生成歌词 button
