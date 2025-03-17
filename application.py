@@ -79,7 +79,7 @@ def get_lyrics():
                     return jsonify({"error": "Failed to download LRC file"}), 500
             else:
                 print("下载LRC link not found.")
-                return jsonify({"error": "LRC link not found"}), 404
+        return jsonify({"error": "LRC link not found"}), 404
     except requests.exceptions.RequestException as e:
         print(e)
         return jsonify({"error": "RequestException"}), 500
