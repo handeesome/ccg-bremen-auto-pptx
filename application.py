@@ -57,6 +57,10 @@ def get_lyrics():
             response = requests.get(songURL, timeout=10)
             response.raise_for_status()
             soup = BeautifulSoup(response.text, "html.parser")
+            lrc_text = soup.find(id="lyric_text")
+            if not lrc_text:
+                continue
+            lrc_text = lrc_text.text
             lrc_link = soup.find(lambda tag: tag.name == "a" and tag.text.strip() == "下载LRC")
             if lrc_link:
                 lrc_url = baseURL + lrc_link["href"]  # Get LRC file URL
@@ -73,7 +77,7 @@ def get_lyrics():
                     with open(save_path, "wb") as file:
                         file.write(response.content)
                     print(f"LRC file saved to {save_path}")
-                    return jsonify({"message": "Success"}), 200
+                    return jsonify({"message": "Success", "lrc_text": lrc_text}), 200
                 else:
                     print(f"Failed to download LRC file. Status code: {response.status_code}")
                     return jsonify({"error": "Failed to download LRC file"}), 500

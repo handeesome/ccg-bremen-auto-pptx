@@ -1,4 +1,4 @@
-export function parseLRC(lrcText) {
+export function parseLRC(lrcText, paragraphs) {
   const lines = lrcText.split("\n"); // Split into lines
   const regex = /\[([0-9:.]+)\]/g; // Regex to match timestamps
   let timestampsMap = []; // Stores { timestamp, lyric }
@@ -22,6 +22,7 @@ export function parseLRC(lrcText) {
 
   let pages = [];
   let currentPage = [];
+  let match_group = [];
 
   for (let i = 0; i < timestampsMap.length; i++) {
     let lyric = timestampsMap[i].lyrics;
@@ -33,14 +34,33 @@ export function parseLRC(lrcText) {
       currentPage = [];
     }
   }
-
   // Push the last paragraph if not empty
   if (currentPage.length > 0) {
     pages.push(currentPage.join("\n"));
   }
-  let lyrics = [...new Set(pages)];
+  for (let i = 0; i < pages.length; i++) {
+    let text_lines = pages[i].split("\n");
+    let matches = [];
+    let current_section = [];
+    for (let j = 0; j < text_lines.length; j++) {
+      current_section.push(text_lines[j]);
+      let section_str = current_section.join("\n");
+
+      if (paragraphs.includes(section_str)) {
+        matches.push(section_str);
+        current_section = [];
+      }
+    }
+    if (current_section.length > 0) {
+      matches.push(current_section.join("\n"));
+    }
+    match_group.push(matches);
+  }
+  match_group = match_group.flat();
+
+  let lyrics = [...new Set(match_group)];
   lyrics = lyrics.join("\n\n");
-  let output = { lyrics: lyrics, pages: pages };
+  let output = { lyrics: lyrics, pages: match_group };
   return output;
 }
 

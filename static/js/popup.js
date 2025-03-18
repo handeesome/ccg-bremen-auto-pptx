@@ -269,11 +269,11 @@ export function DIYpopup(popupOverlay, songId) {
     try {
       const response = await fetch(url);
       const data = await response.json();
-      if (data.message === "Success") {
+      if (data.lrc_text) {
         fetch("/static/temp/lyrics.lrc")
           .then((response) => response.text()) // Read file as text
           .then((lrcText) => {
-            const { lyrics, pages } = parseLRC(lrcText);
+            const { lyrics, pages } = parseLRC(lrcText, data.lrc_text);
             let formData = JSON.parse(localStorage.getItem("formData")) || {};
             formData[`${songId}Pages`] = pages;
             formData[`${songId}Lyrics`] = lyrics;
