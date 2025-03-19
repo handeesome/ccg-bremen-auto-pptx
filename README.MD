@@ -1,4 +1,4 @@
-# Project Name
+# Auto PPTX Generator for Bremen Church
 
 不来梅教会每周日需要一个 PPTX，往往做一个新的 PPTX 需要花费数个小时，这个项目可以通过用户的输入自动生成 PPTX，从而大大减少制作时间。
 
@@ -12,6 +12,8 @@
 
 ## Installation
 
+To set up the project on your local machine, follow these steps:
+
 1. **Clone the repository:**
 
    ```bash
@@ -21,7 +23,7 @@
 2. **Navigate to the project directory:**
 
    ```bash
-   cd your-project
+   cd ccg-bremen-auto-pptx
    ```
 
 3. **Create and activate a virtual environment (optional but recommended):**
@@ -31,7 +33,7 @@
    source venv/bin/activate   # On Windows, use 'venv\Scripts\activate'
    ```
 
-4. **Install dependencies:**
+4. **Install the required dependencies:**
 
    ```bash
    pip install -r requirements.txt
@@ -39,21 +41,21 @@
 
 ## Getting Started
 
+To start the application:
+
 1. **Run the project:**
 
    ```bash
    python app.py
    ```
 
-2. **Open your browser and visit [http://localhost:5000/](http://localhost:5000/):**
+2. **Access the application:**
 
-   The application should be up and running.
+   Open your browser and visit [http://localhost:5000/](http://localhost:5000/). The application should be running and accessible.
 
 ## Usage
 
-打开[http://localhost:5000/]后会跳转到(template.index.html)中的内容，如果需要修改可自行寻找。
-
-这个网页中有一些已经记录的当月的活动报告和祷告会事项等，如果需要 update，可以打开(static/changeMonthly.js)更改其中的变量。
+After opening [http://localhost:5000/], you will be redirected to the content defined in `template.index.html`. You can modify this template as needed.
 
 **重要注意事项**
 
@@ -61,12 +63,12 @@
 
 ## Contributing
 
-If you'd like to contribute to the project, please follow these guidelines:
+If you wish to contribute to this project, please follow these steps:
 
-1. Fork the project.
-2. Create a new branch.
-3. Make your changes.
-4. Submit a pull request.
+1. Fork the repository.
+2. Create a new branch for your changes.
+3. Make your modifications.
+4. Submit a pull request for review.
 
 ## License
 
