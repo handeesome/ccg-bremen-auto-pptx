@@ -1,4 +1,5 @@
 export function parseLRC(lrcText, paragraphs) {
+  const parsedParagraphs = paragraphs.split("\n\n");
   const lines = lrcText.split("\n"); // Split into lines
   const regex = /\[([0-9:.]+)\]/g; // Regex to match timestamps
   let timestampsMap = []; // Stores { timestamp, lyric }
@@ -46,7 +47,7 @@ export function parseLRC(lrcText, paragraphs) {
       current_section.push(text_lines[j]);
       let section_str = current_section.join("\n");
 
-      if (paragraphs.includes(section_str)) {
+      if (parsedParagraphs.includes(section_str)) {
         matches.push(section_str);
         current_section = [];
       }

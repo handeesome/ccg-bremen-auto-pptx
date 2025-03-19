@@ -389,7 +389,7 @@ export function createLyricsPages(songId, pages) {
     colContainer.style.position = "relative";
 
     const card = document.createElement("div");
-    card.classList.add("card", "mb-2", "draggable", "form-control");
+    card.classList.add("card", "mb-2", "draggable", "form-control", "h-100");
     card.draggable = true;
     card.innerHTML = `
       <div class="card-body text-center">
