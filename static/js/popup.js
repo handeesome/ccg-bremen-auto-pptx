@@ -265,7 +265,7 @@ export function DIYpopup(popupOverlay, songId) {
 
   const getLyrics = async (songInput) => {
     const url = `/get_lyrics?song=${songInput}`;
-
+    getBtn.innerHTML = `<i class="fas fa-spinner loading-icon"></i> 获取中...`;
     try {
       const response = await fetch(url);
       const data = await response.json();
@@ -283,17 +283,18 @@ export function DIYpopup(popupOverlay, songId) {
             document
               .getElementById(`DIYBtn${songId}`)
               .dispatchEvent(new Event("click"));
-            const overlayDIY = document.getElementById(`overlay-DIY-${songId}`);
-            const getBtn = overlayDIY.querySelector(".get-btn");
             getBtn.style.visibility = "hidden";
+            getBtn.innerHTML = `<i class="fas fa-check"></i> 获取成功`;
           })
           .catch((error) => console.error("Error loading LRC file:", error));
       } else {
         alert("获取歌词失败，请检查歌名是否正确");
+        getBtn.innerHTML = `<i class="fas fa-exclamation-circle"></i> 获取失败`;
         return null;
       }
     } catch (error) {
       console.error("Fetch error:", error);
+      getBtn.innerHTML = `<i class="fas fa-exclamation-circle"></i> 获取失败`;
       return null;
     }
   };
@@ -304,6 +305,7 @@ export function DIYpopup(popupOverlay, songId) {
     if (inputValue === "") {
       createDialogWForm(songId, () => {
         inputValue = songInput.value;
+
         getLyrics(inputValue);
       });
       return;
