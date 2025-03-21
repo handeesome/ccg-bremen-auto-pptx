@@ -8,9 +8,17 @@ from functions.getGDrive import get_gdrive_folder_structure
 import threading
 import requests
 from bs4 import BeautifulSoup
+import logging
 
 # AWS requires the Flask app to be named "application"
 application = Flask(__name__)
+
+# Configure logging
+logging.basicConfig(
+    filename='/var/log/app.log',  # Path to your log file
+    level=logging.ERROR,  # Log only errors and critical issues
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
 
 
 def get_latest_mod_time(directory):
@@ -41,6 +49,7 @@ def get_lyrics():
     searchURL = baseURL + "/search/song/"
     song_input = request.args.get("song")  # Get songInput from the frontend
     if not song_input:
+        logging.error(f"Form submission failed. Data: {song_input}, Error: {str(e)}")
         return jsonify({"error": "Missing song input"}), 400
 
     searchURL = searchURL + song_input
@@ -77,15 +86,18 @@ def get_lyrics():
                     with open(save_path, "wb") as file:
                         file.write(response.content)
                     print(f"LRC file saved to {save_path}")
+                    logging.error(f"LRC file saved to {save_path}")
                     return jsonify({"message": "Success", "lrc_text": lrc_text}), 200
                 else:
                     print(f"Failed to download LRC file. Status code: {response.status_code}")
+                    logging.error(f"Failed to download LRC file. Status code: {response.status_code}")
                     return jsonify({"error": "Failed to download LRC file"}), 500
             else:
                 print("下载LRC link not found.")
         return jsonify({"error": "LRC link not found"}), 404
     except requests.exceptions.RequestException as e:
         print(e)
+        logging.error(f"RequestException: {e}")
         return jsonify({"error": "RequestException"}), 500
 
 @application.route('/process-form', methods=['POST'])
@@ -93,11 +105,13 @@ def process_form():
     try:
         data = request.json  # Parse JSON
         if not data:
+            logging.error("No JSON received")
             return jsonify({"error": "No JSON received"}), 400
 
         fileName = generate_pptx("./docs/template.pptx", data)  # Get saved filename
         return jsonify({"message": "Success", "fileName": fileName}), 200
     except Exception as e:
+        logging.error(f"Error in process_form: {str(e)}")
         return jsonify({"error": str(e)}), 400
     
 @application.route('/submit-song', methods=['POST'])
@@ -127,8 +141,10 @@ def download_pptx(fileName):
                     print(f"Successfully deleted: {pptx_path}")
                 else:
                     print(f"File not found: {pptx_path}")
+                    logging.error(f"File not found: {pptx_path}")
             except Exception as e:
                 print(f"Error deleting file: {e}")
+                logging.error(f"Error deleting file: {e}")
             return response
         
         # Send the in-memory file as a response
@@ -140,6 +156,7 @@ def download_pptx(fileName):
         )
     
     except Exception as e:
+        logging.error(f"Error in download_pptx: {str(e)}")
         return jsonify({"error": str(e)}), 500
 if __name__ == '__main__':
     application.run()
