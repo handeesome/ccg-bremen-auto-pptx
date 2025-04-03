@@ -16,7 +16,7 @@ application = Flask(__name__)
 # Configure logging
 logging.basicConfig(
     filename='/var/log/app.log',  # Path to your log file
-    level=logging.ERROR,  # Log only errors and critical issues
+    level=logging.INFO,  # Log only errors and critical issues
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 
@@ -104,6 +104,7 @@ def get_lyrics():
 def process_form():
     try:
         data = request.json  # Parse JSON
+        logging.info(f"Data received: {data}")
         if not data:
             logging.error("No JSON received")
             return jsonify({"error": "No JSON received"}), 400

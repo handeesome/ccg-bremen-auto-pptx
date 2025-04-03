@@ -288,12 +288,13 @@ export function DIYpopup(popupOverlay, songId) {
           })
           .catch((error) => console.error("Error loading LRC file:", error));
       } else {
-        alert("获取歌词失败，请检查歌名是否正确");
+        alert("获取歌词失败，请检查歌名是否正确。");
         getBtn.innerHTML = `<i class="fas fa-exclamation-circle"></i> 获取失败`;
         return null;
       }
     } catch (error) {
       console.error("Fetch error:", error);
+      alert("获取歌词失败，请确保https://www.zanmei.ai/可用。");
       getBtn.innerHTML = `<i class="fas fa-exclamation-circle"></i> 获取失败`;
       return null;
     }
