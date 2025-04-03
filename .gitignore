@@ -38,4 +38,4 @@ serviceAccountKey.json
 *.zip
 TODO.txt
 *.lrc
-GDriveSongs.json
+static/temp/GDriveSongs.json
