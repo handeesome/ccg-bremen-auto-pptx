@@ -8,17 +8,10 @@ from functions.getGDrive import get_gdrive_folder_structure
 import threading
 import requests
 from bs4 import BeautifulSoup
-import logging
 
 # AWS requires the Flask app to be named "application"
 application = Flask(__name__)
 
-# Configure logging
-logging.basicConfig(
-    filename='/var/log/app.log',  # Path to your log file
-    level=logging.INFO,  # Log only errors and critical issues
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
 
 
 def get_latest_mod_time(directory):
@@ -112,7 +105,7 @@ def process_form():
         fileName = generate_pptx("./docs/template.pptx", data)  # Get saved filename
         return jsonify({"message": "Success", "fileName": fileName}), 200
     except Exception as e:
-        logging.error(f"Error in process_form: {str(e)}")
+        logging.error(f"Error in process_form: {str(e)}", exc_info=True)
         return jsonify({"error": str(e)}), 400
     
 @application.route('/submit-song', methods=['POST'])

@@ -4,11 +4,13 @@
 
 ## Table of Contents
 
-- [Installation](#installation)
-- [Getting Started](#getting-started)
-- [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
+- [Auto PPTX Generator for Bremen Church](#auto-pptx-generator-for-bremen-church)
+  - [Table of Contents](#table-of-contents)
+  - [Installation](#installation)
+  - [Getting Started](#getting-started)
+  - [Usage](#usage)
+  - [Contributing](#contributing)
+  - [License](#license)
 
 ## Installation
 
@@ -46,7 +48,7 @@ To start the application:
 1. **Run the project:**
 
    ```bash
-   python app.py
+   python application.py
    ```
 
 2. **Access the application:**
