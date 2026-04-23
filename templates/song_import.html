@@ -21,7 +21,7 @@
         <div>
           <h1 class="mb-1">导入旧诗歌 PPTX</h1>
           <p class="text-muted mb-0">
-            把旧文件拖进来，系统会读取每一页的文字，再按当前项目的歌词模板重新导出。
+            这个页面默认按批次处理文件。拖入很多旧文件后，系统会分批转换并在最后打包下载。
           </p>
         </div>
         <a href="/" class="btn btn-outline-secondary">返回主页</a>
@@ -42,9 +42,37 @@
         <span id="status-text" class="text-muted">等待上传文件</span>
       </div>
 
+      <div class="batch-summary mt-3">
+        <div class="summary-card">
+          <div class="summary-label">当前队列</div>
+          <div id="summary-count" class="summary-value">0</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-label">建议批大小</div>
+          <div class="summary-value">25</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-label">处理进度</div>
+          <div id="summary-progress" class="summary-value">0 / 0</div>
+        </div>
+      </div>
+
+      <div class="progress-shell mt-3">
+        <div class="progress">
+          <div
+            id="batch-progress-bar"
+            class="progress-bar"
+            role="progressbar"
+            style="width: 0%"
+            aria-valuenow="0"
+            aria-valuemin="0"
+            aria-valuemax="100"></div>
+        </div>
+      </div>
+
       <div class="action-row mt-4">
         <button id="export-btn" type="button" class="btn btn-primary" disabled>
-          导出并下载PPTX
+          开始批量导出并下载PPTX
         </button>
         <button id="clear-btn" type="button" class="btn btn-outline-secondary" disabled>
           清空文件列表
@@ -58,7 +86,12 @@
         </div>
       </div>
 
-      <div id="preview-list" class="preview-list mt-4"></div>
+      <div class="mt-4">
+        <h5 class="mb-3">批量处理结果</h5>
+        <div id="result-list" class="result-list">
+          <div class="selected-file-empty text-muted">处理开始后会在这里显示结果</div>
+        </div>
+      </div>
     </div>
 
     <script type="module" src="../static/js/song_import.js"></script>

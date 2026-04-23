@@ -3,6 +3,8 @@ import io
 import logging
 import tempfile
 import zipfile
+import shutil
+import uuid
 from flask import Flask, render_template, request, jsonify, send_file, after_this_request
 from functions.generate_pptx import generate_pptx
 from functions.generate_lyrics_pptx import generate_lyrics_pptx
@@ -14,6 +16,7 @@ from bs4 import BeautifulSoup
 # AWS requires the Flask app to be named "application"
 application = Flask(__name__)
 ENABLE_GOOGLE_DRIVE = False
+BATCH_ROOT_NAME = 'song-import-batches'
 
 
 
@@ -44,6 +47,50 @@ def index():
 @application.route('/song-import', methods=['GET'])
 def song_import():
     return render_template('song_import.html')
+
+
+def get_song_import_batch_root():
+    temp_root = os.path.join(os.getcwd(), 'static', 'temp')
+    os.makedirs(temp_root, exist_ok=True)
+    batch_root = os.path.join(temp_root, BATCH_ROOT_NAME)
+    os.makedirs(batch_root, exist_ok=True)
+    return batch_root
+
+
+def get_song_import_batch_dirs(batch_id):
+    batch_root = get_song_import_batch_root()
+    batch_dir = os.path.join(batch_root, batch_id)
+    return {
+        'root': batch_root,
+        'batch': batch_dir,
+        'output': os.path.join(batch_dir, 'output'),
+        'work': os.path.join(batch_dir, 'work'),
+    }
+
+
+def ensure_song_import_batch(batch_id):
+    dirs = get_song_import_batch_dirs(batch_id)
+    if not os.path.isdir(dirs['batch']):
+        raise FileNotFoundError("Batch not found")
+    os.makedirs(dirs['output'], exist_ok=True)
+    os.makedirs(dirs['work'], exist_ok=True)
+    return dirs
+
+
+def reserve_output_path(output_dir, original_name):
+    stem = sanitize_song_name(original_name or 'song')
+    candidate = f"{stem}.pptx"
+    candidate_path = os.path.join(output_dir, candidate)
+    if not os.path.exists(candidate_path):
+        return stem
+
+    suffix = 2
+    while True:
+        candidate = f"{stem}-{suffix}.pptx"
+        candidate_path = os.path.join(output_dir, candidate)
+        if not os.path.exists(candidate_path):
+            return f"{stem}-{suffix}"
+        suffix += 1
 
 @application.route("/get_lyrics", methods=["GET"])
 def get_lyrics():
@@ -298,6 +345,152 @@ def convert_song_import():
     except Exception as e:
         cleanup_paths(generated_paths + temp_audio_paths + [output_dir, source_dir])
         return jsonify({"error": str(e)}), 500
+
+
+@application.route('/api/song-import/batch-start', methods=['POST'])
+def song_import_batch_start():
+    batch_id = uuid.uuid4().hex
+    dirs = get_song_import_batch_dirs(batch_id)
+    os.makedirs(dirs['output'], exist_ok=True)
+    os.makedirs(dirs['work'], exist_ok=True)
+    return jsonify({"batchId": batch_id}), 200
+
+
+@application.route('/api/song-import/batch-chunk', methods=['POST'])
+def song_import_batch_chunk():
+    batch_id = request.form.get('batchId', '').strip()
+    files = request.files.getlist('files')
+    if not batch_id:
+        return jsonify({"error": "Missing batch id"}), 400
+    if not files:
+        return jsonify({"error": "No files uploaded"}), 400
+
+    try:
+        dirs = ensure_song_import_batch(batch_id)
+    except FileNotFoundError:
+        return jsonify({"error": "Batch not found"}), 404
+
+    processed = []
+    failed = []
+
+    for uploaded_file in files:
+        temp_paths = []
+        try:
+            if not uploaded_file or not uploaded_file.filename:
+                continue
+
+            original_name = uploaded_file.filename
+            source_fd, source_path = tempfile.mkstemp(
+                prefix='src-',
+                suffix='.pptx',
+                dir=dirs['work'],
+            )
+            os.close(source_fd)
+            uploaded_file.save(source_path)
+            temp_paths.append(source_path)
+
+            extracted = extract_song_slides_from_path(source_path, original_name)
+            slides = extracted.get('slides') or []
+            slide_texts = [
+                str(slide.get('text', '')).strip()
+                for slide in slides
+                if str(slide.get('text', '')).strip()
+            ]
+
+            if not slide_texts:
+                failed.append({
+                    "name": original_name,
+                    "error": "No slides with text were available to export",
+                })
+                cleanup_paths(temp_paths)
+                continue
+
+            audio_path = extract_slide_one_audio(source_path, dirs['work'])
+            if audio_path:
+                temp_paths.append(audio_path)
+
+            reserved_title = reserve_output_path(dirs['output'], original_name)
+            file_name = generate_lyrics_pptx(
+                './docs/empty.pptx',
+                slide_texts,
+                reserved_title,
+                output_dir=dirs['output'],
+                audio_path=audio_path,
+            )
+            processed.append({
+                "name": original_name,
+                "outputName": file_name,
+                "slideCount": len(slides),
+                "audioCopied": bool(audio_path),
+            })
+        except Exception as e:
+            failed.append({
+                "name": getattr(uploaded_file, 'filename', 'unknown'),
+                "error": str(e),
+            })
+        finally:
+            cleanup_paths(temp_paths)
+
+    return jsonify({
+        "processed": processed,
+        "failed": failed,
+        "processedCount": len(processed),
+        "failedCount": len(failed),
+    }), 200
+
+
+@application.route('/api/song-import/batch-finalize', methods=['POST'])
+def song_import_batch_finalize():
+    payload = request.json or {}
+    batch_id = (payload.get('batchId') or '').strip()
+    if not batch_id:
+        return jsonify({"error": "Missing batch id"}), 400
+
+    try:
+        dirs = ensure_song_import_batch(batch_id)
+    except FileNotFoundError:
+        return jsonify({"error": "Batch not found"}), 404
+
+    output_files = []
+    for entry in sorted(os.listdir(dirs['output'])):
+        path = os.path.join(dirs['output'], entry)
+        if os.path.isfile(path):
+            output_files.append(path)
+
+    if not output_files:
+        cleanup_paths([dirs['batch']])
+        return jsonify({"error": "No converted files available"}), 400
+
+    @after_this_request
+    def cleanup(response):
+        shutil.rmtree(dirs['batch'], ignore_errors=True)
+        return response
+
+    if len(output_files) == 1:
+        output_path = output_files[0]
+        with open(output_path, 'rb') as f:
+            file_data = f.read()
+        file_stream = io.BytesIO(file_data)
+        file_stream.seek(0)
+        return send_file(
+            file_stream,
+            as_attachment=True,
+            download_name=os.path.basename(output_path),
+            mimetype='application/vnd.openxmlformats-officedocument.presentationml.presentation'
+        )
+
+    zip_buffer = io.BytesIO()
+    with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as archive:
+        for path in output_files:
+            archive.write(path, arcname=os.path.basename(path))
+    zip_buffer.seek(0)
+
+    return send_file(
+        zip_buffer,
+        as_attachment=True,
+        download_name='converted-song-pptx.zip',
+        mimetype='application/zip'
+    )
 
 @application.route('/download/<fileName>', methods=['GET'])
 def download_pptx(fileName):

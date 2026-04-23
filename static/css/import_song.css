@@ -32,6 +32,40 @@
   flex-wrap: wrap;
 }
 
+.batch-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.75rem;
+}
+
+.summary-card {
+  border: 1px solid #d6e0ea;
+  border-radius: 14px;
+  background: #ffffff;
+  padding: 1rem;
+}
+
+.summary-label {
+  color: #6c7a89;
+  font-size: 0.95rem;
+}
+
+.summary-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #20374f;
+}
+
+.progress-shell .progress {
+  height: 16px;
+  border-radius: 999px;
+  background: #eaf0f6;
+}
+
+.progress-shell .progress-bar {
+  background: linear-gradient(90deg, #2f74c0 0%, #4c9be8 100%);
+}
+
 .selected-file-list {
   border: 1px solid #d6e0ea;
   border-radius: 14px;
@@ -49,11 +83,6 @@
 
 .selected-file-empty {
   padding: 0.25rem 0;
-}
-
-.preview-list {
-  display: grid;
-  gap: 1rem;
 }
 
 .preview-card {
@@ -95,4 +124,28 @@
   white-space: pre-wrap;
   word-break: break-word;
   font-family: "Microsoft YaHei UI", sans-serif;
+}
+
+.result-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.result-item {
+  border: 1px solid #e5ebf1;
+  border-radius: 12px;
+  padding: 0.85rem 1rem;
+  background: #fbfdff;
+}
+
+.result-item + .result-item {
+  margin-top: 0.75rem;
+}
+
+.result-item.success {
+  border-left: 4px solid #2e8b57;
+}
+
+.result-item.failure {
+  border-left: 4px solid #cf4e4e;
 }
