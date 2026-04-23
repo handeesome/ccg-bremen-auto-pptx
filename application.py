@@ -1,16 +1,19 @@
 import os
 import io
+import logging
+import tempfile
+import zipfile
 from flask import Flask, render_template, request, jsonify, send_file, after_this_request
 from functions.generate_pptx import generate_pptx
 from functions.generate_lyrics_pptx import generate_lyrics_pptx
+from functions.import_song_slides import extract_song_slides, extract_song_slides_from_path, sanitize_song_name, cleanup_paths, extract_slide_one_audio
 import datetime
-from functions.getGDrive import get_gdrive_folder_structure
-import threading
 import requests
 from bs4 import BeautifulSoup
 
 # AWS requires the Flask app to be named "application"
 application = Flask(__name__)
+ENABLE_GOOGLE_DRIVE = False
 
 
 
@@ -30,11 +33,17 @@ def get_latest_mod_time(directory):
 @application.route('/', methods=['GET'])
 def index():
     last_modified = get_latest_mod_time(os.getcwd())  # Scan all project files
-    
-    # Run get_gdrive_folder_structure in a separate thread
-    threading.Thread(target=get_gdrive_folder_structure, args=('serviceAccountKey.json', '13Czs3mdHpL-5XDggphM9n2em4z2ZkSf4', 'static/temp')).start()
+
+    if ENABLE_GOOGLE_DRIVE:
+        logging.info("Google Drive indexing is enabled.")
+    else:
+        logging.info("Google Drive features are temporarily disabled.")
     
     return render_template('index.html', last_modified=last_modified)
+
+@application.route('/song-import', methods=['GET'])
+def song_import():
+    return render_template('song_import.html')
 
 @application.route("/get_lyrics", methods=["GET"])
 def get_lyrics():
@@ -42,7 +51,7 @@ def get_lyrics():
     searchURL = baseURL + "/search/song/"
     song_input = request.args.get("song")  # Get songInput from the frontend
     if not song_input:
-        logging.error(f"Form submission failed. Data: {song_input}, Error: {str(e)}")
+        logging.error("Lyrics request missing song input.")
         return jsonify({"error": "Missing song input"}), 400
 
     searchURL = searchURL + song_input
@@ -79,7 +88,7 @@ def get_lyrics():
                     with open(save_path, "wb") as file:
                         file.write(response.content)
                     print(f"LRC file saved to {save_path}")
-                    logging.error(f"LRC file saved to {save_path}")
+                    logging.info(f"LRC file saved to {save_path}")
                     return jsonify({"message": "Success", "lrc_text": lrc_text}), 200
                 else:
                     print(f"Failed to download LRC file. Status code: {response.status_code}")
@@ -91,7 +100,7 @@ def get_lyrics():
     except requests.exceptions.RequestException as e:
         print(e)
         logging.error(f"RequestException: {e}")
-        return jsonify({"error": "RequestException"}), 500
+        return jsonify({"error": f"Unable to reach zanmei.ai: {e.__class__.__name__}"}), 502
 
 @application.route('/process-form', methods=['POST'])
 def process_form():
@@ -110,9 +119,185 @@ def process_form():
     
 @application.route('/submit-song', methods=['POST'])
 def submit_song():
-    data = request.json
-    fileName = generate_lyrics_pptx('./docs/empty.pptx', data['pages'], data['songName'])
-    return jsonify({"message": "Success", "fileName": fileName}), 200
+    try:
+        data = request.json or {}
+        pages = data.get('pages')
+        song_name = (data.get('songName') or '').strip()
+
+        if not pages:
+            return jsonify({"error": "Missing song pages"}), 400
+        if not song_name:
+            return jsonify({"error": "Missing song name"}), 400
+
+        fileName = generate_lyrics_pptx('./docs/empty.pptx', pages, song_name)
+        return jsonify({"message": "Success", "fileName": fileName}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@application.route('/api/song-import/extract', methods=['POST'])
+def extract_song_import():
+    files = request.files.getlist('files')
+    if not files:
+        return jsonify({"error": "No files uploaded"}), 400
+
+    extracted_files = []
+    for uploaded_file in files:
+        if not uploaded_file or not uploaded_file.filename:
+            continue
+        try:
+            extracted_files.append(extract_song_slides(uploaded_file))
+        except Exception as e:
+            return jsonify({
+                "error": f"Failed to process {uploaded_file.filename}: {str(e)}"
+            }), 400
+
+    if not extracted_files:
+        return jsonify({"error": "No valid files uploaded"}), 400
+
+    return jsonify({"files": extracted_files}), 200
+
+@application.route('/api/song-import/export', methods=['POST'])
+def export_song_import():
+    payload = request.json or {}
+    files = payload.get('files') or []
+    if not files:
+        return jsonify({"error": "No extracted slides provided"}), 400
+
+    temp_root = os.path.join(os.getcwd(), 'static', 'temp')
+    os.makedirs(temp_root, exist_ok=True)
+    output_dir = tempfile.mkdtemp(prefix='song-import-', dir=temp_root)
+    generated_paths = []
+
+    try:
+        for item in files:
+            title = sanitize_song_name(item.get('originalName') or 'song')
+            slides = item.get('slides') or []
+            slide_texts = [str(slide.get('text', '')).strip() for slide in slides if str(slide.get('text', '')).strip()]
+
+            if not slide_texts:
+                continue
+
+            file_name = generate_lyrics_pptx('./docs/empty.pptx', slide_texts, title, output_dir=output_dir)
+            generated_paths.append(os.path.join(output_dir, file_name))
+
+        if not generated_paths:
+            cleanup_paths([output_dir])
+            return jsonify({"error": "No slides with text were available to export"}), 400
+
+        @after_this_request
+        def cleanup(response):
+            cleanup_paths(generated_paths + [output_dir])
+            return response
+
+        if len(generated_paths) == 1:
+            output_path = generated_paths[0]
+            with open(output_path, 'rb') as f:
+                file_data = f.read()
+            file_stream = io.BytesIO(file_data)
+            file_stream.seek(0)
+            return send_file(
+                file_stream,
+                as_attachment=True,
+                download_name=os.path.basename(output_path),
+                mimetype='application/vnd.openxmlformats-officedocument.presentationml.presentation'
+            )
+
+        zip_buffer = io.BytesIO()
+        with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as archive:
+            for path in generated_paths:
+                archive.write(path, arcname=os.path.basename(path))
+        zip_buffer.seek(0)
+
+        return send_file(
+            zip_buffer,
+            as_attachment=True,
+            download_name='converted-song-pptx.zip',
+            mimetype='application/zip'
+        )
+    except Exception as e:
+        cleanup_paths(generated_paths + [output_dir])
+        return jsonify({"error": str(e)}), 500
+
+@application.route('/api/song-import/convert', methods=['POST'])
+def convert_song_import():
+    files = request.files.getlist('files')
+    if not files:
+        return jsonify({"error": "No files uploaded"}), 400
+
+    temp_root = os.path.join(os.getcwd(), 'static', 'temp')
+    os.makedirs(temp_root, exist_ok=True)
+    output_dir = tempfile.mkdtemp(prefix='song-import-', dir=temp_root)
+    source_dir = tempfile.mkdtemp(prefix='song-import-src-', dir=temp_root)
+    generated_paths = []
+    temp_audio_paths = []
+
+    try:
+        for uploaded_file in files:
+            if not uploaded_file or not uploaded_file.filename:
+                continue
+
+            original_name = uploaded_file.filename
+            source_path = os.path.join(source_dir, original_name)
+            uploaded_file.save(source_path)
+
+            extracted = extract_song_slides_from_path(source_path, original_name)
+            slides = extracted.get('slides') or []
+            slide_texts = [str(slide.get('text', '')).strip() for slide in slides if str(slide.get('text', '')).strip()]
+
+            if not slide_texts:
+                continue
+
+            audio_path = extract_slide_one_audio(source_path, source_dir)
+            if audio_path:
+                temp_audio_paths.append(audio_path)
+
+            title = sanitize_song_name(original_name or 'song')
+            file_name = generate_lyrics_pptx(
+                './docs/empty.pptx',
+                slide_texts,
+                title,
+                output_dir=output_dir,
+                audio_path=audio_path,
+            )
+            generated_paths.append(os.path.join(output_dir, file_name))
+
+        if not generated_paths:
+            cleanup_paths(temp_audio_paths + [output_dir, source_dir])
+            return jsonify({"error": "No slides with text were available to export"}), 400
+
+        @after_this_request
+        def cleanup(response):
+            cleanup_paths(generated_paths + temp_audio_paths + [output_dir, source_dir])
+            return response
+
+        if len(generated_paths) == 1:
+            output_path = generated_paths[0]
+            with open(output_path, 'rb') as f:
+                file_data = f.read()
+            file_stream = io.BytesIO(file_data)
+            file_stream.seek(0)
+            return send_file(
+                file_stream,
+                as_attachment=True,
+                download_name=os.path.basename(output_path),
+                mimetype='application/vnd.openxmlformats-officedocument.presentationml.presentation'
+            )
+
+        zip_buffer = io.BytesIO()
+        with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as archive:
+            for path in generated_paths:
+                archive.write(path, arcname=os.path.basename(path))
+        zip_buffer.seek(0)
+
+        return send_file(
+            zip_buffer,
+            as_attachment=True,
+            download_name='converted-song-pptx.zip',
+            mimetype='application/zip'
+        )
+    except Exception as e:
+        cleanup_paths(generated_paths + temp_audio_paths + [output_dir, source_dir])
+        return jsonify({"error": str(e)}), 500
 
 @application.route('/download/<fileName>', methods=['GET'])
 def download_pptx(fileName):

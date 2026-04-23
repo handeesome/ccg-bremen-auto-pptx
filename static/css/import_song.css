@@ -1,0 +1,98 @@
+.import-shell {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.dropzone {
+  border: 2px dashed #5e7ea6;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #f4f8fc 0%, #eef3f8 100%);
+  min-height: 280px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+  transition: border-color 0.2s ease, transform 0.2s ease, background 0.2s ease;
+}
+
+.dropzone.active {
+  border-color: #2f74c0;
+  background: linear-gradient(135deg, #e8f1fb 0%, #dceafb 100%);
+  transform: translateY(-2px);
+}
+
+.dropzone-copy h3 {
+  margin-bottom: 0.5rem;
+}
+
+.action-row {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.selected-file-list {
+  border: 1px solid #d6e0ea;
+  border-radius: 14px;
+  background: #ffffff;
+  padding: 0.75rem 1rem;
+}
+
+.selected-file-item + .selected-file-item {
+  border-top: 1px solid #edf2f7;
+}
+
+.selected-file-item {
+  padding: 0.6rem 0;
+}
+
+.selected-file-empty {
+  padding: 0.25rem 0;
+}
+
+.preview-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.preview-card {
+  border: 1px solid #d6e0ea;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 10px 30px rgba(25, 52, 80, 0.06);
+  overflow: hidden;
+}
+
+.preview-header {
+  padding: 1rem 1.25rem;
+  background: #f7fafc;
+  border-bottom: 1px solid #e4ebf2;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.preview-body {
+  padding: 1rem 1.25rem 1.25rem;
+}
+
+.slide-block {
+  border: 1px solid #e5ebf1;
+  border-radius: 12px;
+  padding: 0.85rem 1rem;
+  background: #fbfdff;
+}
+
+.slide-block + .slide-block {
+  margin-top: 0.75rem;
+}
+
+.slide-block pre {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: "Microsoft YaHei UI", sans-serif;
+}

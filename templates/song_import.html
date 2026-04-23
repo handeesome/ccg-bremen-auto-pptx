@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>导入诗歌PPTX</title>
+    <link rel="stylesheet" href="../static/css/custom.css" />
+    <link rel="stylesheet" href="../static/css/import_song.css" />
+    <link
+      rel="icon"
+      type="image/png"
+      href="{{ url_for('static', filename='logo.png') }}" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+      rel="stylesheet" />
+  </head>
+  <body class="container py-4">
+    <div class="import-shell">
+      <div
+        class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        <div>
+          <h1 class="mb-1">导入旧诗歌 PPTX</h1>
+          <p class="text-muted mb-0">
+            把旧文件拖进来，系统会读取每一页的文字，再按当前项目的歌词模板重新导出。
+          </p>
+        </div>
+        <a href="/" class="btn btn-outline-secondary">返回主页</a>
+      </div>
+
+      <div id="dropzone" class="dropzone">
+        <input id="file-input" type="file" accept=".pptx" multiple hidden />
+        <div class="dropzone-copy">
+          <h3>拖拽文件到这里</h3>
+          <p class="mb-3">支持一次放入多个 `.pptx` 文件</p>
+          <button id="pick-files" type="button" class="btn btn-primary">
+            选择文件
+          </button>
+        </div>
+      </div>
+
+      <div class="status-row mt-3">
+        <span id="status-text" class="text-muted">等待上传文件</span>
+      </div>
+
+      <div class="action-row mt-4">
+        <button id="export-btn" type="button" class="btn btn-primary" disabled>
+          导出并下载PPTX
+        </button>
+        <button id="clear-btn" type="button" class="btn btn-outline-secondary" disabled>
+          清空文件列表
+        </button>
+      </div>
+
+      <div class="mt-4">
+        <h5 class="mb-3">已添加文件</h5>
+        <div id="selected-file-list" class="selected-file-list">
+          <div class="selected-file-empty text-muted">还没有添加文件</div>
+        </div>
+      </div>
+
+      <div id="preview-list" class="preview-list mt-4"></div>
+    </div>
+
+    <script type="module" src="../static/js/song_import.js"></script>
+  </body>
+</html>

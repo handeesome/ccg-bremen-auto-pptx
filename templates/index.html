@@ -12,7 +12,6 @@
       rel="icon"
       type="image/png"
       href="{{ url_for('static', filename='logo.png') }}" />
-    <script src="https://cdn.jsdelivr.net/npm/fuse.js"></script>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
@@ -34,6 +33,11 @@
 
       <div class="card-body">
         <form id="pptxForm">
+          <div class="d-flex justify-content-end mb-3">
+            <a href="/song-import" class="btn btn-outline-primary">
+              导入旧诗歌 PPTX
+            </a>
+          </div>
           <!-- 第零部分 -->
           <div
             class="form-section col-auto d-flex flex-column align-items-center">
