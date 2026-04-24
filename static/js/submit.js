@@ -67,7 +67,13 @@ document.getElementById("submitForm").addEventListener("click", function () {
     },
     body: JSON.stringify(formData), // Send the entire JSON data
   })
-    .then((response) => response.json())
+    .then(async (response) => {
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || "生成 PPTX 失败");
+      }
+      return data;
+    })
     .then((data) => {
       if (data.fileName) {
         window.location.href = "/download/" + data.fileName; // Redirect to download
@@ -78,7 +84,7 @@ document.getElementById("submitForm").addEventListener("click", function () {
     })
     .catch((error) => {
       console.error("Error:", error);
-      alert("网络错误，请稍后再试。");
+      createAlertDialog("pptx-submit-error-dialog", error.message);
     });
 });
 
