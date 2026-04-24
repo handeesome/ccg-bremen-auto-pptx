@@ -19,6 +19,18 @@ ENABLE_GOOGLE_DRIVE = False
 BATCH_ROOT_NAME = 'song-import-batches'
 
 
+def direct_get(url, timeout=15):
+    session = requests.Session()
+    session.trust_env = False
+    return session.get(
+        url,
+        timeout=timeout,
+        headers={
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0 Safari/537.36",
+        },
+    )
+
+
 
 def get_latest_mod_time(directory):
     """ Get the most recent modification date (YYYY-MM-DD) in the project directory. """
@@ -148,6 +160,62 @@ def get_lyrics():
         print(e)
         logging.error(f"RequestException: {e}")
         return jsonify({"error": f"Unable to reach zanmei.ai: {e.__class__.__name__}"}), 502
+
+@application.route('/api/ccg-bremen', methods=['GET'])
+def get_ccg_bremen_content():
+    url = "https://ccg-bremen.de/default.php"
+
+    try:
+        response = direct_get(url, timeout=15)
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        logging.error(f"Failed to fetch CCG Bremen page: {e}")
+        return jsonify({"error": f"Unable to reach CCG Bremen: {e.__class__.__name__}"}), 502
+
+    soup = BeautifulSoup(response.text, "html.parser")
+
+    jin_ju = None
+    tong_xun_items = []
+
+    jin_ju_heading = next(
+        (h2 for h2 in soup.select("h2") if "金句" in h2.get_text(" ", strip=True)),
+        None,
+    )
+    if jin_ju_heading:
+        jin_ju_paragraphs = []
+        for sibling in jin_ju_heading.find_next_siblings():
+            if getattr(sibling, "name", None) == "h2":
+                break
+            if getattr(sibling, "name", None) == "p":
+                text = sibling.get_text(" ", strip=True)
+                if text:
+                    jin_ju_paragraphs.append(text)
+
+        if len(jin_ju_paragraphs) > 1:
+            jin_ju = jin_ju_paragraphs[1]
+        elif jin_ju_paragraphs:
+            jin_ju = jin_ju_paragraphs[0]
+
+    tong_xun_heading = next(
+        (h2 for h2 in soup.select("h2") if "教会通讯" in h2.get_text(" ", strip=True)),
+        None,
+    )
+    if tong_xun_heading:
+        tong_xun = tong_xun_heading.find_next("ol")
+        if tong_xun:
+            tong_xun_items = [
+                li.get_text(" ", strip=True)
+                for li in tong_xun.select("li")
+                if li.get_text(strip=True)
+            ]
+
+    if not jin_ju and not tong_xun_items:
+        return jsonify({"error": "Unable to find expected sections on CCG Bremen page"}), 502
+
+    return jsonify({
+        "jinJu": jin_ju,
+        "activities": tong_xun_items,
+    }), 200
 
 @application.route('/process-form', methods=['POST'])
 def process_form():

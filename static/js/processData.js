@@ -1,7 +1,9 @@
 import { createTextareaSet } from "./createHTML.js";
 import { books, simple_books } from "./bibleIndexes.js";
 import { createLyricsPages } from "./createHTML.js";
+
 export function parseVerse(verseString) {
+  if (!verseString || typeof verseString !== "string") return null;
   const regex = /(.+?)\s+(\d+):(\d+)(?:-(\d+))?/;
   const match = verseString.match(regex);
 
@@ -154,33 +156,32 @@ export function resumeTextareaData(category) {
 }
 
 export function updateFromCCGBremen() {
-  let url = "https://ccg-bremen.de/default.php";
-  const proxy = "https://api.allorigins.win/get?url=";
   const buttonText = document.getElementById("buttonText");
   buttonText.innerHTML = `<i class="fas fa-spinner loading-icon"></i> 获取中...`;
 
-  fetch(proxy + encodeURIComponent(url))
-    .then((response) => response.text()) // Convert response to text (HTML)
-    .then((html) => {
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(html, "text/html");
-      // Extract 金句
-      let heading = Array.from(doc.querySelectorAll("h2")).find((h2) =>
-        h2.textContent.includes("金句")
-      );
-      const jinJu = heading?.parentElement
-        .querySelectorAll("p")[1]
-        .textContent.trim();
+  fetch("/api/ccg-bremen")
+    .then(async (response) => {
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || "Fetch failed");
+      }
+      return data;
+    })
+    .then((data) => {
+      console.info("Fetched CCG Bremen Jinju:", data.jinJu);
+      const parsedJinJu = parseVerse(data.jinJu);
+      console.info("Parsed Jinju for dropdown:", parsedJinJu);
+      if (parsedJinJu) {
+        if (books.includes(parsedJinJu.book) || simple_books.includes(parsedJinJu.book)) {
+          updateDropdowns("jinJu", parsedJinJu);
+        } else {
+          const message = `每月金句书卷名未识别: ${data.jinJu || "空值"}`;
+          console.warn(message);
+          buttonText.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
+        }
+      }
 
-      updateDropdowns("jinJu", parseVerse(jinJu));
-
-      heading = Array.from(doc.querySelectorAll("h2")).find((h2) =>
-        h2.textContent.includes("教会通讯")
-      );
-      const tongXun = heading?.parentElement.querySelector("ol");
-      const activities = Array.from(tongXun?.querySelectorAll("li") || []).map(
-        (li) => li.textContent
-      );
+      const activities = Array.isArray(data.activities) ? data.activities : [];
       document.getElementById("activityTextarea").innerHTML = "";
       createTextareaSet("activityTextarea", "activity");
       let AddTextarea = document.getElementById("activityAddTextarea");
@@ -195,7 +196,16 @@ export function updateFromCCGBremen() {
         textarea.value = activity;
         textarea.dispatchEvent(new Event("change"));
       });
-      buttonText.innerHTML = `<i class="fas fa-check"></i> 获取成功`;
+
+      if (!parsedJinJu && activities.length === 0) {
+        throw new Error("未找到金句或教会通讯");
+      }
+
+      if (parsedJinJu && (books.includes(parsedJinJu.book) || simple_books.includes(parsedJinJu.book))) {
+        buttonText.innerHTML = `<i class="fas fa-check"></i> 获取成功`;
+      } else if (!parsedJinJu) {
+        buttonText.innerHTML = `<i class="fas fa-exclamation-circle"></i> 金句格式无法解析: ${data.jinJu || "空值"}`;
+      }
     })
     .catch((error) => {
       console.error("Fetch error:", error);
