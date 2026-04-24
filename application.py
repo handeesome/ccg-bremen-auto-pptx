@@ -55,8 +55,20 @@ def index():
         logging.info("Google Drive indexing is enabled.")
     else:
         logging.info("Google Drive features are temporarily disabled.")
-    
+
     return render_template('index.html', last_modified=last_modified)
+
+
+@application.route('/worship-pptx', methods=['GET'])
+def worship_pptx():
+    last_modified = get_latest_mod_time(os.getcwd())  # Scan all project files
+
+    if ENABLE_GOOGLE_DRIVE:
+        logging.info("Google Drive indexing is enabled.")
+    else:
+        logging.info("Google Drive features are temporarily disabled.")
+    
+    return render_template('worship.html', last_modified=last_modified)
 
 @application.route('/song-import', methods=['GET'])
 def song_import():

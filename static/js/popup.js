@@ -494,7 +494,7 @@ function makeDraggable(songId) {
           });
           if (sourceContainer === lyricsContainer) {
             const colContainer = document.createElement("div");
-            colContainer.classList.add("col-4", "mt-2");
+            colContainer.classList.add("col-12", "col-md-6", "col-xl-4", "mt-2");
             colContainer.style.position = "relative";
             colContainer.appendChild(draggedItem);
           }

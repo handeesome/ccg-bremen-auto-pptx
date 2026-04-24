@@ -30,6 +30,9 @@
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   z-index: 1000; /* Make sure the popup appears above other elements */
+  width: min(760px, calc(100vw - 24px));
+  max-height: calc(100vh - 80px);
+  overflow: auto;
 }
 /* Content inside the popup */
 .popup-content {
@@ -107,4 +110,12 @@ a:focus {
 
 .clickable {
   cursor: pointer;
+}
+
+@media (max-width: 767.98px) {
+  .popup {
+    top: 12px;
+    transform: translate(-50%, 0);
+    padding: 16px;
+  }
 }

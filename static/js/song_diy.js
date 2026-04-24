@@ -118,7 +118,7 @@ function renderPreviewCards(pages) {
 
   pages.forEach((text) => {
     const colContainer = document.createElement("div");
-    colContainer.classList.add("col-6", "mt-2");
+    colContainer.classList.add("col-12", "col-md-6", "mt-2");
     colContainer.style.position = "relative";
 
     const card = document.createElement("div");
@@ -136,7 +136,7 @@ function renderPreviewCards(pages) {
     row.appendChild(colContainer);
 
     card.querySelector(".card-btn").addEventListener("click", (event) => {
-      event.target.closest(".col-6").remove();
+      event.target.closest(".col-12, .col-md-6").remove();
       updateSlideNumbers();
     });
   });
@@ -211,18 +211,18 @@ function makeDraggable() {
       deleteButton.type = "button";
       deleteButton.textContent = "删除";
       deleteButton.addEventListener("click", (e) => {
-        e.target.closest(".col-6").remove();
+        e.target.closest(".col-12, .col-md-6").remove();
         updateSlideNumbers();
       });
       sourceCard.querySelector(".card-body").prepend(deleteButton);
 
       const colContainer = document.createElement("div");
-      colContainer.classList.add("col-6", "mt-2");
+      colContainer.classList.add("col-12", "col-md-6", "mt-2");
       colContainer.style.position = "relative";
       colContainer.appendChild(sourceCard);
       row.appendChild(colContainer);
     } else {
-      const existingCol = draggedItem.closest(".col-6");
+      const existingCol = draggedItem.closest(".col-12, .col-md-6");
       row.appendChild(existingCol);
     }
 

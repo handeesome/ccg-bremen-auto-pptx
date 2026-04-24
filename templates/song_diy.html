@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DIY 诗歌歌词</title>
+    <title>创建诗歌 PPTX</title>
     <link rel="stylesheet" href="../static/css/custom.css" />
     <link rel="stylesheet" href="../static/css/DIYBtn.css" />
     <link
@@ -14,53 +14,80 @@
       rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/opencc-js@1.0.5/dist/umd/full.js"></script>
   </head>
-  <body class="container mt-4">
-    <div class="card">
-      <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-        <h1 class="mb-0">DIY 诗歌歌词</h1>
-      </div>
-      <div class="card-body">
-        <div class="row g-3 align-items-end mb-3">
-          <div class="col-12 col-lg-6">
-            <label for="song-name-input" class="form-label">诗歌名</label>
-            <input id="song-name-input" class="form-control" type="text" />
-          </div>
-          <div class="col-12 col-lg-6">
-            <div id="song-slot-label" class="text-muted"></div>
+  <body class="app-shell">
+    <main class="page-wrap">
+      <section class="hero-panel">
+        <div class="toolbar-row">
+          <a href="/" class="btn btn-light btn-soft">返回导航页</a>
+          <div class="hero-badge">Song PPTX Builder</div>
+        </div>
+        <div class="hero-brand">
+          <div>
+            <h1>创建单首诗歌 PPTX</h1>
+            <p class="hero-text">
+              先输入歌词，再拖拽整理分页顺序。左边是原始段落，右边是最终导出的投影片预览。
+            </p>
           </div>
         </div>
-        <div class="row g-3">
-          <div class="col-12 col-lg-4">
-            <label for="lyrics-input" class="form-label">歌词</label>
-            <textarea
-              id="lyrics-input"
-              rows="18"
-              class="form-control text-center"
-              placeholder="输入歌词，繁體会被自动转换成简体"></textarea>
-            <button id="generate-lyrics-btn" type="button" class="btn btn-primary w-100 mt-3">
-              生成
-            </button>
-          </div>
-          <div class="col-12 col-lg-8">
-            <div class="d-flex justify-content-end gap-2 mb-3">
-              <button id="save-diy-btn" type="button" class="btn btn-success" disabled>保存</button>
-              <button id="download-diy-btn" type="button" class="btn btn-primary" disabled>保存并下载</button>
+      </section>
+
+      <section class="section-card section-card-full">
+        <div class="section-body">
+          <div class="row g-3 align-items-end mb-4">
+            <div class="col-12 col-lg-7">
+              <label for="song-name-input" class="form-label">诗歌名</label>
+              <input id="song-name-input" class="form-control form-control-lg" type="text" />
             </div>
-            <div class="row">
-              <div class="col-4">
-                <div class="fw-bold mb-2">段落</div>
-                <div id="lyricsContainer" class="lyrics-container vh-100"></div>
+            <div class="col-12 col-lg-5">
+              <div id="song-slot-label" class="helper-label"></div>
+            </div>
+          </div>
+
+          <div class="row g-4">
+            <div class="col-12 col-xl-4">
+              <div class="editor-panel">
+                <label for="lyrics-input" class="form-label">歌词</label>
+                <textarea
+                  id="lyrics-input"
+                  rows="18"
+                  class="form-control text-center lyrics-source"
+                  placeholder="输入歌词，繁體会被自动转换成简体"></textarea>
+                <button id="generate-lyrics-btn" type="button" class="btn btn-primary w-100 mt-3">
+                  生成分页草稿
+                </button>
               </div>
-              <div class="col-8">
-                <div class="fw-bold mb-2">预览</div>
-                <div id="slidePreviewContainer" class="lyrics-container vh-100"></div>
+            </div>
+            <div class="col-12 col-xl-8">
+              <div class="preview-shell">
+                <div class="preview-toolbar">
+                  <div>
+                    <div class="preview-kicker">Drag and Drop</div>
+                    <h3>分页与预览</h3>
+                  </div>
+                  <div class="d-flex gap-2 flex-wrap">
+                    <button id="save-diy-btn" type="button" class="btn btn-success" disabled>保存</button>
+                    <button id="download-diy-btn" type="button" class="btn btn-primary" disabled>保存并下载</button>
+                  </div>
+                </div>
+
+                <div class="row g-3">
+                  <div class="col-12 col-lg-4">
+                    <div class="preview-column-title">段落</div>
+                    <div id="lyricsContainer" class="lyrics-container"></div>
+                  </div>
+                  <div class="col-12 col-lg-8">
+                    <div class="preview-column-title">预览</div>
+                    <div id="slidePreviewContainer" class="lyrics-container"></div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
-    <div id="dialogs-container"></div>
-    <script type="module" src="../static/js/song_diy.js"></script>
+      </section>
+
+      <div id="dialogs-container"></div>
+      <script type="module" src="../static/js/song_diy.js"></script>
+    </main>
   </body>
 </html>

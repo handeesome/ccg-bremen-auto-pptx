@@ -22,11 +22,11 @@ export function createWeekList(weekListId) {
     weekList.insertAdjacentHTML(
       "beforeend",
       `
-      <div class="row align-items-center mb-3">
-        <div class="col-auto">
+      <div class="row align-items-center g-2 mb-3">
+        <div class="col-12 col-md-3 col-xl-2">
           <label class="form-label">${role.label}:</label>
         </div>
-        <div class="col-4">
+        <div class="col-12 col-md-9 col-xl-10">
           <div class="d-flex gap-2">
             <input type="text" class="form-control form-input" id="${
               weekListId + role.id
@@ -58,21 +58,21 @@ export function createBibleDropdownSet(containerId, prefix, labelText) {
   let container = document.getElementById(containerId);
 
   let html = `
-    <div class="row align-items-center mb-3" id="dropdownSet-${prefix}">
+    <div class="row align-items-center g-2 mb-3" id="dropdownSet-${prefix}">
       <!-- Label & TextBox -->
-      <div class="col-auto">
+      <div class="col-12 col-md-3 col-xl-2">
         <label for="${prefix}">${labelText}</label>
       </div>
 
       <!-- Dropdowns -->
-      <div class="col-4">
-        <div class="d-flex gap-2 align-items-center">
+      <div class="col-12 col-md-9 col-xl-10">
+        <div class="d-flex gap-2 align-items-center flex-wrap">
           <select class="form-select" id="${prefix}DropdownBook"></select>
           <select class="form-select" id="${prefix}DropdownChap" style="display: none"></select>
           <select class="form-select" id="${prefix}DropdownVerseFrom" style="display: none"></select>
           <span id="${prefix}TextBetween" style="display: none;">至</span>
           <select class="form-select" id="${prefix}DropdownVerseTo" style="display: none"></select>
-          <button class="btn btn-primary" type="button" id="${prefix}Button"> + </button>
+          <button class="btn btn-primary control-icon-btn control-icon-btn-add" type="button" id="${prefix}Button" aria-label="添加经文">+</button>
         </div>
       </div>
     </div>
@@ -92,8 +92,9 @@ export function createBibleDropdownSet(containerId, prefix, labelText) {
     newRow.querySelector("label").textContent = "\u3000\u3000\u2005";
 
     let newButton = newRow.querySelector("button");
-    newButton.textContent = " − ";
-    newButton.className = "btn btn-danger";
+    newButton.textContent = "−";
+    newButton.className = "btn btn-danger control-icon-btn control-icon-btn-remove";
+    newButton.setAttribute("aria-label", "删除经文");
     newButton.onclick = function () {
       newRow.remove();
       removeVerseData(newRow, prefix);
@@ -117,11 +118,11 @@ export function createBibleDropdownSet(containerId, prefix, labelText) {
 export function createInput(containerId, type, labelText) {
   let container = document.getElementById(containerId);
   let html = `
-    <div class="row align-items-center mb-3">
-      <div class="col-auto" id=${containerId}Label>
+    <div class="row align-items-center g-2 mb-3">
+      <div class="col-12 col-md-3 col-xl-2" id=${containerId}Label>
         <label class="col-form-label">${labelText}</label>
       </div>
-      <div class="col-auto">
+      <div class="col-12 col-md-9 col-xl-10">
         <input type=${type} id="${containerId}Input"/>
       </div>
     </div>
@@ -152,7 +153,7 @@ export function createRadio(
     ? `${12 / numberOfOptions}`
     : "auto";
   let html = `
-    <div class="col-md-${width} d-flex">
+    <div class="col-12 col-md-${width} d-flex">
       <label class="w-100">
         <input
           type="radio"
@@ -222,10 +223,10 @@ export function createRadio(
 
 function createTextarea(container, category, buttonPrimary) {
   let newTextareaDiv = document.createElement("div");
-  newTextareaDiv.classList.add("mb-3", "d-flex", "align-items-center");
+  newTextareaDiv.classList.add("mb-3", "textarea-entry");
 
   let textareaElement = document.createElement("textarea");
-  textareaElement.className = "form-control";
+  textareaElement.className = "form-control textarea-entry-input";
   textareaElement.rows = 3;
   textareaElement.placeholder = "Type something...";
   let index = container.querySelectorAll("textarea").length;
@@ -233,8 +234,9 @@ function createTextarea(container, category, buttonPrimary) {
 
   let buttonRemove = document.createElement("button");
   buttonRemove.type = "button";
-  buttonRemove.className = "btn btn-danger ms-2 col-auto";
-  buttonRemove.innerHTML = "-";
+  buttonRemove.className = "btn btn-danger control-icon-btn control-icon-btn-remove textarea-entry-remove";
+  buttonRemove.innerHTML = "−";
+  buttonRemove.setAttribute("aria-label", "删除文本框");
   buttonRemove.onclick = function () {
     container.removeChild(newTextareaDiv);
     removeTextareaData(index, category);
@@ -258,10 +260,11 @@ export function createTextareaSet(containerId, category) {
   let buttonContainer = document.createElement("div");
   buttonContainer.className = "text-center";
   let buttonPrimary = document.createElement("button");
-  buttonPrimary.className = "btn btn-primary mb-3";
+  buttonPrimary.className = "btn btn-primary mb-3 control-icon-btn control-icon-btn-add";
   buttonPrimary.id = `${category}AddTextarea`;
   buttonPrimary.type = "button";
   buttonPrimary.innerHTML = "+";
+  buttonPrimary.setAttribute("aria-label", "添加文本框");
   buttonContainer.insertAdjacentElement("beforeend", buttonPrimary);
   container.insertAdjacentElement("beforeend", buttonContainer);
 
@@ -276,11 +279,11 @@ export function createFetchButton(containerId) {
   let container = document.getElementById(containerId);
   let button = document.createElement("button");
   button.type = "button";
-  button.className = "btn btn-info absolute-btn";
+  button.className = "btn section-action-btn";
   button.id = "getFromCCGBremen";
   let span = document.createElement("span");
   span.id = "buttonText";
-  span.innerHTML = "从CCG Bremen网站自动获取";
+  span.innerHTML = "自动获取 CCG Bremen 内容";
   button.appendChild(span);
   container.appendChild(button);
 
@@ -317,7 +320,7 @@ export function createLyricsPages(songId, pages) {
 
   pages.forEach((text) => {
     const colContainer = document.createElement("div");
-    colContainer.classList.add("col-4", "mt-2");
+    colContainer.classList.add("col-12", "col-md-6", "col-xl-4", "mt-2");
     colContainer.style.position = "relative";
 
     const card = document.createElement("div");
