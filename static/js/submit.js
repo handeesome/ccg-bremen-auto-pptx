@@ -102,7 +102,13 @@ export function dlSongPPTX(songId) {
     },
     body: JSON.stringify(dataToSend), // Convert the dataToSend object to a JSON string
   })
-    .then((response) => response.json()) // Assuming the server returns JSON
+    .then(async (response) => {
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to generate song PPTX");
+      }
+      return data;
+    })
     .then((data) => {
       // Use setTimeout to ensure dialog hiding is processed first
       window.location.href = "/download/" + data.fileName;
@@ -113,6 +119,6 @@ export function dlSongPPTX(songId) {
     })
     .catch((error) => {
       console.error("Error:", error); // Handle error response
-      // You can show an error message to the user, etc.
+      createAlertDialog("pptx-error-dialog", error.message);
     });
 }
