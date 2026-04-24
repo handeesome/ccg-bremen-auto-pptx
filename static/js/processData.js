@@ -285,6 +285,7 @@ export const initialFormData = {
   song2: "",
   song3: "",
   song4: "",
+  songImports: [],
   thisWeekListzhengDao: ["", ""],
   thisWeekListjieDai: ["", ""],
   thisWeekListerTong: ["", ""],
@@ -307,9 +308,11 @@ export function resumeLyricsData() {
   songs.forEach((song) => {
     let lyrics = formData[`${song}Lyrics`];
     if (!lyrics) return;
-    document.getElementById(`DIYBtn${song}`).dispatchEvent(new Event("click"));
-    let pages = formData[`${song}Pages`];
-    resumeLyricsPages(song, lyrics, pages);
+    const DIYbtn = document.getElementById(`DIYBtn${song}`);
+    if (!DIYbtn) return;
+    DIYbtn.textContent = "查看歌词";
+    DIYbtn.classList.remove("btn-primary");
+    DIYbtn.classList.add("btn-secondary");
   });
 }
 export function resumeLyricsPages(songId, lyrics, pages) {

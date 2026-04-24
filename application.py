@@ -5,6 +5,7 @@ import tempfile
 import zipfile
 import shutil
 import uuid
+from pathlib import Path
 from flask import Flask, render_template, request, jsonify, send_file, after_this_request
 from functions.generate_pptx import generate_pptx
 from functions.generate_lyrics_pptx import generate_lyrics_pptx
@@ -17,6 +18,7 @@ from bs4 import BeautifulSoup
 application = Flask(__name__)
 ENABLE_GOOGLE_DRIVE = False
 BATCH_ROOT_NAME = 'song-import-batches'
+SONG_SLOT_ROOT_NAME = 'song-slot-imports'
 
 
 def direct_get(url, timeout=15):
@@ -61,12 +63,37 @@ def song_import():
     return render_template('song_import.html')
 
 
+@application.route('/song-diy', methods=['GET'])
+def song_diy():
+    return render_template('song_diy.html')
+
+
 def get_song_import_batch_root():
     temp_root = os.path.join(os.getcwd(), 'static', 'temp')
     os.makedirs(temp_root, exist_ok=True)
     batch_root = os.path.join(temp_root, BATCH_ROOT_NAME)
     os.makedirs(batch_root, exist_ok=True)
     return batch_root
+
+
+def get_song_slot_import_root():
+    temp_root = os.path.join(os.getcwd(), 'static', 'temp')
+    os.makedirs(temp_root, exist_ok=True)
+    slot_root = os.path.join(temp_root, SONG_SLOT_ROOT_NAME)
+    os.makedirs(slot_root, exist_ok=True)
+    return slot_root
+
+
+def is_safe_song_slot_audio_path(path_value):
+    if not path_value:
+        return False
+    try:
+        resolved_path = Path(path_value).resolve()
+        slot_root = Path(get_song_slot_import_root()).resolve()
+        resolved_path.relative_to(slot_root)
+        return resolved_path.is_file()
+    except (OSError, ValueError):
+        return False
 
 
 def get_song_import_batch_dirs(batch_id):
@@ -217,8 +244,61 @@ def get_ccg_bremen_content():
         "activities": tong_xun_items,
     }), 200
 
+
+@application.route('/api/song-slots/import', methods=['POST'])
+def import_song_slots():
+    files = request.files.getlist('files')
+    if not files:
+        return jsonify({"error": "No files uploaded"}), 400
+
+    slot_root = get_song_slot_import_root()
+    source_dir = tempfile.mkdtemp(prefix='song-slot-src-', dir=slot_root)
+    temp_paths = [source_dir]
+    imported = []
+
+    try:
+        for uploaded_file in files[:4]:
+            if not uploaded_file or not uploaded_file.filename:
+                continue
+
+            original_name = uploaded_file.filename
+            source_path = os.path.join(source_dir, original_name)
+            uploaded_file.save(source_path)
+
+            extracted = extract_song_slides_from_path(source_path, original_name)
+            slides = extracted.get('slides') or []
+            pages = [
+                str(slide.get('text', '')).strip()
+                for slide in slides
+                if str(slide.get('text', '')).strip()
+            ]
+            if not pages:
+                return jsonify({
+                    "error": f"{original_name} does not contain any readable lyric slides"
+                }), 400
+
+            audio_path = extract_slide_one_audio(source_path, slot_root)
+            if audio_path:
+                temp_paths.append(audio_path)
+
+            imported.append({
+                "originalName": original_name,
+                "suggestedTitle": extracted.get('suggestedTitle') or sanitize_song_name(original_name),
+                "pages": pages,
+                "audioPath": audio_path,
+                "audioCopied": bool(audio_path),
+            })
+
+        if not imported:
+            return jsonify({"error": "No valid .pptx files were uploaded"}), 400
+
+        return jsonify({"files": imported}), 200
+    finally:
+        cleanup_paths([source_dir])
+
 @application.route('/process-form', methods=['POST'])
 def process_form():
+    temp_audio_paths = []
     try:
         data = request.json  # Parse JSON
         logging.info(f"Data received: {data}")
@@ -226,9 +306,18 @@ def process_form():
             logging.error("No JSON received")
             return jsonify({"error": "No JSON received"}), 400
 
+        for song_id in ("song1", "song2", "song3", "song4"):
+            audio_path = data.get(f"{song_id}AudioPath")
+            safe_audio_path = audio_path if is_safe_song_slot_audio_path(audio_path) else None
+            data[f"{song_id}AudioPath"] = safe_audio_path
+            if safe_audio_path:
+                temp_audio_paths.append(safe_audio_path)
+
         fileName = generate_pptx("./docs/template.pptx", data)  # Get saved filename
+        cleanup_paths(temp_audio_paths)
         return jsonify({"message": "Success", "fileName": fileName}), 200
     except Exception as e:
+        cleanup_paths(temp_audio_paths)
         logging.error(f"Error in process_form: {str(e)}", exc_info=True)
         return jsonify({"error": str(e)}), 400
     

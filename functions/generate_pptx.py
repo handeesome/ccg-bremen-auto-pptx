@@ -63,7 +63,12 @@ def generate_pptx(templatePath, formData):
         formData.get('song2Pages', []),
         formData.get('song3Pages', [])
     ]
-    partFive(prs, songOne, songTwo, songThree, songs)
+    songAudioPaths = [
+        formData.get('song1AudioPath'),
+        formData.get('song2AudioPath'),
+        formData.get('song3AudioPath'),
+    ]
+    partFive(prs, songOne, songTwo, songThree, songs, songAudioPaths)
 
     # 为儿童祷告
     slide = newSlide(prs, '')
@@ -87,7 +92,8 @@ def generate_pptx(templatePath, formData):
     # 回应诗歌 
     songHuiying = formData['song4']
     songHuiyingPages = formData.get('song4Pages', [])
-    partTen(prs, songHuiying, songHuiyingPages)
+    songHuiyingAudioPath = formData.get('song4AudioPath')
+    partTen(prs, songHuiying, songHuiyingPages, songHuiyingAudioPath)
 
     # 奉献回应礼
     fengxianjingwen = formData['verseRadio']

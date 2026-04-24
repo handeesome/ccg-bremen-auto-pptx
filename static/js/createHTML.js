@@ -8,7 +8,6 @@ import {
   updateRadioData,
 } from "./processData.js";
 import { findBibleText } from "./findBibleText.js";
-import { openDIYpopup } from "./popup.js";
 
 export function createWeekList(weekListId) {
   const roles = [
@@ -304,58 +303,7 @@ export function updateJinJuText() {
 }
 
 export function createSongInput(songId, text) {
-  const input = createInput(songId, "text", text);
-
-  const DIYBtn = document.createElement("button");
-  DIYBtn.className = "col-auto btn btn-primary";
-  DIYBtn.type = "button";
-  DIYBtn.textContent = "自己制作";
-  DIYBtn.id = `DIYBtn${songId}`;
-  input.firstElementChild.appendChild(DIYBtn);
-
-  const overlayDIY = `
-    <div id="overlay-DIY-${songId}" class="overlay">
-      <div class="popup popup-DIY col-10">
-        <h1 class="text-center">DIY歌词顺序</h1>
-        <div class="popup-content DIY-input">
-          <div class="row justify-content-center">
-            <div class="col-6">
-              <textarea
-                id="lyricsInput${songId}"
-                rows="10"
-                class="form-control text-center"
-                placeholder="输入歌词，繁體会被自动转换成简体"></textarea>
-              <button type="button" class="btn btn-primary w-100"
-                >生成</button
-              >
-            </div>
-          </div>
-        </div>
-        <div class="top-corner-buttons">
-          <div class="get-btn btn btn-info" style="visibility: visible;">从网络自动获取歌词</div>
-          <div class="back-btn btn btn-secondary">后退</div>
-          <div class="save-btn btn btn-success">保存</div>
-          <div class="download-btn btn btn-primary">保存并下载</div>
-        </div>
-        <div class="row DIY-pages">
-          <div class="col-3">
-            <div id="lyricsContainer${songId}" class="lyrics-container vh-100"> </div>
-          </div>
-          <div class="col-9">
-            <div
-              id="slidePreviewContainer${songId}"
-              class="lyrics-container mb-10 vh-100">
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    `;
-  const songContainer = document.getElementById(songId);
-  songContainer.insertAdjacentHTML("afterend", overlayDIY);
-  DIYBtn.addEventListener("click", function () {
-    openDIYpopup(songId);
-  });
+  createInput(songId, "text", text);
 }
 
 export function createLyricsPages(songId, pages) {

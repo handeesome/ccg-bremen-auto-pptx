@@ -72,3 +72,131 @@ input[type="radio"]:checked + .card {
   border: 2px solid red;
   box-shadow: 0 0 5px red;
 }
+
+.song-slot-dropzone {
+  border: 2px dashed #9bb3c9;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  text-align: center;
+  color: #517495;
+  background: #f7fbff;
+}
+
+.song-slot-dropzone.active {
+  border-color: #0d6efd;
+  background: #e8f1ff;
+}
+
+.song-upload-layout {
+  max-width: 1100px;
+}
+
+#song-input-column {
+  width: 100%;
+}
+
+.song-slot-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.song-slot-row {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  border: 1px solid #dee2e6;
+  border-radius: 0.5rem;
+  padding: 0.4rem 0.75rem;
+  background: #fafafa;
+  min-height: 2.8rem;
+}
+
+.song-slot-row.drag-target {
+  border-color: #0d6efd;
+  background: #eef5ff;
+}
+
+.song-slot-row.filled {
+  background: #fff;
+}
+
+.song-slot-row-label {
+  min-width: 7rem;
+  font-weight: 600;
+  text-align: right;
+}
+
+.song-slot-drop-cell {
+  flex: 1;
+  min-height: 2rem;
+}
+
+.song-slot-card {
+  position: relative;
+  border: 1px solid #c8dcf3;
+  background: linear-gradient(135deg, #f8fbff 0%, #edf5ff 100%);
+  border-radius: 0.5rem;
+  padding: 0.35rem 1.8rem 0.35rem 0.7rem;
+  cursor: grab;
+  display: flex;
+  align-items: center;
+  min-height: 2rem;
+  box-shadow: 0 2px 6px rgba(81, 116, 149, 0.12);
+}
+
+.song-slot-card:active {
+  cursor: grabbing;
+}
+
+.song-slot-card-main {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  min-width: 0;
+}
+
+.song-slot-card-title {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.song-slot-audio-badge {
+  font-size: 0.75rem;
+  color: #2d6b43;
+  background: #e7f6ec;
+  border: 1px solid #bfe0c9;
+  border-radius: 999px;
+  padding: 0.02rem 0.4rem;
+  white-space: nowrap;
+}
+
+.song-slot-card-close {
+  position: absolute;
+  top: 0.12rem;
+  right: 0.32rem;
+  border: 0;
+  background: transparent;
+  color: #6c757d;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0;
+}
+
+.song-slot-card-close:hover {
+  color: #dc3545;
+}
+
+.song-slot-empty {
+  min-height: 2rem;
+}
+
+@media (max-width: 991.98px) {
+  .song-slot-row-label {
+    min-width: 5.5rem;
+    text-align: left;
+  }
+}

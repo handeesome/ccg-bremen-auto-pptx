@@ -18,6 +18,11 @@ import {
   initialFormData,
   initializeFormData,
 } from "./processData.js";
+import {
+  initSongSlotImport,
+  restoreImportedSongSlots,
+  clearImportedSongSlots,
+} from "./song_slots.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
   await getBibleVerses();
@@ -47,18 +52,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   createBibleDropdownSet("bibleDropdownSet3", "duJing", "读经:");
 
   //Part 3
-  document.getElementById("song1").insertAdjacentHTML(
-    "beforebegin",
-    `
-      <div class="alert alert-warning col-8 text-center mb-3" role="alert">
-        Google Drive 功能 Coming Up!
-      </div>
-    `,
-  );
   createSongInput("song1", "第一首诗歌");
   createSongInput("song2", "第二首诗歌");
   createSongInput("song3", "第三首诗歌");
   createSongInput("song4", "回应诗歌");
+  initSongSlotImport();
   //Part 4
   createTextareaSet("activityTextarea", "activity");
   createFetchButton("fetchButtonParent");
@@ -102,10 +100,17 @@ document.addEventListener("DOMContentLoaded", async () => {
         resumeTextareaData("activity");
         resumeTextareaData("prayerWorld");
         resumeTextareaData("prayerChurch");
+        restoreImportedSongSlots();
       } else {
         localStorage.removeItem("formData"); // Clear if user doesn't want to restore
         initializeFormData();
+        clearImportedSongSlots();
       }
+    } else {
+      restoreImportedSongSlots();
     }
+  } else {
+    initializeFormData();
+    clearImportedSongSlots();
   }
 });

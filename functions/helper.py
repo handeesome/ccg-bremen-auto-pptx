@@ -171,8 +171,14 @@ def divide_verse_evenly(verse):
 
 
 def addAudio(slide, audioPath):
-    slide.shapes.add_movie(audioPath, Cm(20.14), Cm(16.79), Cm(
-        5), Cm(2.28), poster_frame_image=None)
+    if not audioPath or not os.path.exists(audioPath):
+        return False
+    try:
+        slide.shapes.add_movie(audioPath, Cm(20.14), Cm(16.79), Cm(
+            5), Cm(2.28), poster_frame_image=None)
+        return True
+    except Exception:
+        return False
 
 
 def lyricsPages(prs, song, lyrics, audioPath=None, isOnePage=False, titleFontSize=42):

@@ -5,7 +5,7 @@ from .helper import *
 第十部分 回应诗歌
 """
 
-def partTen(prs, songHuiying, songHuiyingPages):
+def partTen(prs, songHuiying, songHuiyingPages, songHuiyingAudioPath=None):
     slide = newSlide(prs, '回应诗歌')
     txBox = newCenterBox(slide, songHuiying)
     p = txBox.text_frame.paragraphs[0]
@@ -16,4 +16,4 @@ def partTen(prs, songHuiying, songHuiyingPages):
         pages[i] = f"[Page {i+1}]\n{pages[i]}"
     # concatenate pages with pages
     pages = "\n".join(pages)
-    lyricsPages(prs, songHuiying, pages)
+    lyricsPages(prs, songHuiying, pages, audioPath=songHuiyingAudioPath)
