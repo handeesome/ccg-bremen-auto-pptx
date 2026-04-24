@@ -18,7 +18,6 @@ import {
   initialFormData,
   initializeFormData,
 } from "./processData.js";
-import { searchSongPopup } from "./popup.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
   await getBibleVerses();
@@ -48,11 +47,18 @@ document.addEventListener("DOMContentLoaded", async () => {
   createBibleDropdownSet("bibleDropdownSet3", "duJing", "读经:");
 
   //Part 3
+  document.getElementById("song1").insertAdjacentHTML(
+    "beforebegin",
+    `
+      <div class="alert alert-warning col-8 text-center mb-3" role="alert">
+        Google Drive 功能 Coming Up!
+      </div>
+    `,
+  );
   createSongInput("song1", "第一首诗歌");
   createSongInput("song2", "第二首诗歌");
   createSongInput("song3", "第三首诗歌");
   createSongInput("song4", "回应诗歌");
-  searchSongPopup();
   //Part 4
   createTextareaSet("activityTextarea", "activity");
   createFetchButton("fetchButtonParent");
@@ -65,13 +71,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     "verseRadio",
     2,
     "所以，弟兄们，我以神的慈悲劝你们，将身体献上，当作活祭，是圣洁的，是神所喜悦的；你们如此事奉乃是理所当然的。",
-    "罗12:1"
+    "罗12:1",
   );
   createRadio(
     "verseRadio",
     2,
     "少种的少收，多种的多收”，这话是真的。各人要随本心所酌定的，不要作难，不要勉强，因为捐得乐意的人是神所喜爱的。",
-    "林后9:6-7"
+    "林后9:6-7",
   );
 
   // Part 6

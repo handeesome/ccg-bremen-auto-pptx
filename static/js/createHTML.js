@@ -305,22 +305,6 @@ export function updateJinJuText() {
 
 export function createSongInput(songId, text) {
   const input = createInput(songId, "text", text);
-  const showSearchBtn = document.createElement("button");
-  showSearchBtn.className = "showSearchBtn col-auto";
-  showSearchBtn.type = "button";
-  showSearchBtn.textContent = "从Google Drive中搜索下载";
-  input.firstElementChild.appendChild(showSearchBtn);
-
-  const popupOverlay = document.getElementById("popup-overlay");
-  const searchContainer = document.getElementById("search-container");
-  showSearchBtn.addEventListener("click", function () {
-    const parentDiv = this.closest('div[id^="song"]');
-    window.clickedInput = parentDiv.querySelector('input[type="text"]');
-
-    searchContainer.style.display = "block";
-    popupOverlay.style.display = "block";
-    document.body.style.overflow = "hidden"; // Disable scrolling
-  });
 
   const DIYBtn = document.createElement("button");
   DIYBtn.className = "col-auto btn btn-primary";
