@@ -2,6 +2,8 @@
  * The bible indexes are from:
  * http://springbible.fhl.net/OfflineBible/offline.html
  ********************************************/
+import { bibleText } from "./bibleText.js";
+
 export const books = new Array(
   "创世记",
   "出埃及记",
@@ -2673,6 +2675,113 @@ var search = function (bookIndex, chapterIndex1, line1, chapterIndex2, line2) {
   var end = searchLine(bookIndex, chapterIndex2, line2);
   if (end < 0) return [start, end];
   return [min(start, end), max(start, end)];
+};
+
+const simpleBookAliases = {
+  约一: books.indexOf("约翰一书"),
+  约二: books.indexOf("约翰二书"),
+  约三: books.indexOf("约翰三书"),
+};
+
+function lookupBookIndex(bookName) {
+  var bookIndex = simple_books.indexOf(bookName);
+  if (bookIndex == -1) {
+    bookIndex = books.indexOf(bookName);
+  }
+  if (bookIndex == -1 && Object.prototype.hasOwnProperty.call(simpleBookAliases, bookName)) {
+    bookIndex = simpleBookAliases[bookName];
+  }
+  return bookIndex;
+}
+
+const dynamicChapterCounts = new Array(books.length).fill(0);
+const dynamicChapterVerseCounts = new Map();
+const dynamicVerseLineIndexes = new Map();
+
+function dynamicVerseKey(bookIndex, chapter, verse) {
+  return bookIndex + ":" + chapter + ":" + verse;
+}
+
+function dynamicChapterKey(bookIndex, chapter) {
+  return bookIndex + ":" + chapter;
+}
+
+function parseBibleTextPrefix(prefix) {
+  const match = prefix.match(/^(.+?)(\d+):(\d+)(?:-(\d+))?$/);
+  if (!match) return null;
+
+  const bookIndex = lookupBookIndex(match[1]);
+  if (bookIndex < 0) return null;
+
+  return {
+    bookIndex,
+    chapter: parseInt(match[2], 10),
+    verseStart: parseInt(match[3], 10),
+    verseEnd: match[4] ? parseInt(match[4], 10) : parseInt(match[3], 10),
+  };
+}
+
+for (let i = 0; i < bibleText.length; i++) {
+  const spaceIndex = bibleText[i].indexOf(" ");
+  const prefix = spaceIndex > 0 ? bibleText[i].substring(0, spaceIndex) : "";
+  const parsed = parseBibleTextPrefix(prefix);
+  if (!parsed) continue;
+
+  dynamicChapterCounts[parsed.bookIndex] = Math.max(
+    dynamicChapterCounts[parsed.bookIndex],
+    parsed.chapter
+  );
+
+  const chapterKey = dynamicChapterKey(parsed.bookIndex, parsed.chapter);
+  dynamicChapterVerseCounts.set(
+    chapterKey,
+    Math.max(
+      dynamicChapterVerseCounts.get(chapterKey) || 0,
+      parsed.verseEnd
+    )
+  );
+
+  for (let verse = parsed.verseStart; verse <= parsed.verseEnd; verse++) {
+    dynamicVerseLineIndexes.set(
+      dynamicVerseKey(parsed.bookIndex, parsed.chapter, verse),
+      i
+    );
+  }
+}
+
+getBookIndex = function (bookName) {
+  return lookupBookIndex(bookName);
+};
+
+getFullName = function (bookName) {
+  const bookIndex = lookupBookIndex(bookName);
+  return bookIndex == -1 ? null : books[bookIndex];
+};
+
+getTotalChapters = function (bookIndex) {
+  if (bookIndex < 0 || bookIndex >= books.length) return -1;
+  return dynamicChapterCounts[bookIndex] || 0;
+};
+
+getTotalLines = function (bookIndex, chapterIndex) {
+  if (bookIndex < 0 || chapterIndex < 1) return -1;
+  const totalLines = dynamicChapterVerseCounts.get(
+    dynamicChapterKey(bookIndex, chapterIndex)
+  );
+  return totalLines || -1;
+};
+
+searchLine = function (bookIndex, chapter, line) {
+  if (bookIndex < 0 || bookIndex >= books.length) return -1;
+  if (chapter < 1 || chapter > getTotalChapters(bookIndex)) return -2;
+
+  const totalChapterLines = getTotalLines(bookIndex, chapter);
+  if (line < 1 || line > totalChapterLines) return -3;
+
+  const lineIndex = dynamicVerseLineIndexes.get(
+    dynamicVerseKey(bookIndex, chapter, line)
+  );
+  return lineIndex === undefined ? -3 : lineIndex;
 };
 
 export {

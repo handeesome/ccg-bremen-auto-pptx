@@ -121,13 +121,13 @@ def verseGroup(verses, character_limit=90, isQiYing=False):
 
 def parseVerses(verses, isQiYing=False):
     verseArr = []
-    verseFrom = int(verses["verseFrom"])
     for verse in verses["fullVerse"]:
         if isQiYing:# 启应经文 needs the verses without verse numbers
             verseArr.append(verse[1])
         else:
-            verseArr.append(str(verseFrom) +'.'+verse[1])
-            verseFrom += 1
+            match = re.search(r':(\d+(?:-\d+)?)$', verse[0])
+            verseNumber = match.group(1) if match else str(verses["verseFrom"])
+            verseArr.append(verseNumber +'.'+verse[1])
     return verseArr
 
 def divide_verse_evenly(verse):
@@ -267,18 +267,20 @@ def itemsPagesHasSpace(prs, title, items, charPerLine, fontSize=36, isNumber=Fal
                 number += 1
                 numbered_item = f'{number} ' + item
             numbered_item = item
-            pattern = re.compile(r'(\d+).(.*)')
+            pattern = re.compile(r'(\d+(?:-\d+)?)\.(.*)')
             match = re.search(pattern, numbered_item)
             if match:
                 number = match.group(1)
-                if int(number)>9:
+                firstNumber = int(number.split('-')[0])
+                if firstNumber>9:
                     newLine = '\n   '
                 text_part = match.group(2)
                 delimiters = ['，', '。', '：', '；', '?', '、', '！']
                 substrings = []
                 i = 0
                 while i < len(text_part):
-                    line = text_part[i:i+charPerLine]
+                    currentCharPerLine = charPerLine - 1 if '-' in number and not substrings else charPerLine
+                    line = text_part[i:i+currentCharPerLine]
                     if substrings and line[0] in delimiters:
                         # If the first character of the line is a delimiter, append it to the previous line
                         substrings[-1] += line[0]
@@ -286,7 +288,7 @@ def itemsPagesHasSpace(prs, title, items, charPerLine, fontSize=36, isNumber=Fal
                     else:
                         # Otherwise, add the line as a new entry
                         substrings.append(line)
-                        i += charPerLine  # Move to the next line
+                        i += currentCharPerLine  # Move to the next line
                 p.text = number + '.' + newLine.join(substrings)
                 setFont(p, fontSize)
 
